@@ -12,9 +12,7 @@ function Icon({ name, className = 'h-4 w-4' }) {
             </>
         ),
         budget: (
-            <>
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </>
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         ),
         calendar: (
             <>
@@ -22,15 +20,9 @@ function Icon({ name, className = 'h-4 w-4' }) {
                 <path d="M16 3v4M8 3v4M3 10h18" />
             </>
         ),
-        activity: (
-            <>
-                <path d="M3 12h4l3-8 4 16 3-8h4" />
-            </>
-        ),
+        activity: <path d="M3 12h4l3-8 4 16 3-8h4" />,
         message: (
-            <>
-                <path d="M21 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-4 2v-6a7.5 7.5 0 1 1 18-3.5Z" />
-            </>
+            <path d="M21 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-4 2v-6a7.5 7.5 0 1 1 18-3.5Z" />
         ),
         check: <path d="m5 12 4 4L19 6" />,
     };
@@ -53,16 +45,16 @@ function Icon({ name, className = 'h-4 w-4' }) {
 
 function StatusBadge({ status }) {
     const styles = {
-        Ongoing: 'bg-[#edf3fb] text-[#426da9]',
-        Completed: 'bg-[#eaf5ef] text-[#428764]',
-        Planned: 'bg-[#fbf4e6] text-[#a77b29]',
-        Suspended: 'bg-[#faeded] text-[#b65050]',
+        Ongoing: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+        Completed: 'bg-green-50 text-green-700 ring-green-200',
+        Planned: 'bg-amber-50 text-amber-700 ring-amber-200',
+        Suspended: 'bg-red-50 text-red-700 ring-red-200',
     };
 
     return (
         <span
-            className={`inline-flex rounded-full px-2.5 py-1 text-[9px] font-medium ${
-                styles[status] || 'bg-gray-100 text-gray-600'
+            className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-medium ring-1 ring-inset ${
+                styles[status] || 'bg-gray-100 text-gray-600 ring-gray-200'
             }`}
         >
             {status || 'Unknown'}
@@ -106,14 +98,14 @@ function formatBudget(budget) {
 
 function InfoCard({ icon, label, value }) {
     return (
-        <div className="rounded-md border border-[#e7ecf2] bg-[#fbfcfd] p-3">
-            <div className="flex items-center gap-2 text-[#7e8da0]">
-                <Icon name={icon} className="h-3.5 w-3.5" />
-                <span className="text-[9px] font-medium uppercase tracking-wide">
+        <div className="rounded-lg border border-emerald-100 bg-emerald-50/40 p-3.5">
+            <div className="flex items-center gap-2 text-emerald-700">
+                <Icon name={icon} className="h-4 w-4" />
+                <span className="text-[10px] font-semibold uppercase tracking-wide">
                     {label}
                 </span>
             </div>
-            <p className="mt-2 break-words text-[12px] font-semibold text-[#344860]">
+            <p className="mt-2 break-words text-sm font-semibold text-slate-800">
                 {value || 'Not specified'}
             </p>
         </div>
@@ -122,13 +114,13 @@ function InfoCard({ icon, label, value }) {
 
 function SectionHeading({ title, description, right }) {
     return (
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e8edf2] px-4 py-3.5">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
             <div>
-                <h2 className="text-[13px] font-semibold text-[#293d55]">
+                <h2 className="text-sm font-semibold text-slate-800">
                     {title}
                 </h2>
                 {description && (
-                    <p className="mt-1 text-[10px] leading-4 text-[#8793a3]">
+                    <p className="mt-1 text-xs leading-5 text-slate-500">
                         {description}
                     </p>
                 )}
@@ -157,7 +149,6 @@ export default function ProjectDetails({ project }) {
         setCurrentProject(project);
     }, [project]);
 
-    // Keep the existing Laravel Reverb real-time project updates.
     useEffect(() => {
         if (!window.Echo) {
             return;
@@ -172,10 +163,7 @@ export default function ProjectDetails({ project }) {
             }
         };
 
-        channel.listen(
-            '.project.progress.updated',
-            handleProjectUpdate
-        );
+        channel.listen('.project.progress.updated', handleProjectUpdate);
 
         return () => {
             channel.stopListening(
@@ -217,59 +205,60 @@ export default function ProjectDetails({ project }) {
 
     return (
         <DashboardLayout role="citizen">
-            <div className="min-h-screen bg-[#f5f7fa]">
-                {/* Top navigation */}
-                <header className="flex h-12 items-center justify-between border-b border-[#e3e8ef] bg-white px-5 sm:px-7">
-                    <div className="flex items-center gap-2 text-[10px] text-[#8793a3]">
+            <div className="min-h-screen bg-slate-50">
+                <header className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-3 sm:px-7">
+                    <nav
+                        aria-label="Breadcrumb"
+                        className="flex flex-wrap items-center gap-2 text-xs text-slate-500"
+                    >
                         <Link
                             href="/citizen/dashboard"
-                            className="hover:text-[#416b9f]"
+                            className="transition hover:text-emerald-700"
                         >
                             Dashboard
                         </Link>
                         <span>/</span>
                         <Link
                             href="/citizen/projects"
-                            className="hover:text-[#416b9f]"
+                            className="transition hover:text-emerald-700"
                         >
                             Projects
                         </Link>
                         <span>/</span>
-                        <span className="font-medium text-[#344860]">
+                        <span className="font-medium text-emerald-800">
                             Details
                         </span>
-                    </div>
+                    </nav>
 
-                    <span className="text-[10px] text-[#7b899a]">
+                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-medium text-emerald-700">
                         Public Project Record
                     </span>
                 </header>
 
-                <main className="space-y-5 px-5 py-5 sm:px-7">
-                    {/* Project heading */}
+                <main className="space-y-5 px-5 py-6 sm:px-7">
                     <section>
                         <Link
                             href="/citizen/projects"
-                            className="inline-flex items-center gap-1.5 text-[10px] font-medium text-[#61748b] transition hover:text-[#315b8b]"
+                            className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 transition hover:text-emerald-900"
                         >
-                            <Icon
-                                name="arrow"
-                                className="h-3.5 w-3.5"
-                            />
+                            <Icon name="arrow" className="h-4 w-4" />
                             Back to Projects
                         </Link>
 
-                        <div className="mt-3 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                        <div className="mt-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                             <div className="min-w-0">
-                                <h1 className="break-words text-[19px] font-semibold tracking-tight text-[#253951]">
+                                <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
+                                    Project Details
+                                </p>
+                                <h1 className="mt-1 break-words text-2xl font-bold tracking-tight text-slate-900">
                                     {currentProject.project_name ||
                                         'Untitled Project'}
                                 </h1>
 
-                                <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-[#7b899a]">
+                                <p className="mt-2 flex items-center gap-2 text-sm text-slate-500">
                                     <Icon
                                         name="location"
-                                        className="h-3.5 w-3.5"
+                                        className="h-4 w-4 shrink-0 text-emerald-700"
                                     />
                                     {currentProject.location ||
                                         'Location not specified'}
@@ -280,20 +269,19 @@ export default function ProjectDetails({ project }) {
                         </div>
                     </section>
 
-                    {/* Live updates notice */}
-                    <section className="flex items-start gap-2.5 rounded-md border border-[#d9e8df] bg-[#f0f7f2] px-3.5 py-3">
-                        <span className="relative mt-1 flex h-2 w-2 shrink-0">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#62a783] opacity-40" />
-                            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4c9878]" />
+                    <section className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                        <span className="relative mt-1 flex h-2.5 w-2.5 shrink-0">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-40" />
+                            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-600" />
                         </span>
 
                         <div className="min-w-0">
-                            <p className="text-[11px] font-semibold text-[#3e785a]">
+                            <p className="text-sm font-semibold text-emerald-900">
                                 {lastUpdatedLive
                                     ? 'Project information updated live'
                                     : 'Live Project Updates'}
                             </p>
-                            <p className="mt-1 text-[10px] leading-4 text-[#61816e]">
+                            <p className="mt-1 text-xs leading-5 text-emerald-800">
                                 This page listens for project progress updates
                                 from the Municipal Engineering Office. When a
                                 new update is received, the displayed project
@@ -302,23 +290,21 @@ export default function ProjectDetails({ project }) {
                         </div>
                     </section>
 
-                    {/* Main content layout */}
-                    <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(270px,0.85fr)]">
-                        <div className="space-y-4">
-                            {/* Project overview */}
-                            <section className="overflow-hidden rounded-md border border-[#e3e8ef] bg-white">
+                    <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(280px,0.85fr)]">
+                        <div className="space-y-5">
+                            <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Project Overview"
                                     description="General information about this government project"
                                 />
 
-                                <div className="p-4">
-                                    <p className="whitespace-pre-line text-[11px] leading-6 text-[#64758a]">
+                                <div className="p-5">
+                                    <p className="whitespace-pre-line text-sm leading-6 text-slate-600">
                                         {currentProject.description ||
                                             'No project description available.'}
                                     </p>
 
-                                    <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                    <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                                         <InfoCard
                                             icon="location"
                                             label="Project Location"
@@ -349,26 +335,25 @@ export default function ProjectDetails({ project }) {
                                 </div>
                             </section>
 
-                            {/* Project progress */}
-                            <section className="overflow-hidden rounded-md border border-[#e3e8ef] bg-white">
+                            <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Current Progress"
                                     description="Latest recorded implementation progress"
                                     right={
-                                        <span className="text-[20px] font-semibold tracking-tight text-[#304b6b]">
+                                        <span className="text-2xl font-bold tracking-tight text-emerald-700">
                                             {progress}%
                                         </span>
                                     }
                                 />
 
-                                <div className="p-4">
-                                    <div className="flex items-center justify-between text-[10px] text-[#8793a3]">
+                                <div className="p-5">
+                                    <div className="flex items-center justify-between text-xs text-slate-500">
                                         <span>Overall completion</span>
                                         <span>{progress} of 100%</span>
                                     </div>
 
                                     <div
-                                        className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-[#e9edf2]"
+                                        className="mt-3 h-3 overflow-hidden rounded-full bg-slate-100"
                                         role="progressbar"
                                         aria-valuenow={progress}
                                         aria-valuemin={0}
@@ -376,14 +361,14 @@ export default function ProjectDetails({ project }) {
                                         aria-label="Project progress"
                                     >
                                         <div
-                                            className="h-full rounded-full bg-[#5278ae] transition-all duration-500"
+                                            className="h-full rounded-full bg-emerald-600 transition-all duration-500"
                                             style={{
                                                 width: `${progress}%`,
                                             }}
                                         />
                                     </div>
 
-                                    <div className="mt-2 flex justify-between text-[9px] text-[#9aa5b2]">
+                                    <div className="mt-2 flex justify-between text-[10px] text-slate-400">
                                         <span>0%</span>
                                         <span>25%</span>
                                         <span>50%</span>
@@ -391,25 +376,23 @@ export default function ProjectDetails({ project }) {
                                         <span>100%</span>
                                     </div>
 
-                                    <div className="mt-4 grid grid-cols-2 gap-2">
-                                        <div className="rounded-md bg-[#f7f9fb] p-3">
-                                            <p className="text-[9px] text-[#8793a3]">
+                                    <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        <div className="rounded-lg bg-slate-50 p-4">
+                                            <p className="text-xs text-slate-500">
                                                 Current Status
                                             </p>
-                                            <div className="mt-1.5">
+                                            <div className="mt-2">
                                                 <StatusBadge
-                                                    status={
-                                                        currentProject.status
-                                                    }
+                                                    status={currentProject.status}
                                                 />
                                             </div>
                                         </div>
 
-                                        <div className="rounded-md bg-[#f7f9fb] p-3">
-                                            <p className="text-[9px] text-[#8793a3]">
+                                        <div className="rounded-lg bg-slate-50 p-4">
+                                            <p className="text-xs text-slate-500">
                                                 Latest Recorded Update
                                             </p>
-                                            <p className="mt-1.5 text-[10px] font-medium text-[#52647a]">
+                                            <p className="mt-2 text-sm font-semibold text-slate-700">
                                                 {latestUpdate
                                                     ? formatDate(
                                                           latestUpdate.update_date ||
@@ -422,19 +405,18 @@ export default function ProjectDetails({ project }) {
                                 </div>
                             </section>
 
-                            {/* Progress timeline */}
-                            <section className="overflow-hidden rounded-md border border-[#e3e8ef] bg-white">
+                            <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Project Progress Timeline"
                                     description="Recorded status and progress updates"
                                     right={
-                                        <span className="rounded-full bg-[#f0f3f7] px-2 py-1 text-[9px] text-[#718096]">
+                                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                                             {updates.length} updates
                                         </span>
                                     }
                                 />
 
-                                <div className="p-4">
+                                <div className="p-5">
                                     {updates.length > 0 ? (
                                         <div className="space-y-0">
                                             {updates.map((update, index) => (
@@ -447,18 +429,18 @@ export default function ProjectDetails({ project }) {
                                                 >
                                                     {index <
                                                         updates.length - 1 && (
-                                                        <div className="absolute bottom-0 left-[7px] top-4 w-px bg-[#dfe6ee]" />
+                                                        <div className="absolute bottom-0 left-[7px] top-4 w-px bg-emerald-100" />
                                                     )}
 
                                                     <div
-                                                        className={`relative z-10 mt-1 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-white ring-1 ring-[#d7e0ea] ${
+                                                        className={`relative z-10 mt-1 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-white ring-1 ring-emerald-200 ${
                                                             index === 0
-                                                                ? 'bg-[#5278ae]'
-                                                                : 'bg-[#a8b6c6]'
+                                                                ? 'bg-emerald-600'
+                                                                : 'bg-emerald-300'
                                                         }`}
                                                     />
 
-                                                    <div className="min-w-0 flex-1 rounded-md border border-[#edf0f4] bg-[#fbfcfd] p-3">
+                                                    <div className="min-w-0 flex-1 rounded-lg border border-slate-100 bg-slate-50/70 p-4">
                                                         <div className="flex flex-wrap items-center justify-between gap-2">
                                                             <div className="flex flex-wrap items-center gap-2">
                                                                 <StatusBadge
@@ -466,7 +448,7 @@ export default function ProjectDetails({ project }) {
                                                                         update.status
                                                                     }
                                                                 />
-                                                                <span className="text-[11px] font-semibold text-[#344860]">
+                                                                <span className="text-sm font-semibold text-slate-700">
                                                                     {Math.min(
                                                                         100,
                                                                         Math.max(
@@ -481,7 +463,7 @@ export default function ProjectDetails({ project }) {
                                                                 </span>
                                                             </div>
 
-                                                            <span className="text-[9px] text-[#8793a3]">
+                                                            <span className="text-xs text-slate-500">
                                                                 {formatDate(
                                                                     update.update_date ||
                                                                         update.created_at
@@ -490,7 +472,7 @@ export default function ProjectDetails({ project }) {
                                                         </div>
 
                                                         {update.update_description && (
-                                                            <p className="mt-2 whitespace-pre-line text-[10px] leading-5 text-[#64758a]">
+                                                            <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">
                                                                 {
                                                                     update.update_description
                                                                 }
@@ -498,10 +480,10 @@ export default function ProjectDetails({ project }) {
                                                         )}
 
                                                         {index === 0 && (
-                                                            <p className="mt-2 flex items-center gap-1 text-[9px] font-medium text-[#4c8a69]">
+                                                            <p className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
                                                                 <Icon
                                                                     name="check"
-                                                                    className="h-3 w-3"
+                                                                    className="h-3.5 w-3.5"
                                                                 />
                                                                 Latest recorded
                                                                 update
@@ -512,15 +494,15 @@ export default function ProjectDetails({ project }) {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="rounded-md border border-dashed border-[#dfe6ee] px-4 py-8 text-center">
+                                        <div className="rounded-lg border border-dashed border-emerald-200 bg-emerald-50/30 px-4 py-10 text-center">
                                             <Icon
                                                 name="activity"
-                                                className="mx-auto h-5 w-5 text-[#9aa8b8]"
+                                                className="mx-auto h-6 w-6 text-emerald-600"
                                             />
-                                            <p className="mt-2 text-[11px] font-medium text-[#52647a]">
+                                            <p className="mt-3 text-sm font-semibold text-slate-700">
                                                 No progress updates yet
                                             </p>
-                                            <p className="mt-1 text-[10px] text-[#8793a3]">
+                                            <p className="mt-1 text-xs leading-5 text-slate-500">
                                                 Recorded updates will appear
                                                 here when they are provided by
                                                 the Engineering Office.
@@ -531,61 +513,58 @@ export default function ProjectDetails({ project }) {
                             </section>
                         </div>
 
-                        {/* Right column */}
-                        <aside className="space-y-4">
-                            {/* Summary */}
-                            <section className="overflow-hidden rounded-md border border-[#e3e8ef] bg-white">
+                        <aside className="space-y-5">
+                            <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Project Summary"
                                     description="Current project information"
                                 />
 
-                                <div className="space-y-3 p-4">
+                                <div className="space-y-4 p-5">
                                     <div>
-                                        <p className="text-[10px] text-[#8793a3]">
+                                        <p className="text-xs text-slate-500">
                                             Project Name
                                         </p>
-                                        <p className="mt-1 text-[11px] font-medium leading-5 text-[#344860]">
+                                        <p className="mt-1 text-sm font-semibold leading-5 text-slate-800">
                                             {currentProject.project_name ||
                                                 'Untitled Project'}
                                         </p>
                                     </div>
 
-                                    <div className="border-t border-[#edf0f4] pt-3">
-                                        <p className="text-[10px] text-[#8793a3]">
+                                    <div className="border-t border-slate-100 pt-4">
+                                        <p className="text-xs text-slate-500">
                                             Status
                                         </p>
-                                        <div className="mt-1.5">
+                                        <div className="mt-2">
                                             <StatusBadge
                                                 status={currentProject.status}
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="border-t border-[#edf0f4] pt-3">
-                                        <p className="text-[10px] text-[#8793a3]">
+                                    <div className="border-t border-slate-100 pt-4">
+                                        <p className="text-xs text-slate-500">
                                             Project Budget
                                         </p>
-                                        <p className="mt-1 text-[13px] font-semibold text-[#344860]">
+                                        <p className="mt-1 text-base font-bold text-emerald-800">
                                             {formatBudget(
                                                 currentProject.budget
                                             )}
                                         </p>
                                     </div>
 
-                                    <div className="border-t border-[#edf0f4] pt-3">
-                                        <p className="text-[10px] text-[#8793a3]">
+                                    <div className="border-t border-slate-100 pt-4">
+                                        <p className="text-xs text-slate-500">
                                             Progress
                                         </p>
-                                        <p className="mt-1 text-[13px] font-semibold text-[#344860]">
+                                        <p className="mt-1 text-base font-bold text-emerald-700">
                                             {progress}%
                                         </p>
                                     </div>
                                 </div>
                             </section>
 
-                            {/* Citizen feedback */}
-                            <section className="overflow-hidden rounded-md border border-[#e3e8ef] bg-white">
+                            <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Submit Public Feedback"
                                     description="Share an observation or concern about this project"
@@ -593,11 +572,11 @@ export default function ProjectDetails({ project }) {
 
                                 <form
                                     onSubmit={submitFeedback}
-                                    className="p-4"
+                                    className="p-5"
                                 >
                                     <label
                                         htmlFor="feedback-message"
-                                        className="mb-2 block text-[10px] font-medium text-[#52647a]"
+                                        className="mb-2 block text-xs font-semibold text-slate-700"
                                     >
                                         Your message
                                     </label>
@@ -615,16 +594,16 @@ export default function ProjectDetails({ project }) {
                                         maxLength={3000}
                                         required
                                         placeholder="Write your feedback here..."
-                                        className="w-full resize-y rounded-md border border-[#dfe5ec] bg-white px-3 py-2.5 text-[11px] leading-5 text-[#344860] outline-none transition placeholder:text-[#a0aab7] focus:border-[#7898bd] focus:ring-2 focus:ring-[#e7eef7]"
+                                        className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm leading-5 text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                     />
 
                                     {errors.message && (
-                                        <p className="mt-1.5 text-[10px] text-red-600">
+                                        <p className="mt-2 text-xs text-red-600">
                                             {errors.message}
                                         </p>
                                     )}
 
-                                    <p className="mt-1 text-right text-[9px] text-[#9aa5b2]">
+                                    <p className="mt-1 text-right text-xs text-slate-400">
                                         {data.message.length}/3000
                                     </p>
 
@@ -634,18 +613,18 @@ export default function ProjectDetails({ project }) {
                                             processing ||
                                             !data.message.trim()
                                         }
-                                        className="mt-3 flex h-9 w-full items-center justify-center gap-2 rounded-md bg-[#304b6b] px-4 text-[11px] font-medium text-white transition hover:bg-[#243c58] disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         <Icon
                                             name="message"
-                                            className="h-3.5 w-3.5"
+                                            className="h-4 w-4"
                                         />
                                         {processing
                                             ? 'Submitting...'
                                             : 'Submit Feedback'}
                                     </button>
 
-                                    <p className="mt-2 text-[9px] leading-4 text-[#929eac]">
+                                    <p className="mt-3 text-xs leading-5 text-slate-500">
                                         Please keep your feedback relevant
                                         to the project. Submissions are
                                         subject to administrative review.
@@ -653,12 +632,11 @@ export default function ProjectDetails({ project }) {
                                 </form>
                             </section>
 
-                            {/* Notice */}
-                            <section className="rounded-md border border-[#e3e8ef] bg-white p-3.5">
-                                <h3 className="text-[11px] font-semibold text-[#344860]">
+                            <section className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
+                                <h3 className="text-sm font-semibold text-emerald-900">
                                     About Project Information
                                 </h3>
-                                <p className="mt-1.5 text-[10px] leading-5 text-[#7b899a]">
+                                <p className="mt-2 text-xs leading-5 text-slate-600">
                                     The Municipal Engineering Office maintains
                                     official project progress and status.
                                     Citizen feedback does not directly change
@@ -668,8 +646,7 @@ export default function ProjectDetails({ project }) {
                         </aside>
                     </div>
 
-                    {/* Footer */}
-                    <footer className="border-t border-[#e3e8ef] pt-3 text-[9px] leading-4 text-[#929eac]">
+                    <footer className="border-t border-slate-200 pt-4 text-xs text-slate-500">
                         Pagudpud Transparency · Municipality of Pagudpud,
                         Ilocos Norte
                     </footer>

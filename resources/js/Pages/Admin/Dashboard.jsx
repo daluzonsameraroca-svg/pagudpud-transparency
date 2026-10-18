@@ -58,10 +58,10 @@ export default function Dashboard({
     ].filter((item) => item.value > 0);
 
     const chartColors = {
-        Ongoing: '#3974c6',
-        Completed: '#31936a',
-        Planned: '#d6a13d',
-        Suspended: '#d45d5d',
+        Ongoing: '#059669',
+        Completed: '#047857',
+        Planned: '#d97706',
+        Suspended: '#dc2626',
     };
 
     const progressData = projects.map((project) => {
@@ -84,15 +84,15 @@ export default function Dashboard({
     const getStatusClass = (status) => {
         switch (status) {
             case 'Completed':
-                return 'bg-green-50 text-green-700';
+                return 'bg-emerald-50 text-emerald-800';
             case 'Ongoing':
-                return 'bg-blue-50 text-blue-700';
+                return 'bg-green-50 text-green-800';
             case 'Planned':
-                return 'bg-amber-50 text-amber-700';
+                return 'bg-amber-50 text-amber-800';
             case 'Suspended':
-                return 'bg-red-50 text-red-700';
+                return 'bg-red-50 text-red-800';
             default:
-                return 'bg-gray-100 text-gray-600';
+                return 'bg-slate-100 text-slate-700';
         }
     };
 
@@ -102,40 +102,40 @@ export default function Dashboard({
             value: totalUsers,
             note: 'Registered accounts',
             icon: '♙',
-            color: 'text-[#315f91]',
-            iconBg: 'bg-blue-50',
+            color: 'text-emerald-800',
+            iconBg: 'bg-emerald-50',
         },
         {
             label: 'Total Projects',
             value: totalProjects,
             note: 'Recorded projects',
             icon: '▤',
-            color: 'text-[#315f91]',
-            iconBg: 'bg-blue-50',
+            color: 'text-emerald-800',
+            iconBg: 'bg-emerald-50',
         },
         {
             label: 'Citizen Feedback',
             value: totalFeedback,
             note: 'Submitted feedback',
             icon: '☷',
-            color: 'text-[#8061a7]',
-            iconBg: 'bg-purple-50',
+            color: 'text-teal-800',
+            iconBg: 'bg-teal-50',
         },
         {
             label: 'Administrative Posts',
             value: totalPosts,
             note: 'Published records',
             icon: '▧',
-            color: 'text-[#b77936]',
-            iconBg: 'bg-orange-50',
+            color: 'text-amber-800',
+            iconBg: 'bg-amber-50',
         },
         {
             label: 'Average Progress',
             value: `${averageProgress}%`,
             note: 'Across all projects',
             icon: '↗',
-            color: 'text-[#27835c]',
-            iconBg: 'bg-green-50',
+            color: 'text-emerald-800',
+            iconBg: 'bg-emerald-50',
         },
     ];
 
@@ -166,76 +166,104 @@ export default function Dashboard({
         },
     ];
 
+    const summaryCards = [
+        {
+            label: 'Ongoing Projects',
+            value: ongoingProjects,
+            color: 'bg-green-500',
+            text: 'text-green-800',
+            bg: 'bg-green-50',
+        },
+        {
+            label: 'Completed Projects',
+            value: completedProjects,
+            color: 'bg-emerald-600',
+            text: 'text-emerald-800',
+            bg: 'bg-emerald-50',
+        },
+        {
+            label: 'Planned Projects',
+            value: plannedProjects,
+            color: 'bg-amber-500',
+            text: 'text-amber-800',
+            bg: 'bg-amber-50',
+        },
+        {
+            label: 'Suspended Projects',
+            value: suspendedProjects,
+            color: 'bg-red-500',
+            text: 'text-red-800',
+            bg: 'bg-red-50',
+        },
+    ];
+
     return (
         <DashboardLayout role="admin">
-            <div className="min-h-screen bg-[#f4f6f9]">
-                {/* Page header */}
-                <header className="border-b border-[#e4e8ee] bg-white px-5 py-4 sm:px-7">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="min-h-screen bg-slate-50 text-slate-800">
+                <header className="border-b border-slate-200 bg-white px-5 py-5 sm:px-7">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
                         <div>
-                            <div className="mb-1 flex items-center gap-2 text-[11px] text-gray-400">
+                            <div className="mb-2 flex items-center gap-2 text-sm text-slate-500">
                                 <span>Home</span>
                                 <span>/</span>
-                                <span className="text-[#315f91]">
+                                <span className="font-medium text-emerald-700">
                                     Dashboard
                                 </span>
                             </div>
 
-                            <h1 className="text-xl font-bold tracking-tight text-[#24364b]">
+                            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                                 Administrator Dashboard
                             </h1>
 
-                            <p className="mt-1 text-xs text-gray-500">
-                                Overview of users, projects, posts, and citizen
-                                feedback.
+                            <p className="mt-2 text-sm text-slate-600">
+                                Overview of users, projects, posts, and citizen feedback.
                             </p>
                         </div>
 
                         <Link
                             href="/admin/projects"
-                            className="inline-flex items-center gap-2 rounded-md bg-[#25476b] px-3.5 py-2 text-xs font-medium text-white transition hover:bg-[#1b3653]"
+                            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
                         >
-                            <span className="text-base leading-none">+</span>
+                            <span className="text-lg leading-none">+</span>
                             View Projects
                         </Link>
                     </div>
                 </header>
 
-                <main className="space-y-5 p-4 sm:p-6">
-                    {/* Statistics */}
+                <main className="space-y-7 p-4 sm:p-6">
                     <section>
-                        <div className="mb-3">
-                            <h2 className="text-sm font-semibold text-[#283b52]">
+                        <div className="mb-4">
+                            <h2 className="text-lg font-bold text-slate-900">
                                 System Overview
                             </h2>
-                            <p className="mt-1 text-[11px] text-gray-500">
+                            <p className="mt-1 text-sm text-slate-600">
                                 Summary of the current system records.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
                             {statCards.map((card) => (
                                 <div
                                     key={card.label}
-                                    className="rounded-lg border border-[#e1e6ed] bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
+                                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200"
                                 >
-                                    <div className="flex items-start justify-between gap-2">
-                                        <p className="text-[11px] font-medium text-gray-500">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <p className="text-sm font-medium leading-5 text-slate-600">
                                             {card.label}
                                         </p>
 
                                         <span
-                                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-lg ${card.iconBg} ${card.color}`}
+                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xl ${card.iconBg} ${card.color}`}
                                         >
                                             {card.icon}
                                         </span>
                                     </div>
 
-                                    <p className="mt-3 text-2xl font-bold tracking-tight text-[#25384e]">
+                                    <p className="mt-4 text-3xl font-bold tracking-tight text-slate-900">
                                         {card.value}
                                     </p>
 
-                                    <p className="mt-1 text-[10px] text-gray-400">
+                                    <p className="mt-2 text-sm text-slate-500">
                                         {card.note}
                                     </p>
                                 </div>
@@ -243,53 +271,21 @@ export default function Dashboard({
                         </div>
                     </section>
 
-                    {/* Project status summary */}
-                    <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                        {[
-                            {
-                                label: 'Ongoing Projects',
-                                value: ongoingProjects,
-                                color: 'bg-blue-500',
-                                text: 'text-blue-700',
-                                bg: 'bg-blue-50',
-                            },
-                            {
-                                label: 'Completed Projects',
-                                value: completedProjects,
-                                color: 'bg-green-500',
-                                text: 'text-green-700',
-                                bg: 'bg-green-50',
-                            },
-                            {
-                                label: 'Planned Projects',
-                                value: plannedProjects,
-                                color: 'bg-amber-500',
-                                text: 'text-amber-700',
-                                bg: 'bg-amber-50',
-                            },
-                            {
-                                label: 'Suspended Projects',
-                                value: suspendedProjects,
-                                color: 'bg-red-500',
-                                text: 'text-red-700',
-                                bg: 'bg-red-50',
-                            },
-                        ].map((item) => (
+                    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        {summaryCards.map((item) => (
                             <div
                                 key={item.label}
-                                className="flex items-center gap-3 rounded-lg border border-[#e1e6ed] bg-white p-3.5"
+                                className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
                             >
                                 <span
-                                    className={`h-9 w-1 rounded-full ${item.color}`}
+                                    className={`h-12 w-1.5 shrink-0 rounded-full ${item.color}`}
                                 />
 
                                 <div>
-                                    <p className="text-[10px] text-gray-500">
+                                    <p className="text-sm text-slate-600">
                                         {item.label}
                                     </p>
-                                    <p
-                                        className={`mt-1 text-lg font-bold ${item.text}`}
-                                    >
+                                    <p className={`mt-1 text-2xl font-bold ${item.text}`}>
                                         {item.value}
                                     </p>
                                 </div>
@@ -297,36 +293,30 @@ export default function Dashboard({
                         ))}
                     </section>
 
-                    {/* Charts */}
                     <section>
-                        <div className="mb-3">
-                            <h2 className="text-sm font-semibold text-[#283b52]">
+                        <div className="mb-4">
+                            <h2 className="text-lg font-bold text-slate-900">
                                 Project Analytics
                             </h2>
-                            <p className="mt-1 text-[11px] text-gray-500">
-                                Visual summaries of project status and
-                                implementation progress.
+                            <p className="mt-1 text-sm text-slate-600">
+                                Visual summaries of project status and implementation progress.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                            {/* Project status chart */}
-                            <div className="rounded-lg border border-[#e1e6ed] bg-white p-4">
-                                <div className="border-b border-gray-100 pb-3">
-                                    <h3 className="text-sm font-semibold text-[#283b52]">
+                        <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+                            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <div className="border-b border-slate-100 pb-4">
+                                    <h3 className="text-base font-semibold text-slate-900">
                                         Project Status
                                     </h3>
-                                    <p className="mt-1 text-[11px] text-gray-500">
+                                    <p className="mt-1 text-sm text-slate-600">
                                         Distribution of recorded projects.
                                     </p>
                                 </div>
 
-                                <div className="mt-3 h-[250px]">
+                                <div className="mt-4 h-[280px]">
                                     {statusData.length > 0 ? (
-                                        <ResponsiveContainer
-                                            width="100%"
-                                            height="100%"
-                                        >
+                                        <ResponsiveContainer width="100%" height="100%">
                                             <PieChart>
                                                 <Pie
                                                     data={statusData}
@@ -334,18 +324,14 @@ export default function Dashboard({
                                                     nameKey="name"
                                                     cx="50%"
                                                     cy="45%"
-                                                    innerRadius={48}
-                                                    outerRadius={76}
+                                                    innerRadius={55}
+                                                    outerRadius={85}
                                                     paddingAngle={3}
                                                 >
                                                     {statusData.map((entry) => (
                                                         <Cell
                                                             key={entry.name}
-                                                            fill={
-                                                                chartColors[
-                                                                    entry.name
-                                                                ]
-                                                            }
+                                                            fill={chartColors[entry.name]}
                                                             stroke="none"
                                                         />
                                                     ))}
@@ -353,60 +339,55 @@ export default function Dashboard({
 
                                                 <Tooltip
                                                     contentStyle={{
-                                                        borderRadius: '6px',
-                                                        border: '1px solid #e1e6ed',
-                                                        fontSize: '12px',
+                                                        borderRadius: '8px',
+                                                        border: '1px solid #e2e8f0',
+                                                        fontSize: '13px',
                                                     }}
                                                 />
 
                                                 <Legend
                                                     verticalAlign="bottom"
                                                     iconType="circle"
-                                                    iconSize={8}
+                                                    iconSize={9}
                                                     wrapperStyle={{
-                                                        fontSize: '11px',
-                                                        paddingTop: '8px',
+                                                        fontSize: '13px',
+                                                        paddingTop: '10px',
                                                     }}
                                                 />
                                             </PieChart>
                                         </ResponsiveContainer>
                                     ) : (
-                                        <div className="flex h-full items-center justify-center text-xs text-gray-400">
+                                        <div className="flex h-full items-center justify-center text-sm text-slate-500">
                                             No project data available.
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            {/* Project progress chart */}
-                            <div className="rounded-lg border border-[#e1e6ed] bg-white p-4">
-                                <div className="border-b border-gray-100 pb-3">
-                                    <h3 className="text-sm font-semibold text-[#283b52]">
+                            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <div className="border-b border-slate-100 pb-4">
+                                    <h3 className="text-base font-semibold text-slate-900">
                                         Project Progress
                                     </h3>
-                                    <p className="mt-1 text-[11px] text-gray-500">
-                                        Current completion percentage per
-                                        project.
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        Current completion percentage per project.
                                     </p>
                                 </div>
 
-                                <div className="mt-3 h-[250px]">
+                                <div className="mt-4 h-[280px]">
                                     {progressData.length > 0 ? (
-                                        <ResponsiveContainer
-                                            width="100%"
-                                            height="100%"
-                                        >
+                                        <ResponsiveContainer width="100%" height="100%">
                                             <BarChart
                                                 data={progressData}
                                                 margin={{
                                                     top: 8,
                                                     right: 8,
-                                                    left: -15,
-                                                    bottom: 5,
+                                                    left: 0,
+                                                    bottom: 8,
                                                 }}
                                             >
                                                 <CartesianGrid
-                                                    stroke="#edf0f4"
+                                                    stroke="#e2e8f0"
                                                     strokeDasharray="3 3"
                                                     vertical={false}
                                                 />
@@ -414,25 +395,23 @@ export default function Dashboard({
                                                 <XAxis
                                                     dataKey="name"
                                                     tick={{
-                                                        fontSize: 9,
-                                                        fill: '#7b8797',
+                                                        fontSize: 11,
+                                                        fill: '#64748b',
                                                     }}
                                                     axisLine={false}
                                                     tickLine={false}
                                                     interval={0}
                                                     angle={-15}
                                                     textAnchor="end"
-                                                    height={55}
+                                                    height={60}
                                                 />
 
                                                 <YAxis
                                                     domain={[0, 100]}
-                                                    tickFormatter={(value) =>
-                                                        `${value}%`
-                                                    }
+                                                    tickFormatter={(value) => `${value}%`}
                                                     tick={{
-                                                        fontSize: 10,
-                                                        fill: '#7b8797',
+                                                        fontSize: 12,
+                                                        fill: '#64748b',
                                                     }}
                                                     axisLine={false}
                                                     tickLine={false}
@@ -444,23 +423,23 @@ export default function Dashboard({
                                                         'Progress',
                                                     ]}
                                                     contentStyle={{
-                                                        borderRadius: '6px',
-                                                        border: '1px solid #e1e6ed',
-                                                        fontSize: '12px',
+                                                        borderRadius: '8px',
+                                                        border: '1px solid #e2e8f0',
+                                                        fontSize: '13px',
                                                     }}
                                                 />
 
                                                 <Bar
                                                     dataKey="progress"
                                                     name="Progress"
-                                                    fill="#3974c6"
-                                                    radius={[3, 3, 0, 0]}
-                                                    maxBarSize={36}
+                                                    fill="#059669"
+                                                    radius={[4, 4, 0, 0]}
+                                                    maxBarSize={40}
                                                 />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     ) : (
-                                        <div className="flex h-full items-center justify-center text-xs text-gray-400">
+                                        <div className="flex h-full items-center justify-center text-sm text-slate-500">
                                             No project data available.
                                         </div>
                                     )}
@@ -469,22 +448,20 @@ export default function Dashboard({
                         </div>
                     </section>
 
-                    {/* Recent projects */}
-                    <section className="overflow-hidden rounded-lg border border-[#e1e6ed] bg-white">
-                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e8ecf1] px-4 py-3.5 sm:px-5">
+                    <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
                             <div>
-                                <h2 className="text-sm font-semibold text-[#283b52]">
+                                <h2 className="text-lg font-bold text-slate-900">
                                     Recent Projects
                                 </h2>
-                                <p className="mt-1 text-[11px] text-gray-500">
-                                    A quick view of the recorded government
-                                    projects.
+                                <p className="mt-1 text-sm text-slate-600">
+                                    A quick view of the recorded government projects.
                                 </p>
                             </div>
 
                             <Link
                                 href="/admin/projects"
-                                className="text-xs font-semibold text-[#315f91] hover:text-[#203e60]"
+                                className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-900"
                             >
                                 Manage Projects →
                             </Link>
@@ -494,86 +471,61 @@ export default function Dashboard({
                             <>
                                 <div className="hidden overflow-x-auto md:block">
                                     <table className="w-full text-left">
-                                        <thead className="bg-[#f8fafc]">
-                                            <tr className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
-                                                <th className="px-5 py-3">
-                                                    Project
-                                                </th>
-                                                <th className="px-4 py-3">
-                                                    Location
-                                                </th>
-                                                <th className="px-4 py-3">
-                                                    Status
-                                                </th>
-                                                <th className="px-5 py-3">
-                                                    Progress
-                                                </th>
+                                        <thead className="bg-slate-50">
+                                            <tr className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                                <th className="px-5 py-4">Project</th>
+                                                <th className="px-4 py-4">Location</th>
+                                                <th className="px-4 py-4">Status</th>
+                                                <th className="px-5 py-4">Progress</th>
                                             </tr>
                                         </thead>
 
-                                        <tbody className="divide-y divide-gray-100">
+                                        <tbody className="divide-y divide-slate-100">
                                             {recentProjects.map((project) => {
                                                 const progress = Math.min(
                                                     100,
-                                                    Math.max(
-                                                        0,
-                                                        Number(
-                                                            project.progress || 0
-                                                        )
-                                                    )
+                                                    Math.max(0, Number(project.progress || 0))
                                                 );
 
                                                 return (
                                                     <tr
                                                         key={project.id}
-                                                        className="transition hover:bg-gray-50"
+                                                        className="transition hover:bg-emerald-50/40"
                                                     >
-                                                        <td className="max-w-[260px] px-5 py-3.5">
+                                                        <td className="max-w-[260px] px-5 py-4">
                                                             <Link
                                                                 href="/admin/projects"
-                                                                className="block truncate text-xs font-semibold text-[#283b52] hover:text-[#315f91]"
+                                                                className="block truncate text-sm font-semibold text-slate-800 transition hover:text-emerald-700"
                                                             >
-                                                                {project.project_name ||
-                                                                    'Untitled Project'}
+                                                                {project.project_name || 'Untitled Project'}
                                                             </Link>
                                                         </td>
 
-                                                        <td className="px-4 py-3.5 text-xs text-gray-500">
-                                                            {project.location ||
-                                                                'Not specified'}
+                                                        <td className="px-4 py-4 text-sm text-slate-600">
+                                                            {project.location || 'Not specified'}
                                                         </td>
 
-                                                        <td className="px-4 py-3.5">
+                                                        <td className="px-4 py-4">
                                                             <span
-                                                                className={`inline-flex rounded px-2 py-1 text-[10px] font-medium ${getStatusClass(
-                                                                    project.status
-                                                                )}`}
+                                                                className={`inline-flex rounded-full px-3 py-1.5 text-xs font-semibold ${getStatusClass(project.status)}`}
                                                             >
-                                                                {project.status ||
-                                                                    'Unknown'}
+                                                                {project.status || 'Unknown'}
                                                             </span>
                                                         </td>
 
-                                                        <td className="px-5 py-3.5">
-                                                            <div className="w-full max-w-[150px]">
-                                                                <div className="mb-1.5 flex items-center justify-between gap-3 text-[10px] text-gray-500">
-                                                                    <span>
-                                                                        Progress
-                                                                    </span>
-                                                                    <span className="font-semibold text-[#283b52]">
-                                                                        {
-                                                                            progress
-                                                                        }
-                                                                        %
+                                                        <td className="px-5 py-4">
+                                                            <div className="w-full max-w-[170px]">
+                                                                <div className="mb-2 flex items-center justify-between gap-3 text-xs text-slate-600">
+                                                                    <span>Progress</span>
+                                                                    <span className="font-semibold text-slate-800">
+                                                                        {progress}%
                                                                     </span>
                                                                 </div>
 
-                                                                <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+                                                                <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                                                                     <div
-                                                                        className="h-full rounded-full bg-[#3974c6] transition-all"
-                                                                        style={{
-                                                                            width: `${progress}%`,
-                                                                        }}
+                                                                        className="h-full rounded-full bg-emerald-600 transition-all"
+                                                                        style={{ width: `${progress}%` }}
                                                                     />
                                                                 </div>
                                                             </div>
@@ -585,57 +537,47 @@ export default function Dashboard({
                                     </table>
                                 </div>
 
-                                <div className="divide-y divide-gray-100 md:hidden">
+                                <div className="divide-y divide-slate-100 md:hidden">
                                     {recentProjects.map((project) => {
                                         const progress = Math.min(
                                             100,
-                                            Math.max(
-                                                0,
-                                                Number(project.progress || 0)
-                                            )
+                                            Math.max(0, Number(project.progress || 0))
                                         );
 
                                         return (
                                             <div
                                                 key={project.id}
-                                                className="space-y-3 px-4 py-3.5"
+                                                className="space-y-4 px-5 py-4"
                                             >
                                                 <div className="flex items-start justify-between gap-3">
                                                     <div className="min-w-0">
-                                                        <p className="break-words text-xs font-semibold text-[#283b52]">
-                                                            {project.project_name ||
-                                                                'Untitled Project'}
+                                                        <p className="break-words text-sm font-semibold text-slate-900">
+                                                            {project.project_name || 'Untitled Project'}
                                                         </p>
-                                                        <p className="mt-1 text-[10px] text-gray-500">
-                                                            {project.location ||
-                                                                'Not specified'}
+                                                        <p className="mt-1.5 text-sm text-slate-600">
+                                                            {project.location || 'Not specified'}
                                                         </p>
                                                     </div>
 
                                                     <span
-                                                        className={`shrink-0 rounded px-2 py-1 text-[10px] font-medium ${getStatusClass(
-                                                            project.status
-                                                        )}`}
+                                                        className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ${getStatusClass(project.status)}`}
                                                     >
-                                                        {project.status ||
-                                                            'Unknown'}
+                                                        {project.status || 'Unknown'}
                                                     </span>
                                                 </div>
 
                                                 <div>
-                                                    <div className="mb-1 flex justify-between text-[10px] text-gray-500">
+                                                    <div className="mb-2 flex justify-between text-sm text-slate-600">
                                                         <span>Progress</span>
-                                                        <span>
+                                                        <span className="font-semibold text-slate-800">
                                                             {progress}%
                                                         </span>
                                                     </div>
 
-                                                    <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+                                                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                                                         <div
-                                                            className="h-full rounded-full bg-[#3974c6]"
-                                                            style={{
-                                                                width: `${progress}%`,
-                                                            }}
+                                                            className="h-full rounded-full bg-emerald-600"
+                                                            style={{ width: `${progress}%` }}
                                                         />
                                                     </div>
                                                 </div>
@@ -645,51 +587,49 @@ export default function Dashboard({
                                 </div>
                             </>
                         ) : (
-                            <div className="px-5 py-10 text-center">
-                                <p className="text-sm font-medium text-gray-600">
+                            <div className="px-5 py-12 text-center">
+                                <p className="text-base font-semibold text-slate-700">
                                     No projects available
                                 </p>
-                                <p className="mt-1 text-xs text-gray-400">
-                                    Project records will appear here when
-                                    available.
+                                <p className="mt-2 text-sm text-slate-500">
+                                    Project records will appear here when available.
                                 </p>
                             </div>
                         )}
                     </section>
 
-                    {/* System management */}
                     <section>
-                        <div className="mb-3">
-                            <h2 className="text-sm font-semibold text-[#283b52]">
+                        <div className="mb-4">
+                            <h2 className="text-lg font-bold text-slate-900">
                                 System Management
                             </h2>
-                            <p className="mt-1 text-[11px] text-gray-500">
+                            <p className="mt-1 text-sm text-slate-600">
                                 Open a section to manage its records.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             {managementLinks.map((item) => (
                                 <Link
                                     key={item.title}
                                     href={item.href}
-                                    className="group rounded-lg border border-[#e1e6ed] bg-white p-4 transition hover:border-[#b8c9dc] hover:shadow-sm"
+                                    className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
                                 >
                                     <div className="flex items-start justify-between">
-                                        <span className="flex h-9 w-9 items-center justify-center rounded-md bg-[#edf3f9] text-lg text-[#315f91]">
+                                        <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-xl text-emerald-800">
                                             {item.icon}
                                         </span>
 
-                                        <span className="text-sm text-gray-300 transition group-hover:translate-x-0.5 group-hover:text-[#315f91]">
+                                        <span className="text-lg text-slate-300 transition group-hover:translate-x-1 group-hover:text-emerald-700">
                                             →
                                         </span>
                                     </div>
 
-                                    <h3 className="mt-3 text-xs font-semibold text-[#283b52]">
+                                    <h3 className="mt-4 text-base font-semibold text-slate-900">
                                         {item.title}
                                     </h3>
 
-                                    <p className="mt-1.5 text-[11px] leading-5 text-gray-500">
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
                                         {item.description}
                                     </p>
                                 </Link>
@@ -697,8 +637,7 @@ export default function Dashboard({
                         </div>
                     </section>
 
-                    {/* Footer */}
-                    <footer className="border-t border-[#e1e6ed] pt-4 text-center text-[10px] text-gray-400">
+                    <footer className="border-t border-slate-200 pt-5 text-center text-sm leading-6 text-slate-500">
                         Pagudpud Transparency · Web-Based Local Government
                         Project Monitoring System
                     </footer>

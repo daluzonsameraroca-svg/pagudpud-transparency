@@ -11,9 +11,7 @@ function Icon({ name, className = 'h-4 w-4' }) {
             </>
         ),
         folder: (
-            <>
-                <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
-            </>
+            <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
         ),
         arrow: <path d="M5 12h14m-6-6 6 6-6 6" />,
         filter: (
@@ -42,16 +40,16 @@ function Icon({ name, className = 'h-4 w-4' }) {
 
 function StatusBadge({ status }) {
     const styles = {
-        Ongoing: 'bg-[#edf3fb] text-[#426da9]',
-        Completed: 'bg-[#eaf5ef] text-[#428764]',
-        Planned: 'bg-[#fbf4e6] text-[#a77b29]',
-        Suspended: 'bg-[#faeded] text-[#b65050]',
+        Ongoing: 'bg-emerald-50 text-emerald-700',
+        Completed: 'bg-green-50 text-green-700',
+        Planned: 'bg-amber-50 text-amber-700',
+        Suspended: 'bg-red-50 text-red-700',
     };
 
     return (
         <span
             className={`inline-flex whitespace-nowrap rounded-full px-2 py-1 text-[9px] font-medium ${
-                styles[status] || 'bg-gray-100 text-gray-600'
+                styles[status] || 'bg-slate-100 text-slate-600'
             }`}
         >
             {status || 'Unknown'}
@@ -64,7 +62,13 @@ function formatBudget(budget) {
         return '—';
     }
 
-    return Number(budget).toLocaleString('en-PH', {
+    const amount = Number(budget);
+
+    if (!Number.isFinite(amount)) {
+        return '—';
+    }
+
+    return amount.toLocaleString('en-PH', {
         style: 'currency',
         currency: 'PHP',
         maximumFractionDigits: 2,
@@ -74,19 +78,29 @@ function formatBudget(budget) {
 function formatDate(date) {
     if (!date) return 'Not specified';
 
-    // Parse date-only values locally to avoid timezone date shifts.
     const parts = String(date).slice(0, 10).split('-');
 
     if (parts.length === 3) {
         const [year, month, day] = parts.map(Number);
-        const parsed = new Date(year, month - 1, day);
 
-        if (!Number.isNaN(parsed.getTime())) {
-            return parsed.toLocaleDateString('en-PH', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-            });
+        if (
+            Number.isInteger(year) &&
+            Number.isInteger(month) &&
+            Number.isInteger(day)
+        ) {
+            const parsed = new Date(year, month - 1, day);
+
+            if (
+                parsed.getFullYear() === year &&
+                parsed.getMonth() === month - 1 &&
+                parsed.getDate() === day
+            ) {
+                return parsed.toLocaleDateString('en-PH', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                });
+            }
         }
     }
 
@@ -131,55 +145,53 @@ export default function Projects({ projects = [], search = '' }) {
 
     return (
         <DashboardLayout role="citizen">
-            <div className="min-h-screen bg-[#f5f7fa]">
-                {/* Top navigation */}
-                <header className="flex h-12 items-center justify-between border-b border-[#e3e8ef] bg-white px-5 sm:px-7">
-                    <div className="flex items-center gap-2 text-[10px] text-[#8793a3]">
+            <div className="min-h-screen bg-slate-50">
+                <header className="flex h-12 items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7">
+                    <div className="flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
                         <span>Pagudpud Transparency</span>
                         <span>/</span>
                         <Link
                             href="/citizen/dashboard"
-                            className="hover:text-[#416b9f]"
+                            className="transition hover:text-emerald-700"
                         >
                             Dashboard
                         </Link>
                         <span>/</span>
-                        <span className="font-medium text-[#344860]">
+                        <span className="font-medium text-emerald-800">
                             Projects
                         </span>
                     </div>
 
-                    <span className="text-[10px] text-[#7b899a]">
+                    <span className="hidden text-[10px] text-slate-500 sm:inline">
                         Public Project Records
                     </span>
                 </header>
 
                 <main className="space-y-5 px-5 py-5 sm:px-7">
-                    {/* Page heading */}
                     <section>
-                        <h1 className="text-[19px] font-semibold tracking-tight text-[#253951]">
+                        <h1 className="text-[19px] font-semibold tracking-tight text-slate-800">
                             Government Projects
                         </h1>
-                        <p className="mt-1 text-[11px] text-[#7b899a]">
+
+                        <p className="mt-1 text-[11px] text-slate-500">
                             View and monitor local government projects in
                             Pagudpud, Ilocos Norte.
                         </p>
                     </section>
 
-                    {/* Information notice */}
-                    <div className="rounded-md border border-[#dce7f3] bg-[#eef4fa] px-3 py-2.5 text-[10px] leading-4 text-[#49627f]">
+                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[10px] leading-4 text-emerald-900">
                         Project information and official progress updates are
                         provided by the responsible municipal office.
                     </div>
 
-                    {/* Search and filters */}
-                    <section className="rounded-md border border-[#e3e8ef] bg-white p-4">
+                    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
                         <div className="mb-3 flex items-center gap-2">
                             <Icon
                                 name="search"
-                                className="h-4 w-4 text-[#52739b]"
+                                className="h-4 w-4 text-emerald-700"
                             />
-                            <h2 className="text-[12px] font-semibold text-[#293d55]">
+
+                            <h2 className="text-[12px] font-semibold text-slate-800">
                                 Search Projects
                             </h2>
                         </div>
@@ -191,8 +203,9 @@ export default function Projects({ projects = [], search = '' }) {
                             <div className="relative min-w-0 flex-1">
                                 <Icon
                                     name="search"
-                                    className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#97a2b0]"
+                                    className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
                                 />
+
                                 <input
                                     type="text"
                                     value={searchTerm}
@@ -200,21 +213,22 @@ export default function Projects({ projects = [], search = '' }) {
                                         setSearchTerm(event.target.value)
                                     }
                                     placeholder="Search by project name or location..."
-                                    className="h-9 w-full rounded-md border border-[#dfe5ec] bg-white pl-9 pr-3 text-[11px] text-[#344860] outline-none transition placeholder:text-[#a0aab7] focus:border-[#7898bd] focus:ring-2 focus:ring-[#e7eef7]"
+                                    className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[11px] text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                 />
                             </div>
 
                             <div className="relative sm:w-40">
                                 <Icon
                                     name="filter"
-                                    className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8793a3]"
+                                    className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500"
                                 />
+
                                 <select
                                     value={statusFilter}
                                     onChange={(event) =>
                                         setStatusFilter(event.target.value)
                                     }
-                                    className="h-9 w-full appearance-none rounded-md border border-[#dfe5ec] bg-white pl-9 pr-3 text-[11px] text-[#52647a] outline-none focus:border-[#7898bd]"
+                                    className="h-9 w-full appearance-none rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[11px] text-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                 >
                                     <option value="">All statuses</option>
                                     <option value="Planned">Planned</option>
@@ -226,7 +240,7 @@ export default function Projects({ projects = [], search = '' }) {
 
                             <button
                                 type="submit"
-                                className="h-9 rounded-md bg-[#304b6b] px-5 text-[11px] font-medium text-white transition hover:bg-[#243c58]"
+                                className="h-9 rounded-lg bg-emerald-700 px-5 text-[11px] font-medium text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-1"
                             >
                                 Search
                             </button>
@@ -235,7 +249,7 @@ export default function Projects({ projects = [], search = '' }) {
                                 <button
                                     type="button"
                                     onClick={clearFilters}
-                                    className="h-9 rounded-md border border-[#dfe5ec] px-4 text-[11px] font-medium text-[#65758a] transition hover:bg-[#f8fafc]"
+                                    className="h-9 rounded-lg border border-slate-200 px-4 text-[11px] font-medium text-slate-600 transition hover:bg-slate-50"
                                 >
                                     Clear
                                 </button>
@@ -243,14 +257,14 @@ export default function Projects({ projects = [], search = '' }) {
                         </form>
                     </section>
 
-                    {/* Project table */}
-                    <section className="overflow-hidden rounded-md border border-[#e3e8ef] bg-white">
-                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e8edf2] px-4 py-3">
+                    <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
                             <div>
-                                <h2 className="text-[13px] font-semibold text-[#293d55]">
+                                <h2 className="text-[13px] font-semibold text-slate-800">
                                     Project List
                                 </h2>
-                                <p className="mt-1 text-[10px] text-[#8793a3]">
+
+                                <p className="mt-1 text-[10px] text-slate-500">
                                     {projects.length}{' '}
                                     {projects.length === 1
                                         ? 'project'
@@ -259,31 +273,34 @@ export default function Projects({ projects = [], search = '' }) {
                                 </p>
                             </div>
 
-                            <span className="rounded-md border border-[#e3e8ef] bg-[#f8fafc] px-2.5 py-1.5 text-[9px] text-[#718096]">
+                            <span className="rounded-lg border border-emerald-100 bg-emerald-50 px-2.5 py-1.5 text-[9px] text-emerald-700">
                                 Updated project records
                             </span>
                         </div>
 
                         {projects.length === 0 ? (
                             <div className="px-4 py-12 text-center">
-                                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#edf3fa] text-[#52739b]">
+                                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
                                     <Icon
                                         name="folder"
                                         className="h-5 w-5"
                                     />
                                 </div>
-                                <h3 className="mt-3 text-[12px] font-semibold text-[#354960]">
+
+                                <h3 className="mt-3 text-[12px] font-semibold text-slate-800">
                                     No projects found
                                 </h3>
-                                <p className="mx-auto mt-1 max-w-sm text-[10px] leading-5 text-[#8793a3]">
+
+                                <p className="mx-auto mt-1 max-w-sm text-[10px] leading-5 text-slate-500">
                                     Try another project name or location, or
                                     clear your filters to view all projects.
                                 </p>
+
                                 {(searchTerm || statusFilter) && (
                                     <button
                                         type="button"
                                         onClick={clearFilters}
-                                        className="mt-3 text-[10px] font-medium text-[#416b9f] hover:underline"
+                                        className="mt-3 text-[10px] font-medium text-emerald-700 hover:text-emerald-900 hover:underline"
                                     >
                                         Clear filters
                                     </button>
@@ -292,8 +309,8 @@ export default function Projects({ projects = [], search = '' }) {
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full min-w-[760px] text-left">
-                                    <thead className="bg-[#f8fafc]">
-                                        <tr className="text-[9px] font-semibold uppercase tracking-wide text-[#8290a1]">
+                                    <thead className="bg-slate-50">
+                                        <tr className="text-[9px] font-semibold uppercase tracking-wide text-slate-500">
                                             <th className="px-4 py-3">
                                                 Project
                                             </th>
@@ -315,41 +332,48 @@ export default function Projects({ projects = [], search = '' }) {
                                         </tr>
                                     </thead>
 
-                                    <tbody className="divide-y divide-[#edf0f4]">
+                                    <tbody className="divide-y divide-slate-100">
                                         {projects.map((project) => {
-                                            const progress = Math.min(
-                                                100,
-                                                Math.max(
-                                                    0,
-                                                    Number(
-                                                        project.progress || 0
-                                                    )
-                                                )
+                                            const numericProgress = Number(
+                                                project.progress || 0
                                             );
+
+                                            const progress = Number.isFinite(
+                                                numericProgress
+                                            )
+                                                ? Math.min(
+                                                      100,
+                                                      Math.max(
+                                                          0,
+                                                          numericProgress
+                                                      )
+                                                  )
+                                                : 0;
 
                                             return (
                                                 <tr
                                                     key={project.id}
-                                                    className="transition hover:bg-[#fafbfd]"
+                                                    className="transition hover:bg-emerald-50/40"
                                                 >
                                                     <td className="px-4 py-3.5">
-                                                        <p className="max-w-[230px] truncate text-[11px] font-medium text-[#354960]">
+                                                        <p className="max-w-[230px] truncate text-[11px] font-medium text-slate-700">
                                                             {project.project_name ||
                                                                 'Untitled Project'}
                                                         </p>
-                                                        <p className="mt-1 text-[10px] text-[#8793a3]">
+
+                                                        <p className="mt-1 text-[10px] text-slate-500">
                                                             {project.location ||
                                                                 'Location not specified'}
                                                         </p>
                                                     </td>
 
-                                                    <td className="whitespace-nowrap px-4 py-3.5 text-[10px] text-[#5d6d81]">
+                                                    <td className="whitespace-nowrap px-4 py-3.5 text-[10px] text-slate-600">
                                                         {formatBudget(
                                                             project.budget
                                                         )}
                                                     </td>
 
-                                                    <td className="whitespace-nowrap px-4 py-3.5 text-[10px] text-[#5d6d81]">
+                                                    <td className="whitespace-nowrap px-4 py-3.5 text-[10px] text-slate-600">
                                                         {formatDate(
                                                             project.target_completion_date
                                                         )}
@@ -365,17 +389,19 @@ export default function Projects({ projects = [], search = '' }) {
 
                                                     <td className="px-4 py-3.5">
                                                         <div className="w-24">
-                                                            <div className="mb-1.5 flex items-center justify-between text-[9px] text-[#7c8a9b]">
+                                                            <div className="mb-1.5 flex items-center justify-between text-[9px] text-slate-500">
                                                                 <span>
                                                                     Progress
                                                                 </span>
-                                                                <span className="font-medium text-[#52647a]">
+
+                                                                <span className="font-medium text-slate-700">
                                                                     {progress}%
                                                                 </span>
                                                             </div>
-                                                            <div className="h-1.5 overflow-hidden rounded-full bg-[#e9edf2]">
+
+                                                            <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
                                                                 <div
-                                                                    className="h-full rounded-full bg-[#5278ae] transition-all"
+                                                                    className="h-full rounded-full bg-emerald-600 transition-all"
                                                                     style={{
                                                                         width: `${progress}%`,
                                                                     }}
@@ -387,9 +413,10 @@ export default function Projects({ projects = [], search = '' }) {
                                                     <td className="px-4 py-3.5">
                                                         <Link
                                                             href={`/citizen/projects/${project.id}`}
-                                                            className="inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-medium text-[#416b9f] hover:text-[#244a79] hover:underline"
+                                                            className="inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-medium text-emerald-700 hover:text-emerald-900 hover:underline"
                                                         >
                                                             View details
+
                                                             <Icon
                                                                 name="arrow"
                                                                 className="h-3 w-3"
@@ -404,7 +431,7 @@ export default function Projects({ projects = [], search = '' }) {
                             </div>
                         )}
 
-                        <div className="border-t border-[#e8edf2] bg-[#fbfcfd] px-4 py-2.5 text-[9px] text-[#929eac]">
+                        <div className="border-t border-slate-200 bg-slate-50 px-4 py-2.5 text-[9px] text-slate-500">
                             Project progress reflects the latest recorded
                             information provided by the responsible office.
                         </div>

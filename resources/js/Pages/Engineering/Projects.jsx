@@ -11,7 +11,7 @@ const STATUS_OPTIONS = [
 
 const STATUS_STYLES = {
     Completed: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
-    Ongoing: 'bg-blue-50 text-blue-700 ring-blue-600/20',
+    Ongoing: 'bg-green-50 text-green-700 ring-green-600/20',
     Planned: 'bg-amber-50 text-amber-700 ring-amber-600/20',
     Suspended: 'bg-red-50 text-red-700 ring-red-600/20',
 };
@@ -30,15 +30,19 @@ export default function Projects({ projects = [] }) {
     });
 
     const totalProjects = projects.length;
+
     const ongoingCount = projects.filter(
         (project) => project.status === 'Ongoing',
     ).length;
+
     const completedCount = projects.filter(
         (project) => project.status === 'Completed',
     ).length;
+
     const plannedCount = projects.filter(
         (project) => project.status === 'Planned',
     ).length;
+
     const suspendedCount = projects.filter(
         (project) => project.status === 'Suspended',
     ).length;
@@ -113,15 +117,12 @@ export default function Projects({ projects = [] }) {
             },
             {
                 preserveScroll: true,
-
                 onSuccess: () => {
                     closeUpdateForm();
                 },
-
                 onError: () => {
                     setIsSubmitting(false);
                 },
-
                 onFinish: () => {
                     setIsSubmitting(false);
                 },
@@ -162,7 +163,7 @@ export default function Projects({ projects = [] }) {
         {
             label: 'Ongoing',
             value: ongoingCount,
-            color: 'bg-blue-50 text-blue-700',
+            color: 'bg-green-50 text-green-700',
             icon: '◷',
         },
         {
@@ -181,24 +182,23 @@ export default function Projects({ projects = [] }) {
 
     return (
         <DashboardLayout role="engineering">
-            <div className="min-h-screen bg-[#f4f6f9] text-slate-800">
-                {/* Page header */}
+            <div className="min-h-screen bg-slate-50 text-slate-800">
                 <header className="border-b border-slate-200 bg-white px-5 py-5 sm:px-8">
                     <div className="mx-auto flex max-w-[1500px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <div className="mb-1 flex items-center gap-2 text-xs text-slate-500">
+                            <div className="mb-2 flex items-center gap-2 text-xs text-slate-500">
                                 <span>Engineering Office</span>
                                 <span>/</span>
-                                <span className="font-medium text-slate-700">
+                                <span className="font-semibold text-emerald-700">
                                     Projects
                                 </span>
                             </div>
 
-                            <h1 className="text-xl font-bold tracking-tight text-[#20334b] sm:text-2xl">
+                            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                 Projects
                             </h1>
 
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className="mt-2 text-sm leading-6 text-slate-500">
                                 Manage project records and update official
                                 status and progress.
                             </p>
@@ -206,53 +206,62 @@ export default function Projects({ projects = [] }) {
 
                         <Link
                             href="/engineering/projects/create"
-                            className="inline-flex items-center justify-center gap-2 self-start rounded-lg bg-[#20334b] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#2c4664] sm:self-center"
+                            className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 sm:self-center"
                         >
-                            <span className="text-base">+</span>
+                            <span className="text-lg">+</span>
                             Add Project
                         </Link>
                     </div>
                 </header>
 
                 <main className="mx-auto max-w-[1500px] px-5 py-6 sm:px-8">
-                    {/* Summary cards */}
-                    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                        {summaryCards.map((card) => (
-                            <div
-                                key={card.label}
-                                className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
-                            >
-                                <div className="flex items-center justify-between gap-2">
-                                    <p className="text-xs font-medium text-slate-500">
-                                        {card.label}
+                    <section>
+                        <div className="mb-4">
+                            <h2 className="text-base font-bold text-slate-900">
+                                Project Overview
+                            </h2>
+                            <p className="mt-1 text-sm text-slate-500">
+                                A summary of your recorded government projects.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                            {summaryCards.map((card) => (
+                                <div
+                                    key={card.label}
+                                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                                >
+                                    <div className="flex items-center justify-between gap-2">
+                                        <p className="text-sm font-medium text-slate-500">
+                                            {card.label}
+                                        </p>
+
+                                        <span
+                                            className={`flex h-10 w-10 items-center justify-center rounded-xl text-base font-semibold ${card.color}`}
+                                        >
+                                            {card.icon}
+                                        </span>
+                                    </div>
+
+                                    <p className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+                                        {card.value}
                                     </p>
-
-                                    <span
-                                        className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold ${card.color}`}
-                                    >
-                                        {card.icon}
-                                    </span>
                                 </div>
+                            ))}
+                        </div>
+                    </section>
 
-                                <p className="mt-2 text-2xl font-bold text-[#20334b]">
-                                    {card.value}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Suspended project notice */}
                     {suspendedCount > 0 && (
-                        <div className="mt-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-red-100 text-sm font-bold text-red-700">
+                        <div className="mt-5 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-100 text-sm font-bold text-red-700">
                                 !
                             </span>
 
                             <div>
-                                <p className="text-xs font-semibold text-red-800">
+                                <p className="text-sm font-bold text-red-800">
                                     Suspended Projects
                                 </p>
-                                <p className="mt-1 text-xs leading-5 text-red-700">
+                                <p className="mt-1 text-sm leading-6 text-red-700">
                                     {suspendedCount}{' '}
                                     {suspendedCount === 1
                                         ? 'project is'
@@ -263,29 +272,28 @@ export default function Projects({ projects = [] }) {
                         </div>
                     )}
 
-                    {/* Search and filters */}
-                    <section className="mt-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                    <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                             <div>
-                                <h2 className="text-sm font-semibold text-[#20334b]">
+                                <h2 className="text-base font-bold text-slate-900">
                                     Project Records
                                 </h2>
-                                <p className="mt-1 text-xs text-slate-500">
+                                <p className="mt-1 text-sm text-slate-500">
                                     Search projects and filter them by status.
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(220px,1fr)_180px] lg:w-[520px]">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(220px,1fr)_190px] lg:w-[560px]">
                                 <div>
                                     <label
                                         htmlFor="project-search"
-                                        className="mb-1.5 block text-xs font-medium text-slate-600"
+                                        className="mb-2 block text-sm font-medium text-slate-700"
                                     >
                                         Search projects
                                     </label>
 
                                     <div className="relative">
-                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-base text-slate-400">
                                             ⌕
                                         </span>
 
@@ -297,7 +305,7 @@ export default function Projects({ projects = [] }) {
                                                 setSearch(e.target.value)
                                             }
                                             placeholder="Name, location, description..."
-                                            className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-xs outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                            className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                         />
                                     </div>
                                 </div>
@@ -305,7 +313,7 @@ export default function Projects({ projects = [] }) {
                                 <div>
                                     <label
                                         htmlFor="status-filter"
-                                        className="mb-1.5 block text-xs font-medium text-slate-600"
+                                        className="mb-2 block text-sm font-medium text-slate-700"
                                     >
                                         Filter by status
                                     </label>
@@ -316,17 +324,12 @@ export default function Projects({ projects = [] }) {
                                         onChange={(e) =>
                                             setStatusFilter(e.target.value)
                                         }
-                                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                     >
-                                        <option value="All">
-                                            All statuses
-                                        </option>
+                                        <option value="All">All statuses</option>
 
                                         {STATUS_OPTIONS.map((status) => (
-                                            <option
-                                                key={status}
-                                                value={status}
-                                            >
+                                            <option key={status} value={status}>
                                                 {status}
                                             </option>
                                         ))}
@@ -336,10 +339,13 @@ export default function Projects({ projects = [] }) {
                         </div>
 
                         {(search || statusFilter !== 'All') && (
-                            <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
-                                <p className="text-xs text-slate-500">
-                                    Showing {filteredProjects.length} of{' '}
-                                    {totalProjects} projects
+                            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                                <p className="text-sm text-slate-500">
+                                    Showing{' '}
+                                    <span className="font-semibold text-slate-800">
+                                        {filteredProjects.length}
+                                    </span>{' '}
+                                    of {totalProjects} projects
                                 </p>
 
                                 <button
@@ -348,7 +354,7 @@ export default function Projects({ projects = [] }) {
                                         setSearch('');
                                         setStatusFilter('All');
                                     }}
-                                    className="text-xs font-semibold text-blue-700 hover:text-blue-900"
+                                    className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-900"
                                 >
                                     Clear filters
                                 </button>
@@ -356,8 +362,7 @@ export default function Projects({ projects = [] }) {
                         )}
                     </section>
 
-                    {/* Project list */}
-                    <section className="mt-4 space-y-4">
+                    <section className="mt-5 space-y-5">
                         {filteredProjects.length > 0 ? (
                             filteredProjects.map((project) => {
                                 const progress = getProgress(project.progress);
@@ -367,22 +372,21 @@ export default function Projects({ projects = [] }) {
                                 return (
                                     <article
                                         key={project.id}
-                                        className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+                                        className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
                                     >
-                                        {/* Project heading */}
-                                        <div className="flex flex-col gap-3 border-b border-slate-100 px-4 py-4 sm:px-5 md:flex-row md:items-start md:justify-between">
-                                            <div className="flex min-w-0 items-start gap-3">
-                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-lg text-slate-600">
+                                        <div className="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:px-6 md:flex-row md:items-start md:justify-between">
+                                            <div className="flex min-w-0 items-start gap-4">
+                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700">
                                                     ▤
                                                 </div>
 
                                                 <div className="min-w-0">
-                                                    <h3 className="break-words text-sm font-semibold text-[#20334b]">
+                                                    <h3 className="break-words text-base font-bold text-slate-900">
                                                         {project.project_name ||
                                                             'Untitled Project'}
                                                     </h3>
 
-                                                    <p className="mt-1 text-xs text-slate-500">
+                                                    <p className="mt-2 break-words text-sm text-slate-500">
                                                         <span className="mr-1">
                                                             📍
                                                         </span>
@@ -393,7 +397,7 @@ export default function Projects({ projects = [] }) {
                                             </div>
 
                                             <span
-                                                className={`w-fit shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ring-1 ring-inset ${
+                                                className={`w-fit shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset ${
                                                     STATUS_STYLES[
                                                         project.status
                                                     ] ||
@@ -404,35 +408,30 @@ export default function Projects({ projects = [] }) {
                                             </span>
                                         </div>
 
-                                        {/* Project information */}
-                                        <div className="grid grid-cols-2 gap-x-5 gap-y-5 px-4 py-5 sm:grid-cols-4 sm:px-5">
+                                        <div className="grid grid-cols-2 gap-x-5 gap-y-6 px-5 py-6 sm:grid-cols-4 sm:px-6">
                                             <div>
-                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                                     Budget
                                                 </p>
-                                                <p className="mt-1.5 break-words text-sm font-semibold text-slate-800">
-                                                    {formatBudget(
-                                                        project.budget,
-                                                    )}
+                                                <p className="mt-2 break-words text-sm font-bold text-slate-800">
+                                                    {formatBudget(project.budget)}
                                                 </p>
                                             </div>
 
                                             <div>
-                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                                     Start Date
                                                 </p>
-                                                <p className="mt-1.5 text-xs font-medium text-slate-700">
-                                                    {formatDate(
-                                                        project.start_date,
-                                                    )}
+                                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                                    {formatDate(project.start_date)}
                                                 </p>
                                             </div>
 
                                             <div>
-                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                                     Target Completion
                                                 </p>
-                                                <p className="mt-1.5 text-xs font-medium text-slate-700">
+                                                <p className="mt-2 text-sm font-medium text-slate-700">
                                                     {formatDate(
                                                         project.target_completion_date,
                                                     )}
@@ -440,40 +439,38 @@ export default function Projects({ projects = [] }) {
                                             </div>
 
                                             <div>
-                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                                     Current Progress
                                                 </p>
-                                                <p className="mt-1.5 text-sm font-semibold text-[#20334b]">
+                                                <p className="mt-2 text-sm font-bold text-emerald-700">
                                                     {progress}%
                                                 </p>
                                             </div>
                                         </div>
 
-                                        {/* Description */}
                                         {project.description && (
-                                            <div className="border-t border-slate-100 px-4 py-4 sm:px-5">
-                                                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                            <div className="border-t border-slate-100 px-5 py-5 sm:px-6">
+                                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                                     Description
                                                 </p>
-                                                <p className="mt-2 whitespace-pre-line break-words text-xs leading-5 text-slate-600">
+                                                <p className="mt-2 whitespace-pre-line break-words text-sm leading-6 text-slate-600">
                                                     {project.description}
                                                 </p>
                                             </div>
                                         )}
 
-                                        {/* Progress bar */}
-                                        <div className="border-t border-slate-100 px-4 py-4 sm:px-5">
-                                            <div className="mb-2 flex items-center justify-between">
-                                                <p className="text-xs font-medium text-slate-600">
+                                        <div className="border-t border-slate-100 px-5 py-5 sm:px-6">
+                                            <div className="mb-3 flex items-center justify-between gap-3">
+                                                <p className="text-sm font-semibold text-slate-700">
                                                     Project Progress
                                                 </p>
-                                                <p className="text-xs font-semibold text-[#20334b]">
+                                                <p className="text-sm font-bold text-emerald-700">
                                                     {progress}%
                                                 </p>
                                             </div>
 
                                             <div
-                                                className="h-2 overflow-hidden rounded-full bg-slate-100"
+                                                className="h-2.5 overflow-hidden rounded-full bg-slate-100"
                                                 role="progressbar"
                                                 aria-valuenow={progress}
                                                 aria-valuemin={0}
@@ -483,12 +480,9 @@ export default function Projects({ projects = [] }) {
                                                 <div
                                                     className={`h-full rounded-full transition-all ${
                                                         project.status ===
-                                                        'Completed'
-                                                            ? 'bg-emerald-500'
-                                                            : project.status ===
-                                                                'Suspended'
-                                                              ? 'bg-red-400'
-                                                              : 'bg-blue-500'
+                                                        'Suspended'
+                                                            ? 'bg-red-400'
+                                                            : 'bg-emerald-500'
                                                     }`}
                                                     style={{
                                                         width: `${progress}%`,
@@ -497,9 +491,8 @@ export default function Projects({ projects = [] }) {
                                             </div>
                                         </div>
 
-                                        {/* Update action */}
-                                        <div className="flex flex-col gap-3 border-t border-slate-100 bg-slate-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-                                            <p className="text-[11px] leading-5 text-slate-500">
+                                        <div className="flex flex-col gap-3 border-t border-slate-100 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                                            <p className="text-sm leading-6 text-slate-500">
                                                 Keep the official project status
                                                 and progress current.
                                             </p>
@@ -510,24 +503,23 @@ export default function Projects({ projects = [] }) {
                                                     onClick={() =>
                                                         openUpdateForm(project)
                                                     }
-                                                    className="inline-flex items-center justify-center rounded-lg bg-[#20334b] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#2c4664]"
+                                                    className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
                                                 >
                                                     Update Progress
                                                 </button>
                                             )}
                                         </div>
 
-                                        {/* Update form */}
                                         {isEditing && (
-                                            <div className="border-t border-slate-200 bg-slate-50/70 px-4 py-5 sm:px-5">
+                                            <div className="border-t border-slate-200 bg-slate-50 p-5 sm:p-6">
                                                 <div className="mb-5">
-                                                    <h4 className="text-sm font-semibold text-[#20334b]">
+                                                    <h4 className="text-base font-bold text-slate-900">
                                                         Update Project Progress
                                                     </h4>
-                                                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                                                        Record the latest official
-                                                        status and implementation
-                                                        progress.
+                                                    <p className="mt-1 text-sm leading-6 text-slate-500">
+                                                        Record the latest
+                                                        official status and
+                                                        implementation progress.
                                                     </p>
                                                 </div>
 
@@ -540,12 +532,11 @@ export default function Projects({ projects = [] }) {
                                                     }
                                                     className="space-y-5"
                                                 >
-                                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                                        {/* Status */}
+                                                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                                         <div>
                                                             <label
                                                                 htmlFor={`status-${project.id}`}
-                                                                className="mb-1.5 block text-xs font-medium text-slate-700"
+                                                                className="mb-2 block text-sm font-medium text-slate-700"
                                                             >
                                                                 Project Status
                                                             </label>
@@ -553,14 +544,12 @@ export default function Projects({ projects = [] }) {
                                                             <select
                                                                 id={`status-${project.id}`}
                                                                 name="status"
-                                                                value={
-                                                                    form.status
-                                                                }
+                                                                value={form.status}
                                                                 onChange={
                                                                     handleChange
                                                                 }
                                                                 required
-                                                                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                                                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                                             >
                                                                 {STATUS_OPTIONS.map(
                                                                     (status) => (
@@ -581,11 +570,10 @@ export default function Projects({ projects = [] }) {
                                                             </select>
                                                         </div>
 
-                                                        {/* Date */}
                                                         <div>
                                                             <label
                                                                 htmlFor={`date-${project.id}`}
-                                                                className="mb-1.5 block text-xs font-medium text-slate-700"
+                                                                className="mb-2 block text-sm font-medium text-slate-700"
                                                             >
                                                                 Update Date
                                                             </label>
@@ -601,22 +589,22 @@ export default function Projects({ projects = [] }) {
                                                                     handleChange
                                                                 }
                                                                 required
-                                                                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                                                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                                             />
                                                         </div>
                                                     </div>
 
-                                                    {/* Progress slider */}
-                                                    <div className="rounded-lg border border-slate-200 bg-white p-4">
-                                                        <div className="mb-3 flex items-center justify-between gap-3">
+                                                    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                                                        <div className="mb-4 flex items-center justify-between gap-3">
                                                             <label
                                                                 htmlFor={`progress-${project.id}`}
-                                                                className="text-xs font-medium text-slate-700"
+                                                                className="text-sm font-semibold text-slate-700"
                                                             >
-                                                                Completion Progress
+                                                                Completion
+                                                                Progress
                                                             </label>
 
-                                                            <span className="rounded-md bg-blue-50 px-2.5 py-1 text-sm font-bold text-blue-700">
+                                                            <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-bold text-emerald-700">
                                                                 {form.progress}%
                                                             </span>
                                                         </div>
@@ -628,16 +616,14 @@ export default function Projects({ projects = [] }) {
                                                             min="0"
                                                             max="100"
                                                             step="1"
-                                                            value={
-                                                                form.progress
-                                                            }
+                                                            value={form.progress}
                                                             onChange={
                                                                 handleChange
                                                             }
-                                                            className="w-full cursor-pointer accent-blue-600"
+                                                            className="w-full cursor-pointer accent-emerald-600"
                                                         />
 
-                                                        <div className="mt-2 flex justify-between text-[10px] text-slate-400">
+                                                        <div className="mt-3 flex justify-between text-xs text-slate-400">
                                                             <span>0%</span>
                                                             <span>25%</span>
                                                             <span>50%</span>
@@ -646,11 +632,10 @@ export default function Projects({ projects = [] }) {
                                                         </div>
                                                     </div>
 
-                                                    {/* Description */}
                                                     <div>
                                                         <label
                                                             htmlFor={`description-${project.id}`}
-                                                            className="mb-1.5 block text-xs font-medium text-slate-700"
+                                                            className="mb-2 block text-sm font-medium text-slate-700"
                                                         >
                                                             Update Description
                                                         </label>
@@ -664,14 +649,13 @@ export default function Projects({ projects = [] }) {
                                                             onChange={
                                                                 handleChange
                                                             }
-                                                            rows={3}
+                                                            rows={4}
                                                             placeholder="Describe completed work, recent developments, or issues encountered..."
-                                                            className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs leading-5 outline-none placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                                            className="w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                                         />
                                                     </div>
 
-                                                    {/* Buttons */}
-                                                    <div className="flex flex-col gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
+                                                    <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
                                                         <button
                                                             type="button"
                                                             onClick={
@@ -680,7 +664,7 @@ export default function Projects({ projects = [] }) {
                                                             disabled={
                                                                 isSubmitting
                                                             }
-                                                            className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                                            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
                                                         >
                                                             Cancel
                                                         </button>
@@ -690,7 +674,7 @@ export default function Projects({ projects = [] }) {
                                                             disabled={
                                                                 isSubmitting
                                                             }
-                                                            className="rounded-lg bg-[#20334b] px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-[#2c4664] disabled:cursor-not-allowed disabled:opacity-60"
+                                                            className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
                                                         >
                                                             {isSubmitting
                                                                 ? 'Saving Update...'
@@ -704,18 +688,18 @@ export default function Projects({ projects = [] }) {
                                 );
                             })
                         ) : (
-                            <div className="rounded-xl border border-slate-200 bg-white px-5 py-12 text-center shadow-sm">
-                                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-xl text-slate-500">
+                            <div className="rounded-2xl border border-slate-200 bg-white px-5 py-14 text-center shadow-sm">
+                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-2xl text-emerald-700">
                                     ▤
                                 </div>
 
-                                <h3 className="mt-4 text-sm font-semibold text-[#20334b]">
+                                <h3 className="mt-4 text-base font-bold text-slate-900">
                                     {projects.length === 0
                                         ? 'No projects available'
                                         : 'No matching projects'}
                                 </h3>
 
-                                <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-slate-500">
+                                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
                                     {projects.length === 0
                                         ? 'There are currently no project records. Add a project to get started.'
                                         : 'Try another search term or change the status filter.'}
@@ -724,7 +708,7 @@ export default function Projects({ projects = [] }) {
                                 {projects.length === 0 ? (
                                     <Link
                                         href="/engineering/projects/create"
-                                        className="mt-4 inline-flex rounded-lg bg-[#20334b] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#2c4664]"
+                                        className="mt-5 inline-flex rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
                                     >
                                         Add First Project
                                     </Link>
@@ -735,7 +719,7 @@ export default function Projects({ projects = [] }) {
                                             setSearch('');
                                             setStatusFilter('All');
                                         }}
-                                        className="mt-4 text-xs font-semibold text-blue-700 hover:text-blue-900"
+                                        className="mt-5 text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                                     >
                                         Clear filters
                                     </button>
@@ -744,7 +728,7 @@ export default function Projects({ projects = [] }) {
                         )}
                     </section>
 
-                    <footer className="mt-8 border-t border-slate-200 py-4 text-center text-[10px] text-slate-400">
+                    <footer className="mt-10 border-t border-slate-200 py-5 text-center text-xs text-slate-400">
                         Pagudpud Transparency · Engineering Office
                     </footer>
                 </main>

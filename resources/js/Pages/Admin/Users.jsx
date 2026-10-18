@@ -17,13 +17,13 @@ export default function Users({ users = [] }) {
     const getRoleClass = (role) => {
         switch (role) {
             case 'admin':
-                return 'bg-purple-50 text-purple-700';
+                return 'bg-purple-50 text-purple-700 ring-purple-200';
             case 'engineering':
-                return 'bg-blue-50 text-blue-700';
+                return 'bg-blue-50 text-blue-700 ring-blue-200';
             case 'citizen':
-                return 'bg-green-50 text-green-700';
+                return 'bg-emerald-50 text-emerald-700 ring-emerald-200';
             default:
-                return 'bg-gray-100 text-gray-600';
+                return 'bg-gray-100 text-gray-600 ring-gray-200';
         }
     };
 
@@ -58,16 +58,18 @@ export default function Users({ users = [] }) {
             value: users.length,
             description: 'All registered accounts',
             icon: '♙',
-            color: 'text-[#315f91]',
-            iconBg: 'bg-blue-50',
+            color: 'text-emerald-700',
+            iconBg: 'bg-emerald-50',
+            border: 'border-l-emerald-500',
         },
         {
             label: 'Citizens',
             value: citizenCount,
             description: 'Public platform users',
             icon: '♧',
-            color: 'text-green-700',
-            iconBg: 'bg-green-50',
+            color: 'text-emerald-700',
+            iconBg: 'bg-emerald-50',
+            border: 'border-l-emerald-500',
         },
         {
             label: 'Engineering',
@@ -76,6 +78,7 @@ export default function Users({ users = [] }) {
             icon: '▤',
             color: 'text-blue-700',
             iconBg: 'bg-blue-50',
+            border: 'border-l-blue-500',
         },
         {
             label: 'Administrators',
@@ -84,83 +87,117 @@ export default function Users({ users = [] }) {
             icon: '⚙',
             color: 'text-purple-700',
             iconBg: 'bg-purple-50',
+            border: 'border-l-purple-500',
+        },
+    ];
+
+    const systemRoles = [
+        {
+            role: 'Citizen',
+            description:
+                'Views public project information and submits feedback.',
+            badge: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+            marker: 'bg-emerald-500',
+        },
+        {
+            role: 'Municipal Engineering Office',
+            description:
+                'Manages project records and updates official project progress.',
+            badge: 'bg-blue-50 text-blue-700 ring-blue-200',
+            marker: 'bg-blue-500',
+        },
+        {
+            role: 'Administrator',
+            description:
+                'Manages user accounts, administrative posts, projects, and feedback.',
+            badge: 'bg-purple-50 text-purple-700 ring-purple-200',
+            marker: 'bg-purple-500',
         },
     ];
 
     return (
         <DashboardLayout role="admin">
-            <div className="min-h-screen bg-[#f4f6f9]">
-                {/* Page header */}
-                <header className="border-b border-[#e4e8ee] bg-white px-5 py-4 sm:px-7">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="min-h-screen bg-slate-50 font-sans">
+                <header className="border-b border-emerald-100 bg-white px-5 py-6 sm:px-8">
+                    <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
                         <div>
-                            <div className="mb-1 flex items-center gap-2 text-[11px] text-gray-400">
+                            <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
                                 <span>Home</span>
-                                <span>/</span>
+                                <span className="text-slate-300">/</span>
                                 <span>System Management</span>
-                                <span>/</span>
-                                <span className="text-[#315f91]">
+                                <span className="text-slate-300">/</span>
+                                <span className="font-medium text-emerald-700">
                                     User Accounts
                                 </span>
                             </div>
 
-                            <h1 className="text-xl font-bold tracking-tight text-[#24364b]">
-                                User Accounts
-                            </h1>
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-2xl text-emerald-700">
+                                    ♙
+                                </div>
 
-                            <p className="mt-1 text-xs text-gray-500">
-                                Manage registered users and their system roles.
-                            </p>
+                                <div>
+                                    <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">
+                                        User Accounts
+                                    </h1>
+
+                                    <p className="mt-1 text-sm text-slate-500">
+                                        Manage registered users and their system roles.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="rounded-md border border-[#e1e6ed] bg-[#f8fafc] px-3 py-2">
-                            <p className="text-[10px] text-gray-500">
+                        <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-5 py-3">
+                            <p className="text-sm font-medium text-emerald-700">
                                 Registered Accounts
                             </p>
-                            <p className="mt-0.5 text-sm font-semibold text-[#283b52]">
-                                {users.length} users
+
+                            <p className="mt-1 text-2xl font-bold text-emerald-800">
+                                {users.length}
+                                <span className="ml-2 text-sm font-medium">
+                                    users
+                                </span>
                             </p>
                         </div>
                     </div>
                 </header>
 
-                <main className="space-y-5 p-4 sm:p-6">
-                    {/* Summary cards */}
+                <main className="mx-auto max-w-7xl space-y-8 p-5 sm:p-8">
                     <section>
-                        <div className="mb-3">
-                            <h2 className="text-sm font-semibold text-[#283b52]">
+                        <div className="mb-4">
+                            <h2 className="text-lg font-bold text-slate-800">
                                 User Overview
                             </h2>
-                            <p className="mt-1 text-[11px] text-gray-500">
-                                Breakdown of accounts by assigned role.
+
+                            <p className="mt-1 text-sm text-slate-500">
+                                Breakdown of registered accounts by assigned role.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             {summaryCards.map((card) => (
                                 <div
                                     key={card.label}
-                                    className="rounded-lg border border-[#e1e6ed] bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
+                                    className={`rounded-xl border border-slate-200 border-l-4 ${card.border} bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md`}
                                 >
-                                    <div className="flex items-start justify-between gap-2">
-                                        <p className="text-[11px] font-medium text-gray-500">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <p className="text-sm font-semibold text-slate-600">
                                             {card.label}
                                         </p>
 
                                         <span
-                                            className={`flex h-8 w-8 items-center justify-center rounded-md text-lg ${card.iconBg} ${card.color}`}
+                                            className={`flex h-11 w-11 items-center justify-center rounded-xl text-xl ${card.iconBg} ${card.color}`}
                                         >
                                             {card.icon}
                                         </span>
                                     </div>
 
-                                    <p
-                                        className={`mt-3 text-2xl font-bold ${card.color}`}
-                                    >
+                                    <p className={`mt-4 text-3xl font-bold ${card.color}`}>
                                         {card.value}
                                     </p>
 
-                                    <p className="mt-1 text-[10px] text-gray-400">
+                                    <p className="mt-2 text-sm text-slate-500">
                                         {card.description}
                                     </p>
                                 </div>
@@ -168,44 +205,42 @@ export default function Users({ users = [] }) {
                         </div>
                     </section>
 
-                    {/* Registered users table */}
-                    <section className="overflow-hidden rounded-lg border border-[#e1e6ed] bg-white">
-                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e8ecf1] px-4 py-4 sm:px-5">
+                    <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-5 sm:px-6">
                             <div>
-                                <h2 className="text-sm font-semibold text-[#283b52]">
+                                <h2 className="text-lg font-bold text-slate-800">
                                     Registered Users
                                 </h2>
 
-                                <p className="mt-1 text-[11px] text-gray-500">
-                                    Review account details and change assigned
-                                    system roles.
+                                <p className="mt-1 text-sm text-slate-500">
+                                    Review account details and change assigned system roles.
                                 </p>
                             </div>
 
-                            <span className="rounded-md bg-[#edf3f9] px-2.5 py-1.5 text-[10px] font-medium text-[#315f91]">
+                            <span className="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-200">
                                 {users.length} records
                             </span>
                         </div>
 
                         {users.length === 0 ? (
-                            <div className="px-5 py-14 text-center">
-                                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#edf3f9] text-2xl text-[#315f91]">
+                            <div className="px-5 py-16 text-center">
+                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-3xl text-emerald-700">
                                     ♙
                                 </div>
 
-                                <h3 className="mt-3 text-sm font-semibold text-[#283b52]">
+                                <h3 className="mt-4 text-lg font-semibold text-slate-800">
                                     No users found
                                 </h3>
 
-                                <p className="mt-1 text-xs text-gray-500">
+                                <p className="mt-2 text-sm text-slate-500">
                                     Registered accounts will appear here.
                                 </p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="w-full min-w-[850px] text-left">
-                                    <thead className="bg-[#f8fafc]">
-                                        <tr className="border-b border-[#e8ecf1]">
+                                <table className="w-full min-w-[900px] text-left">
+                                    <thead className="bg-emerald-50/70">
+                                        <tr className="border-b border-emerald-100">
                                             {[
                                                 'User Information',
                                                 'Contact Number',
@@ -215,7 +250,7 @@ export default function Users({ users = [] }) {
                                             ].map((heading) => (
                                                 <th
                                                     key={heading}
-                                                    className="px-5 py-3 text-[10px] font-semibold uppercase tracking-wide text-gray-500"
+                                                    className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-emerald-900"
                                                 >
                                                     {heading}
                                                 </th>
@@ -223,16 +258,15 @@ export default function Users({ users = [] }) {
                                         </tr>
                                     </thead>
 
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-slate-100">
                                         {users.map((user) => (
                                             <tr
                                                 key={user.id}
-                                                className="transition hover:bg-[#fafbfd]"
+                                                className="transition hover:bg-emerald-50/30"
                                             >
-                                                {/* User information */}
-                                                <td className="px-5 py-4">
+                                                <td className="px-5 py-5">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#edf3f9] text-xs font-semibold text-[#315f91]">
+                                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-base font-bold text-emerald-800 ring-1 ring-emerald-200">
                                                             {(user.name || 'U')
                                                                 .trim()
                                                                 .charAt(0)
@@ -240,51 +274,43 @@ export default function Users({ users = [] }) {
                                                         </div>
 
                                                         <div className="min-w-0">
-                                                            <p className="max-w-[220px] truncate text-xs font-semibold text-[#283b52]">
-                                                                {user.name}
+                                                            <p className="max-w-[230px] truncate text-sm font-semibold text-slate-800">
+                                                                {user.name || 'Unnamed User'}
                                                             </p>
 
-                                                            <p className="mt-1 max-w-[220px] truncate text-[11px] text-gray-500">
-                                                                {user.email}
+                                                            <p className="mt-1 max-w-[230px] truncate text-sm text-slate-500">
+                                                                {user.email || 'No email provided'}
                                                             </p>
 
-                                                            <p className="mt-1 text-[10px] text-gray-400">
+                                                            <p className="mt-1 text-xs text-slate-400">
                                                                 User ID: {user.id}
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </td>
 
-                                                {/* Contact */}
-                                                <td className="px-5 py-4 text-xs text-gray-600">
-                                                    {user.phone_number ||
-                                                        'Not provided'}
+                                                <td className="px-5 py-5 text-sm text-slate-600">
+                                                    {user.phone_number || 'Not provided'}
                                                 </td>
 
-                                                {/* Address */}
-                                                <td className="max-w-[220px] px-5 py-4">
+                                                <td className="max-w-[240px] px-5 py-5">
                                                     <p
-                                                        className="truncate text-xs text-gray-600"
+                                                        className="truncate text-sm text-slate-600"
                                                         title={user.address || ''}
                                                     >
-                                                        {user.address ||
-                                                            'Not provided'}
+                                                        {user.address || 'Not provided'}
                                                     </p>
                                                 </td>
 
-                                                {/* Current role */}
-                                                <td className="px-5 py-4">
+                                                <td className="px-5 py-5">
                                                     <span
-                                                        className={`inline-flex rounded-md px-2.5 py-1.5 text-[10px] font-semibold ${getRoleClass(
-                                                            user.role
-                                                        )}`}
+                                                        className={`inline-flex rounded-lg px-3 py-2 text-xs font-semibold ring-1 ${getRoleClass(user.role)}`}
                                                     >
                                                         {getRoleName(user.role)}
                                                     </span>
                                                 </td>
 
-                                                {/* Change role */}
-                                                <td className="px-5 py-4">
+                                                <td className="px-5 py-5">
                                                     <select
                                                         value={user.role || 'citizen'}
                                                         onChange={(event) =>
@@ -294,15 +320,14 @@ export default function Users({ users = [] }) {
                                                             )
                                                         }
                                                         aria-label={`Change role for ${user.name}`}
-                                                        className="w-full max-w-[190px] rounded-md border border-[#d8dee7] bg-white px-2.5 py-2 text-xs text-[#283b52] outline-none transition focus:border-[#7898ba] focus:ring-2 focus:ring-[#dce8f4]"
+                                                        className="w-full max-w-[210px] rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                                                     >
                                                         <option value="citizen">
                                                             Citizen
                                                         </option>
 
                                                         <option value="engineering">
-                                                            Municipal Engineering
-                                                            Office
+                                                            Municipal Engineering Office
                                                         </option>
 
                                                         <option value="admin">
@@ -310,7 +335,7 @@ export default function Users({ users = [] }) {
                                                         </option>
                                                     </select>
 
-                                                    <p className="mt-1.5 text-[10px] text-gray-400">
+                                                    <p className="mt-2 text-xs text-slate-400">
                                                         Saves when changed
                                                     </p>
                                                 </td>
@@ -321,84 +346,66 @@ export default function Users({ users = [] }) {
                             </div>
                         )}
 
-                        {/* Table footer */}
                         {users.length > 0 && (
-                            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#e8ecf1] bg-[#fbfcfd] px-5 py-3">
-                                <p className="text-[10px] text-gray-500">
+                            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4 sm:px-6">
+                                <p className="text-sm text-slate-600">
                                     Showing {users.length} registered account
                                     {users.length !== 1 ? 's' : ''}
                                 </p>
 
-                                <p className="text-[10px] text-gray-400">
+                                <p className="text-xs text-slate-500">
                                     Role changes are saved to the system.
                                 </p>
                             </div>
                         )}
                     </section>
 
-                    {/* Role information */}
                     <section>
-                        <div className="mb-3">
-                            <h2 className="text-sm font-semibold text-[#283b52]">
+                        <div className="mb-4">
+                            <h2 className="text-lg font-bold text-slate-800">
                                 System Roles
                             </h2>
-                            <p className="mt-1 text-[11px] text-gray-500">
-                                Reference for the available account roles.
+
+                            <p className="mt-1 text-sm text-slate-500">
+                                Reference for the available account roles and their responsibilities.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                            {[
-                                {
-                                    role: 'Citizen',
-                                    description:
-                                        'Views public project information and submits feedback.',
-                                    badge: 'bg-green-50 text-green-700',
-                                    marker: 'bg-green-500',
-                                },
-                                {
-                                    role: 'Municipal Engineering Office',
-                                    description:
-                                        'Manages project records and updates official project progress.',
-                                    badge: 'bg-blue-50 text-blue-700',
-                                    marker: 'bg-blue-500',
-                                },
-                                {
-                                    role: 'Administrator',
-                                    description:
-                                        'Manages user accounts, administrative posts, projects, and feedback.',
-                                    badge: 'bg-purple-50 text-purple-700',
-                                    marker: 'bg-purple-500',
-                                },
-                            ].map((item) => (
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                            {systemRoles.map((item) => (
                                 <div
                                     key={item.role}
-                                    className="rounded-lg border border-[#e1e6ed] bg-white p-4"
+                                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-start gap-3">
                                         <span
-                                            className={`h-2 w-2 rounded-full ${item.marker}`}
+                                            className={`mt-1.5 h-3 w-3 shrink-0 rounded-full ${item.marker}`}
                                         />
 
-                                        <span
-                                            className={`rounded-md px-2 py-1 text-[10px] font-semibold ${item.badge}`}
-                                        >
-                                            {item.role}
-                                        </span>
-                                    </div>
+                                        <div className="min-w-0">
+                                            <span
+                                                className={`inline-flex rounded-lg px-3 py-2 text-sm font-semibold ring-1 ${item.badge}`}
+                                            >
+                                                {item.role}
+                                            </span>
 
-                                    <p className="mt-3 text-[11px] leading-5 text-gray-500">
-                                        {item.description}
-                                    </p>
+                                            <p className="mt-4 text-sm leading-6 text-slate-600">
+                                                {item.description}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </section>
 
-                    {/* Footer */}
-                    <footer className="border-t border-[#e1e6ed] pt-4 text-center text-[10px] text-gray-400">
-                        Pagudpud Transparency · Web-Based Local Government
-                        Project Monitoring System
+                    <footer className="border-t border-slate-200 pt-5 text-center text-sm text-slate-500">
+                        <p className="font-medium text-emerald-800">
+                            Pagudpud Transparency
+                        </p>
+                        <p className="mt-1">
+                            Web-Based Local Government Project Monitoring System
+                        </p>
                     </footer>
                 </main>
             </div>

@@ -113,66 +113,61 @@ export default function Posts({ posts = [] }) {
 
     return (
         <DashboardLayout role="admin">
-            <div className="min-h-screen bg-[#f4f6f9] text-slate-800">
-                {/* Page header */}
-                <header className="border-b border-slate-200 bg-white px-5 py-5 sm:px-8">
-                    <div className="mx-auto flex max-w-[1500px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-h-screen bg-slate-50 text-slate-800">
+                <header className="border-b border-slate-200 bg-white px-5 py-6 sm:px-8">
+                    <div className="mx-auto flex max-w-[1500px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <div className="mb-1 flex items-center gap-2 text-xs text-slate-500">
+                            <div className="mb-2 flex items-center gap-2 text-sm text-slate-500">
                                 <span>Administrator</span>
                                 <span>/</span>
-                                <span className="font-medium text-slate-700">
+                                <span className="font-semibold text-emerald-700">
                                     Administrative Posts
                                 </span>
                             </div>
 
-                            <h1 className="text-xl font-bold tracking-tight text-[#20334b] sm:text-2xl">
+                            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                 Administrative Posts
                             </h1>
 
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
                                 Publish and manage official municipal
                                 announcements and information.
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-2 self-start rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 sm:self-center">
-                            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                        <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
+                            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                             {posts.length} published{' '}
                             {posts.length === 1 ? 'post' : 'posts'}
                         </div>
                     </div>
                 </header>
 
-                <main className="mx-auto max-w-[1500px] px-5 py-6 sm:px-8">
-                    <div className="grid items-start gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-                        {/* Create post panel */}
-                        <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                            <div className="border-b border-slate-200 px-5 py-4">
+                <main className="mx-auto max-w-[1500px] px-5 py-7 sm:px-8">
+                    <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+                        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                            <div className="border-b border-slate-200 px-5 py-5">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#20334b] text-lg text-white">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-2xl font-bold text-emerald-800">
                                         +
                                     </div>
 
                                     <div>
-                                        <h2 className="text-sm font-semibold text-[#20334b]">
+                                        <h2 className="text-lg font-bold text-slate-900">
                                             Create New Post
                                         </h2>
-                                        <p className="mt-1 text-xs text-slate-500">
+                                        <p className="mt-1 text-sm text-slate-600">
                                             Write an official announcement.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <form
-                                onSubmit={createPost}
-                                className="space-y-5 p-5"
-                            >
+                            <form onSubmit={createPost} className="space-y-5 p-5">
                                 <div>
                                     <label
                                         htmlFor="new-post-title"
-                                        className="mb-1.5 block text-xs font-semibold text-slate-700"
+                                        className="mb-2 block text-sm font-semibold text-slate-700"
                                     >
                                         Post Title
                                     </label>
@@ -185,19 +180,19 @@ export default function Posts({ posts = [] }) {
                                         onChange={handleChange}
                                         placeholder="Enter announcement title"
                                         required
-                                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                        className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                                     />
                                 </div>
 
                                 <div>
-                                    <div className="mb-1.5 flex items-center justify-between">
+                                    <div className="mb-2 flex items-center justify-between gap-2">
                                         <label
                                             htmlFor="new-post-content"
-                                            className="text-xs font-semibold text-slate-700"
+                                            className="text-sm font-semibold text-slate-700"
                                         >
                                             Announcement Content
                                         </label>
-                                        <span className="text-[10px] text-slate-400">
+                                        <span className="text-xs text-slate-500">
                                             Required
                                         </span>
                                     </div>
@@ -210,27 +205,32 @@ export default function Posts({ posts = [] }) {
                                         rows={9}
                                         placeholder="Write the announcement details here..."
                                         required
-                                        className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm leading-6 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                        className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                                     />
 
-                                    <p className="mt-1.5 text-[11px] text-slate-400">
-                                        Provide clear information for citizens.
+                                    <p className="mt-2 text-sm leading-5 text-slate-500">
+                                        Provide clear and accurate information
+                                        for citizens.
                                     </p>
                                 </div>
 
                                 <button
                                     type="submit"
                                     disabled={isPublishing}
-                                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#20334b] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2c4664] disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
-                                    <span>{isPublishing ? 'Publishing...' : 'Publish Announcement'}</span>
-                                    {!isPublishing && <span>→</span>}
+                                    <span>
+                                        {isPublishing
+                                            ? 'Publishing...'
+                                            : 'Publish Announcement'}
+                                    </span>
+                                    {!isPublishing && <span aria-hidden="true">→</span>}
                                 </button>
                             </form>
 
-                            <div className="border-t border-slate-200 bg-slate-50 px-5 py-3">
-                                <p className="text-[11px] leading-5 text-slate-500">
-                                    <span className="font-semibold text-slate-700">
+                            <div className="border-t border-slate-200 bg-emerald-50/60 px-5 py-4">
+                                <p className="text-sm leading-6 text-slate-600">
+                                    <span className="font-semibold text-emerald-800">
                                         Note:
                                     </span>{' '}
                                     Published posts provide citizens with
@@ -239,48 +239,45 @@ export default function Posts({ posts = [] }) {
                             </div>
                         </section>
 
-                        {/* Published posts */}
                         <section className="min-w-0">
-                            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                                 <div>
-                                    <h2 className="text-sm font-semibold text-[#20334b]">
+                                    <h2 className="text-xl font-bold text-slate-900">
                                         Published Posts
                                     </h2>
-                                    <p className="mt-1 text-xs text-slate-500">
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
                                         View and manage existing announcements.
                                     </p>
                                 </div>
 
                                 <div className="relative">
-                                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-lg text-slate-400">
                                         ⌕
                                     </span>
                                     <input
                                         type="search"
                                         value={search}
-                                        onChange={(e) =>
-                                            setSearch(e.target.value)
-                                        }
+                                        onChange={(e) => setSearch(e.target.value)}
                                         placeholder="Search posts..."
                                         aria-label="Search published posts"
-                                        className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-xs outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 sm:w-64"
+                                        className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 sm:w-72"
                                     />
                                 </div>
                             </div>
 
                             {filteredPosts.length === 0 ? (
-                                <div className="rounded-xl border border-slate-200 bg-white px-5 py-14 text-center shadow-sm">
-                                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-2xl text-slate-500">
+                                <div className="rounded-2xl border border-slate-200 bg-white px-5 py-16 text-center shadow-sm">
+                                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-2xl text-emerald-700">
                                         ▤
                                     </div>
 
-                                    <h3 className="mt-3 text-sm font-semibold text-slate-800">
+                                    <h3 className="mt-4 text-lg font-bold text-slate-900">
                                         {posts.length === 0
                                             ? 'No posts yet'
                                             : 'No matching posts'}
                                     </h3>
 
-                                    <p className="mt-1 text-xs text-slate-500">
+                                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
                                         {posts.length === 0
                                             ? 'Create your first administrative announcement using the form.'
                                             : 'Try searching with a different title, content, or author.'}
@@ -290,65 +287,62 @@ export default function Posts({ posts = [] }) {
                                         <button
                                             type="button"
                                             onClick={() => setSearch('')}
-                                            className="mt-3 text-xs font-semibold text-blue-700 hover:text-blue-900"
+                                            className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
                                         >
                                             Clear search
                                         </button>
                                     )}
                                 </div>
                             ) : (
-                                <div className="space-y-4">
+                                <div className="space-y-5">
                                     {filteredPosts.map((post) => (
                                         <article
                                             key={post.id}
-                                            className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300"
+                                            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-emerald-200 hover:shadow-md"
                                         >
-                                            <div className="p-4 sm:p-5">
-                                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                                                    <div className="flex min-w-0 gap-3">
-                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-lg text-blue-700">
+                                            <div className="p-5 sm:p-6">
+                                                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                                    <div className="flex min-w-0 gap-4">
+                                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl text-emerald-800">
                                                             ▤
                                                         </div>
 
                                                         <div className="min-w-0">
-                                                            <h3 className="break-words text-sm font-semibold leading-5 text-[#20334b]">
+                                                            <h3 className="break-words text-base font-bold leading-6 text-slate-900 sm:text-lg">
                                                                 {post.title}
                                                             </h3>
 
-                                                            <p className="mt-1.5 text-[11px] text-slate-400">
+                                                            <p className="mt-2 text-sm text-slate-500">
                                                                 Published{' '}
-                                                                {formatDate(
-                                                                    post.created_at,
-                                                                )}
+                                                                {formatDate(post.created_at)}
                                                             </p>
                                                         </div>
                                                     </div>
 
-                                                    <span className="w-fit shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                                                    <span className="w-fit shrink-0 rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-600/20">
                                                         Official Post
                                                     </span>
                                                 </div>
 
-                                                <div className="mt-4 border-t border-slate-100 pt-4">
-                                                    <p className="whitespace-pre-line break-words text-xs leading-6 text-slate-600">
+                                                <div className="mt-5 border-t border-slate-100 pt-5">
+                                                    <p className="whitespace-pre-line break-words text-sm leading-7 text-slate-700">
                                                         {post.content}
                                                     </p>
                                                 </div>
 
                                                 {post.user && (
-                                                    <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3">
-                                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
+                                                    <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800">
                                                             {post.user.name
                                                                 ?.trim()
                                                                 ?.charAt(0)
-                                                                ?.toUpperCase() ||
-                                                                'A'}
+                                                                ?.toUpperCase() || 'A'}
                                                         </div>
-                                                        <div>
-                                                            <p className="text-[10px] text-slate-400">
+                                                        <div className="min-w-0">
+                                                            <p className="text-sm text-slate-500">
                                                                 Published by
                                                             </p>
-                                                            <p className="mt-0.5 text-xs font-medium text-slate-700">
+                                                            <p className="mt-1 break-words text-sm font-semibold text-slate-800">
                                                                 {post.user.name}
                                                             </p>
                                                         </div>
@@ -356,7 +350,7 @@ export default function Posts({ posts = [] }) {
                                                 )}
                                             </div>
 
-                                            <div className="flex flex-wrap justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3">
+                                            <div className="flex flex-wrap justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-4 sm:px-6">
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -364,7 +358,7 @@ export default function Posts({ posts = [] }) {
                                                             ? closeEditForm()
                                                             : openEditForm(post)
                                                     }
-                                                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
+                                                    className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800"
                                                 >
                                                     {editingPost === post.id
                                                         ? 'Close Editor'
@@ -373,40 +367,34 @@ export default function Posts({ posts = [] }) {
 
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
-                                                        setDeletingPost(post)
-                                                    }
-                                                    className="rounded-lg border border-red-200 bg-white px-3.5 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50"
+                                                    onClick={() => setDeletingPost(post)}
+                                                    className="rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-50"
                                                 >
                                                     Delete Post
                                                 </button>
                                             </div>
 
                                             {editingPost === post.id && (
-                                                <div className="border-t border-slate-200 bg-slate-50 p-4 sm:p-5">
-                                                    <div className="mb-4">
-                                                        <h4 className="text-sm font-semibold text-[#20334b]">
+                                                <div className="border-t border-emerald-200 bg-emerald-50/40 p-5 sm:p-6">
+                                                    <div className="mb-5">
+                                                        <h4 className="text-lg font-bold text-slate-900">
                                                             Edit Announcement
                                                         </h4>
-                                                        <p className="mt-1 text-xs text-slate-500">
-                                                            Make changes to the
-                                                            selected post.
+                                                        <p className="mt-1 text-sm text-slate-600">
+                                                            Make changes to the selected post.
                                                         </p>
                                                     </div>
 
                                                     <form
                                                         onSubmit={(e) =>
-                                                            updatePost(
-                                                                e,
-                                                                post.id,
-                                                            )
+                                                            updatePost(e, post.id)
                                                         }
-                                                        className="space-y-4"
+                                                        className="space-y-5"
                                                     >
                                                         <div>
                                                             <label
                                                                 htmlFor={`edit-title-${post.id}`}
-                                                                className="mb-1.5 block text-xs font-semibold text-slate-700"
+                                                                className="mb-2 block text-sm font-semibold text-slate-700"
                                                             >
                                                                 Post Title
                                                             </label>
@@ -414,59 +402,45 @@ export default function Posts({ posts = [] }) {
                                                                 id={`edit-title-${post.id}`}
                                                                 type="text"
                                                                 name="title"
-                                                                value={
-                                                                    form.title
-                                                                }
-                                                                onChange={
-                                                                    handleChange
-                                                                }
+                                                                value={form.title}
+                                                                onChange={handleChange}
                                                                 required
-                                                                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                                                             />
                                                         </div>
 
                                                         <div>
                                                             <label
                                                                 htmlFor={`edit-content-${post.id}`}
-                                                                className="mb-1.5 block text-xs font-semibold text-slate-700"
+                                                                className="mb-2 block text-sm font-semibold text-slate-700"
                                                             >
                                                                 Content
                                                             </label>
                                                             <textarea
                                                                 id={`edit-content-${post.id}`}
                                                                 name="content"
-                                                                value={
-                                                                    form.content
-                                                                }
-                                                                onChange={
-                                                                    handleChange
-                                                                }
+                                                                value={form.content}
+                                                                onChange={handleChange}
                                                                 rows={6}
                                                                 required
-                                                                className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm leading-6 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                                                                className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                                                             />
                                                         </div>
 
-                                                        <div className="flex flex-col-reverse gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
+                                                        <div className="flex flex-col-reverse gap-3 border-t border-emerald-100 pt-5 sm:flex-row sm:justify-end">
                                                             <button
                                                                 type="button"
-                                                                onClick={
-                                                                    closeEditForm
-                                                                }
-                                                                disabled={
-                                                                    isSaving
-                                                                }
-                                                                className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-60"
+                                                                onClick={closeEditForm}
+                                                                disabled={isSaving}
+                                                                className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
                                                             >
                                                                 Cancel
                                                             </button>
 
                                                             <button
                                                                 type="submit"
-                                                                disabled={
-                                                                    isSaving
-                                                                }
-                                                                className="rounded-lg bg-[#20334b] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#2c4664] disabled:cursor-not-allowed disabled:opacity-60"
+                                                                disabled={isSaving}
+                                                                className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
                                                             >
                                                                 {isSaving
                                                                     ? 'Saving...'
@@ -481,16 +455,24 @@ export default function Posts({ posts = [] }) {
                                 </div>
                             )}
 
-                            <div className="mt-4 flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-[11px] text-slate-500">
+                            <div className="mt-5 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
                                 <span>
-                                    Showing {filteredPosts.length} of{' '}
-                                    {posts.length} posts
+                                    Showing{' '}
+                                    <strong className="font-bold text-slate-900">
+                                        {filteredPosts.length}
+                                    </strong>{' '}
+                                    of{' '}
+                                    <strong className="font-bold text-slate-900">
+                                        {posts.length}
+                                    </strong>{' '}
+                                    posts
                                 </span>
+
                                 {search && (
                                     <button
                                         type="button"
                                         onClick={() => setSearch('')}
-                                        className="font-semibold text-blue-700 hover:text-blue-900"
+                                        className="self-start rounded-lg px-3 py-2 font-semibold text-emerald-700 transition hover:bg-emerald-50 sm:self-auto"
                                     >
                                         Clear search
                                     </button>
@@ -500,10 +482,9 @@ export default function Posts({ posts = [] }) {
                     </div>
                 </main>
 
-                {/* Delete confirmation modal */}
                 {deletingPost && (
                     <div
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-[2px]"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
                         onMouseDown={(e) => {
                             if (
                                 e.target === e.currentTarget &&
@@ -517,37 +498,37 @@ export default function Posts({ posts = [] }) {
                             role="dialog"
                             aria-modal="true"
                             aria-labelledby="delete-post-title"
-                            className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-5 shadow-2xl"
+                            className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl"
                         >
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-xl text-red-600">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-2xl font-bold text-red-600">
                                 !
                             </div>
 
                             <h2
                                 id="delete-post-title"
-                                className="mt-4 text-base font-bold text-slate-900"
+                                className="mt-5 text-xl font-bold text-slate-900"
                             >
                                 Delete Post?
                             </h2>
 
-                            <p className="mt-2 break-words text-sm leading-6 text-slate-500">
+                            <p className="mt-3 break-words text-sm leading-7 text-slate-600">
                                 Are you sure you want to delete{' '}
-                                <span className="font-semibold text-slate-800">
+                                <span className="font-semibold text-slate-900">
                                     {deletingPost.title}
                                 </span>
                                 ?
                             </p>
 
-                            <p className="mt-2 text-xs text-red-600">
+                            <p className="mt-2 text-sm text-red-600">
                                 This action cannot be undone.
                             </p>
 
-                            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                                 <button
                                     type="button"
                                     onClick={() => setDeletingPost(null)}
                                     disabled={isDeleting}
-                                    className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-60"
+                                    className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
                                 >
                                     Cancel
                                 </button>
@@ -556,7 +537,7 @@ export default function Posts({ posts = [] }) {
                                     type="button"
                                     onClick={confirmDelete}
                                     disabled={isDeleting}
-                                    className="rounded-lg bg-red-600 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {isDeleting ? 'Deleting...' : 'Delete Post'}
                                 </button>
