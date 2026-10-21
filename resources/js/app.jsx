@@ -1,3 +1,4 @@
+
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/react';
@@ -7,17 +8,26 @@ import { createRoot } from 'react-dom/client';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
-window.Pusher = Pusher;
+// Enable real-time updates only when Reverb is configured.
+const reverbKey = import.meta.env.VITE_REVERB_APP_KEY;
+const reverbHost = import.meta.env.VITE_REVERB_HOST;
+const reverbPort = import.meta.env.VITE_REVERB_PORT;
 
-window.Echo = new Echo({
-    broadcaster: 'reverb',
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: import.meta.env.VITE_REVERB_PORT,
-    wssPort: import.meta.env.VITE_REVERB_PORT,
-    forceTLS: false,
-    enabledTransports: ['ws', 'wss'],
-});
+if (reverbKey && reverbHost && reverbPort) {
+    window.Pusher = Pusher;
+
+    window.Echo = new Echo({
+        broadcaster: 'reverb',
+        key: reverbKey,
+        wsHost: reverbHost,
+        wsPort: Number(reverbPort),
+        wssPort: Number(reverbPort),
+        forceTLS: true,
+        enabledTransports: ['ws', 'wss'],
+    });
+} else {
+    window.Echo = null;
+}
 
 createInertiaApp({
     title: (title) => `${title} - Pagudpud Transparency`,
