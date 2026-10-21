@@ -1,3 +1,4 @@
+
 FROM node:22-alpine AS frontend-build
 
 WORKDIR /app
@@ -42,9 +43,11 @@ RUN composer install \
        /etc/apache2/sites-available/000-default.conf \
     && printf '<Directory /var/www/html/public>\nAllowOverride All\nRequire all granted\n</Directory>\n' \
        >> /etc/apache2/apache2.conf \
-    && printf 'Listen 10000\n' > /etc/apache2/ports.conf \
+    && printf '\nListen 10000\n' > /etc/apache2/ports.conf \
     && sed -ri 's/<VirtualHost \*:80>/<VirtualHost *:10000>/' \
        /etc/apache2/sites-available/000-default.conf \
     && chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 10000
+
+CMD ["sh", "-c", "sed -i \"s/10000/${PORT:-10000}/g\" /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
