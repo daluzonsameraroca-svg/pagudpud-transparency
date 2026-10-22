@@ -23,7 +23,8 @@ class RegisterController extends Controller
                 'unique:users,email',
             ],
             'phone_number' => ['required', 'string', 'max:20'],
-            'address' => ['required', 'string', 'max:500'],
+            'barangay' => ['required', 'string', 'max:100'],
+            'sitio' => ['required', 'string', 'max:150'],
             'password' => [
                 'required',
                 'confirmed',
@@ -35,7 +36,11 @@ class RegisterController extends Controller
             'name' => trim($validated['name']),
             'email' => strtolower(trim($validated['email'])),
             'phone_number' => trim($validated['phone_number']),
-            'address' => trim($validated['address']),
+            'address' => sprintf(
+                '%s, %s, Pagudpud, Ilocos Norte',
+                trim($validated['sitio']),
+                trim($validated['barangay']),
+            ),
             'role' => 'citizen',
             'password' => Hash::make($validated['password']),
         ]);
@@ -44,6 +49,7 @@ class RegisterController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect('/citizen/dashboard');
+        return redirect('/citizen/dashboard')
+            ->with('new_citizen', true);
     }
 }

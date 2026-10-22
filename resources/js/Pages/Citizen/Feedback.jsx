@@ -3,28 +3,18 @@ import { Head } from '@inertiajs/react';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 export default function Feedback({ feedback = [] }) {
-    const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
 
     const filteredFeedback = useMemo(() => {
-        const term = search.toLowerCase().trim();
-
         return feedback.filter((item) => {
-            const projectName = item.project?.project_name ?? '';
-            const message = item.message ?? '';
             const status = item.status ?? 'Pending';
-
-            const matchesSearch =
-                !term ||
-                `${projectName} ${message}`.toLowerCase().includes(term);
-
             const matchesStatus =
                 statusFilter === 'All' ||
                 status.toLowerCase() === statusFilter.toLowerCase();
 
-            return matchesSearch && matchesStatus;
+            return matchesStatus;
         });
-    }, [feedback, search, statusFilter]);
+    }, [feedback, statusFilter]);
 
     const formatDate = (date) => {
         if (!date) return 'Date unavailable';
@@ -71,7 +61,6 @@ export default function Feedback({ feedback = [] }) {
         {
             label: 'Total Feedback',
             count: feedback.length,
-            description: 'All submitted feedback',
             icon: 'total',
             color: 'text-emerald-800',
             iconBg: 'bg-emerald-50 text-emerald-700',
@@ -79,7 +68,6 @@ export default function Feedback({ feedback = [] }) {
         {
             label: 'Pending',
             count: pendingCount,
-            description: 'Awaiting review',
             icon: 'pending',
             color: 'text-amber-600',
             iconBg: 'bg-amber-50 text-amber-700',
@@ -87,7 +75,6 @@ export default function Feedback({ feedback = [] }) {
         {
             label: 'Reviewed',
             count: reviewedCount,
-            description: 'Already reviewed',
             icon: 'reviewed',
             color: 'text-emerald-700',
             iconBg: 'bg-emerald-50 text-emerald-700',
@@ -95,7 +82,6 @@ export default function Feedback({ feedback = [] }) {
         {
             label: 'Resolved',
             count: resolvedCount,
-            description: 'Marked as resolved',
             icon: 'resolved',
             color: 'text-green-700',
             iconBg: 'bg-green-50 text-green-700',
@@ -116,10 +102,6 @@ export default function Feedback({ feedback = [] }) {
                         My Feedback
                     </h1>
 
-                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-                        View the feedback you have submitted about municipal
-                        projects and check its status.
-                    </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -197,9 +179,6 @@ export default function Feedback({ feedback = [] }) {
                                 {card.count}
                             </p>
 
-                            <p className="mt-1 text-xs text-slate-500">
-                                {card.description}
-                            </p>
                         </div>
                     ))}
                 </div>
@@ -207,79 +186,37 @@ export default function Feedback({ feedback = [] }) {
                 <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                     <div className="mb-4">
                         <h2 className="text-sm font-semibold text-slate-800">
-                            Find Your Feedback
+                            Filter Feedback
                         </h2>
-                        <p className="mt-1 text-xs text-slate-500">
-                            Search by project or message, or filter by status.
-                        </p>
                     </div>
 
-                    <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
-                        <div>
-                            <label
-                                htmlFor="feedback-search"
-                                className="mb-2 block text-sm font-semibold text-slate-700"
-                            >
-                                Search feedback
-                            </label>
+                    <div className="max-w-xs">
+                        <label
+                            htmlFor="feedback-status"
+                            className="mb-2 block text-sm font-semibold text-slate-700"
+                        >
+                            Filter by status
+                        </label>
 
-                            <div className="relative">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.7"
-                                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                                    aria-hidden="true"
-                                >
-                                    <circle cx="11" cy="11" r="7" />
-                                    <path d="m16 16 4 4" />
-                                </svg>
-
-                                <input
-                                    id="feedback-search"
-                                    type="text"
-                                    value={search}
-                                    onChange={(event) =>
-                                        setSearch(event.target.value)
-                                    }
-                                    placeholder="Search project or message..."
-                                    className="w-full rounded-lg border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label
-                                htmlFor="feedback-status"
-                                className="mb-2 block text-sm font-semibold text-slate-700"
-                            >
-                                Filter by status
-                            </label>
-
-                            <select
-                                id="feedback-status"
-                                value={statusFilter}
-                                onChange={(event) =>
-                                    setStatusFilter(event.target.value)
-                                }
-                                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                            >
-                                <option value="All">All statuses</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Reviewed">Reviewed</option>
-                                <option value="Resolved">Resolved</option>
-                            </select>
-                        </div>
+                        <select
+                            id="feedback-status"
+                            value={statusFilter}
+                            onChange={(event) =>
+                                setStatusFilter(event.target.value)
+                            }
+                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                        >
+                            <option value="All">All statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Reviewed">Reviewed</option>
+                            <option value="Resolved">Resolved</option>
+                        </select>
                     </div>
 
-                    {(search || statusFilter !== 'All') && (
+                    {statusFilter !== 'All' && (
                         <button
                             type="button"
-                            onClick={() => {
-                                setSearch('');
-                                setStatusFilter('All');
-                            }}
+                            onClick={() => setStatusFilter('All')}
                             className="mt-4 text-xs font-semibold text-emerald-700 transition hover:text-emerald-900"
                         >
                             Clear all filters
@@ -293,9 +230,6 @@ export default function Feedback({ feedback = [] }) {
                             <h2 className="text-lg font-bold text-slate-900">
                                 Feedback History
                             </h2>
-                            <p className="mt-1 text-xs text-slate-500">
-                                Track the status of your submitted feedback.
-                            </p>
                         </div>
 
                         <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
@@ -381,24 +315,15 @@ export default function Feedback({ feedback = [] }) {
                             </div>
 
                             <h3 className="mt-4 font-semibold text-slate-800">
-                                {search || statusFilter !== 'All'
+                                {statusFilter !== 'All'
                                     ? 'No matching feedback'
                                     : 'No feedback submitted yet'}
                             </h3>
 
-                            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                                {search || statusFilter !== 'All'
-                                    ? 'Try changing your search or status filter.'
-                                    : 'You can submit feedback from a project details page. Your submissions will appear here.'}
-                            </p>
-
-                            {(search || statusFilter !== 'All') && (
+                            {statusFilter !== 'All' && (
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        setSearch('');
-                                        setStatusFilter('All');
-                                    }}
+                                    onClick={() => setStatusFilter('All')}
                                     className="mt-4 rounded-lg bg-emerald-700 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-emerald-800"
                                 >
                                     Clear Filters

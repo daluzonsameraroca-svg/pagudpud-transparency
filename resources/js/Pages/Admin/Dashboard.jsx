@@ -100,7 +100,6 @@ export default function Dashboard({
         {
             label: 'Total Users',
             value: totalUsers,
-            note: 'Registered accounts',
             icon: '♙',
             color: 'text-emerald-800',
             iconBg: 'bg-emerald-50',
@@ -108,7 +107,6 @@ export default function Dashboard({
         {
             label: 'Total Projects',
             value: totalProjects,
-            note: 'Recorded projects',
             icon: '▤',
             color: 'text-emerald-800',
             iconBg: 'bg-emerald-50',
@@ -116,7 +114,6 @@ export default function Dashboard({
         {
             label: 'Citizen Feedback',
             value: totalFeedback,
-            note: 'Submitted feedback',
             icon: '☷',
             color: 'text-teal-800',
             iconBg: 'bg-teal-50',
@@ -124,7 +121,6 @@ export default function Dashboard({
         {
             label: 'Administrative Posts',
             value: totalPosts,
-            note: 'Published records',
             icon: '▧',
             color: 'text-amber-800',
             iconBg: 'bg-amber-50',
@@ -132,7 +128,6 @@ export default function Dashboard({
         {
             label: 'Average Progress',
             value: `${averageProgress}%`,
-            note: 'Across all projects',
             icon: '↗',
             color: 'text-emerald-800',
             iconBg: 'bg-emerald-50',
@@ -142,25 +137,21 @@ export default function Dashboard({
     const managementLinks = [
         {
             title: 'Manage Users',
-            description: 'Manage system accounts and user roles.',
             href: '/admin/users',
             icon: '♙',
         },
         {
             title: 'Manage Projects',
-            description: 'Maintain official project information.',
             href: '/admin/projects',
             icon: '▤',
         },
         {
             title: 'Administrative Posts',
-            description: 'Publish and manage announcements.',
             href: '/admin/posts',
             icon: '▧',
         },
         {
             title: 'Citizen Feedback',
-            description: 'Review feedback submitted by citizens.',
             href: '/admin/feedback',
             icon: '☷',
         },
@@ -203,21 +194,10 @@ export default function Dashboard({
                 <header className="border-b border-slate-200 bg-white px-5 py-5 sm:px-7">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <div>
-                            <div className="mb-2 flex items-center gap-2 text-sm text-slate-500">
-                                <span>Home</span>
-                                <span>/</span>
-                                <span className="font-medium text-emerald-700">
-                                    Dashboard
-                                </span>
-                            </div>
-
                             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                                 Administrator Dashboard
                             </h1>
 
-                            <p className="mt-2 text-sm text-slate-600">
-                                Overview of users, projects, posts, and citizen feedback.
-                            </p>
                         </div>
 
                         <Link
@@ -236,9 +216,6 @@ export default function Dashboard({
                             <h2 className="text-lg font-bold text-slate-900">
                                 System Overview
                             </h2>
-                            <p className="mt-1 text-sm text-slate-600">
-                                Summary of the current system records.
-                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
@@ -263,9 +240,6 @@ export default function Dashboard({
                                         {card.value}
                                     </p>
 
-                                    <p className="mt-2 text-sm text-slate-500">
-                                        {card.note}
-                                    </p>
                                 </div>
                             ))}
                         </div>
@@ -298,9 +272,6 @@ export default function Dashboard({
                             <h2 className="text-lg font-bold text-slate-900">
                                 Project Analytics
                             </h2>
-                            <p className="mt-1 text-sm text-slate-600">
-                                Visual summaries of project status and implementation progress.
-                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
@@ -309,9 +280,6 @@ export default function Dashboard({
                                     <h3 className="text-base font-semibold text-slate-900">
                                         Project Status
                                     </h3>
-                                    <p className="mt-1 text-sm text-slate-600">
-                                        Distribution of recorded projects.
-                                    </p>
                                 </div>
 
                                 <div className="mt-4 h-[280px]">
@@ -369,9 +337,6 @@ export default function Dashboard({
                                     <h3 className="text-base font-semibold text-slate-900">
                                         Project Progress
                                     </h3>
-                                    <p className="mt-1 text-sm text-slate-600">
-                                        Current completion percentage per project.
-                                    </p>
                                 </div>
 
                                 <div className="mt-4 h-[280px]">
@@ -454,16 +419,13 @@ export default function Dashboard({
                                 <h2 className="text-lg font-bold text-slate-900">
                                     Recent Projects
                                 </h2>
-                                <p className="mt-1 text-sm text-slate-600">
-                                    A quick view of the recorded government projects.
-                                </p>
                             </div>
 
                             <Link
                                 href="/admin/projects"
                                 className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-900"
                             >
-                                Manage Projects →
+                                Manage Projects
                             </Link>
                         </div>
 
@@ -591,9 +553,6 @@ export default function Dashboard({
                                 <p className="text-base font-semibold text-slate-700">
                                     No projects available
                                 </p>
-                                <p className="mt-2 text-sm text-slate-500">
-                                    Project records will appear here when available.
-                                </p>
                             </div>
                         )}
                     </section>
@@ -603,9 +562,6 @@ export default function Dashboard({
                             <h2 className="text-lg font-bold text-slate-900">
                                 System Management
                             </h2>
-                            <p className="mt-1 text-sm text-slate-600">
-                                Open a section to manage its records.
-                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -620,18 +576,12 @@ export default function Dashboard({
                                             {item.icon}
                                         </span>
 
-                                        <span className="text-lg text-slate-300 transition group-hover:translate-x-1 group-hover:text-emerald-700">
-                                            →
-                                        </span>
                                     </div>
 
                                     <h3 className="mt-4 text-base font-semibold text-slate-900">
                                         {item.title}
                                     </h3>
 
-                                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                                        {item.description}
-                                    </p>
                                 </Link>
                             ))}
                         </div>

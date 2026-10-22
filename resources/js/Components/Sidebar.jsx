@@ -37,12 +37,7 @@ function Icon({ name, size = 20 }) {
             </>
         ),
         plus: <path d="M12 5v14M5 12h14" />,
-        logout: (
-            <>
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <path d="m16 17 5-5-5-5M21 12H9" />
-            </>
-        ),
+        logout: <path d="M5 21h14M7 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M11 12h.01" />,
         menu: <path d="M4 6h16M4 12h16M4 18h16" />,
         close: <path d="m18 6-12 12M6 6l12 12" />,
         building: (
@@ -70,18 +65,12 @@ function Icon({ name, size = 20 }) {
     );
 }
 
-const roleNames = {
-    citizen: 'Citizen',
-    engineering: 'Municipal Engineering Office',
-    admin: 'Administrator',
-};
-
 const navigationByRole = {
     citizen: [
         {
             section: 'MAIN MENU',
             items: [
-                { label: 'Dashboard', href: '/citizen/dashboard', icon: 'dashboard' },
+                { label: 'Home', href: '/citizen/dashboard', icon: 'dashboard' },
                 { label: 'Projects', href: '/citizen/projects', icon: 'projects' },
             ],
         },
@@ -97,7 +86,7 @@ const navigationByRole = {
         {
             section: 'MAIN MENU',
             items: [
-                { label: 'Dashboard', href: '/engineering/dashboard', icon: 'dashboard' },
+                { label: 'Home', href: '/engineering/dashboard', icon: 'dashboard' },
                 { label: 'Projects', href: '/engineering/projects', icon: 'projects' },
                 { label: 'Add Project', href: '/engineering/projects/create', icon: 'plus' },
             ],
@@ -107,7 +96,7 @@ const navigationByRole = {
         {
             section: 'MAIN MENU',
             items: [
-                { label: 'Dashboard', href: '/admin/dashboard', icon: 'dashboard' },
+                { label: 'Home', href: '/admin/dashboard', icon: 'dashboard' },
             ],
         },
         {
@@ -166,10 +155,9 @@ export default function Sidebar({
     const pathname = url.split('?')[0];
     const user = props.auth?.user;
     const navigation = navigationByRole[role] || navigationByRole.citizen;
+    const feedbackProjects = props.citizenFeedbackProjects || [];
     const displayName = user?.name || 'User';
     const email = user?.email || '';
-    const roleName = roleNames[role] || 'Citizen';
-
     const toggleSidebar = () => {
         setIsDesktopCollapsed((current) => !current);
     };
@@ -185,52 +173,49 @@ export default function Sidebar({
                 type="button"
                 onClick={() => setIsMobileOpen(true)}
                 aria-label="Open navigation menu"
-                className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-100 bg-white text-emerald-800 shadow-sm transition hover:bg-emerald-50 lg:hidden"
+                className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-100 bg-white text-emerald-800 shadow-sm transition duration-200 hover:scale-105 hover:bg-emerald-50 motion-reduce:transition-none motion-reduce:hover:scale-100 lg:hidden"
             >
                 <Icon name="menu" size={22} />
             </button>
 
             {/* Mobile backdrop */}
-            {isMobileOpen && (
-                <button
-                    type="button"
-                    aria-label="Close navigation menu"
-                    onClick={() => setIsMobileOpen(false)}
-                    className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
-                />
-            )}
+            <button
+                type="button"
+                aria-label="Close navigation menu"
+                aria-hidden={!isMobileOpen}
+                tabIndex={isMobileOpen ? 0 : -1}
+                onClick={() => setIsMobileOpen(false)}
+                className={`fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] transition-opacity duration-300 motion-reduce:transition-none lg:hidden ${
+                    isMobileOpen
+                        ? 'opacity-100'
+                        : 'pointer-events-none opacity-0'
+                }`}
+            />
 
             <aside
-                className={`fixed inset-y-0 left-0 z-50 flex max-w-[85vw] flex-col border-r border-emerald-100 bg-white shadow-xl transition-[width,transform] duration-300 ease-in-out lg:max-w-none lg:translate-x-0 lg:shadow-sm ${
-                    isMobileOpen
-                        ? 'w-72 translate-x-0'
-                        : `-translate-x-full ${
-                              isDesktopCollapsed ? 'lg:w-20' : 'lg:w-64'
-                          }`
-                }`}
+                className={`fixed inset-y-0 left-0 z-50 flex max-w-[85vw] flex-col border-r border-emerald-100 bg-white shadow-xl transition-[width,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:max-w-none lg:translate-x-0 lg:shadow-sm ${
+                    isMobileOpen ? 'w-72 translate-x-0' : '-translate-x-full'
+                } ${isDesktopCollapsed ? 'lg:w-20' : 'lg:w-64'}`}
             >
-                {/* Logo is the only desktop expand/collapse toggle */}
                 <div
                     className={`flex min-h-[84px] shrink-0 items-center border-b border-emerald-100 ${
                         isDesktopCollapsed
-                            ? 'justify-center px-2'
+                            ? 'justify-center px-2 lg:flex-col lg:gap-1 lg:py-2'
                             : 'px-4'
                     }`}
                 >
-                    <button
-                        type="button"
-                        onClick={toggleSidebar}
-                        title={isDesktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                        aria-label={isDesktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                        className={`group flex min-w-0 items-center rounded-xl p-2 transition-colors hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
+                    <div
+                        className={`flex min-w-0 items-center p-2 ${
                             isDesktopCollapsed
                                 ? 'justify-center'
-                                : 'w-full gap-3'
+                                : 'flex-1 gap-3'
                         }`}
                     >
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-700 text-white shadow-sm transition-colors group-hover:bg-emerald-800">
-                            <Icon name="building" size={25} />
-                        </span>
+                        <img
+                            src="/images/pagudpud-logo.png.png"
+                            alt=""
+                            className="h-11 w-11 shrink-0 object-contain"
+                        />
 
                         {!isDesktopCollapsed && (
                             <span className="min-w-0 text-left">
@@ -242,6 +227,16 @@ export default function Sidebar({
                                 </span>
                             </span>
                         )}
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={toggleSidebar}
+                        title={isDesktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                        aria-label={isDesktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                        className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-emerald-50 hover:text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 lg:flex"
+                    >
+                        <Icon name="menu" size={18} />
                     </button>
 
                     {/* Mobile drawer close button */}
@@ -255,74 +250,93 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                {/* Role label */}
-                <div
-                    className={`shrink-0 py-4 ${
-                        isDesktopCollapsed ? 'px-2 text-center' : 'px-5'
-                    }`}
-                    title={isDesktopCollapsed ? roleName : undefined}
-                >
-                    {isDesktopCollapsed ? (
-                        <div className="mx-auto h-1 w-8 rounded-full bg-emerald-100" />
-                    ) : (
-                        <>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
-                                Signed in as
-                            </p>
-                            <p className="mt-1 text-xs font-semibold text-emerald-800">
-                                {roleName}
-                            </p>
-                        </>
-                    )}
-                </div>
-
                 {/* Navigation */}
                 <nav className="flex-1 space-y-5 overflow-y-auto overflow-x-hidden px-3 pb-5">
                     {navigation.map((group) => (
                         <div key={group.section}>
-                            {!isDesktopCollapsed && (
-                                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                            <p
+                                aria-hidden={isDesktopCollapsed}
+                                className={`overflow-hidden whitespace-nowrap px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400 transition-[max-height,margin,opacity,transform] duration-300 ease-in-out motion-reduce:transition-none ${
+                                    isDesktopCollapsed
+                                        ? 'mb-0 max-h-0 -translate-x-2 opacity-0'
+                                        : 'mb-2 max-h-6 translate-x-0 opacity-100'
+                                }`}
+                            >
                                     {group.section}
-                                </p>
-                            )}
+                            </p>
 
                             <div className="space-y-1">
                                 {group.items.map((item) => {
                                     const active = isActiveRoute(item.href, pathname);
 
                                     return (
-                                        <Link
-                                            key={item.href}
-                                            href={item.href}
-                                            title={isDesktopCollapsed ? item.label : undefined}
-                                            onClick={() => setIsMobileOpen(false)}
-                                            aria-current={active ? 'page' : undefined}
-                                            className={`group flex min-h-11 items-center rounded-xl text-sm font-medium transition-colors ${
-                                                isDesktopCollapsed
-                                                    ? 'justify-center px-2'
-                                                    : 'gap-3 px-3'
-                                            } ${
-                                                active
-                                                    ? 'bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-100'
-                                                    : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-800'
-                                            }`}
-                                        >
-                                            <span
-                                                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                                        <div key={item.href}>
+                                            <Link
+                                                href={item.href}
+                                                title={isDesktopCollapsed ? item.label : undefined}
+                                                onClick={() => setIsMobileOpen(false)}
+                                                aria-current={active ? 'page' : undefined}
+                                                className={`group flex min-h-11 items-center rounded-xl text-sm font-medium transition-[background-color,color,transform] duration-200 ease-out motion-reduce:transition-none ${
+                                                    isDesktopCollapsed
+                                                        ? 'justify-center px-2'
+                                                        : 'gap-3 px-3 hover:translate-x-1 motion-reduce:hover:translate-x-0'
+                                                } ${
                                                     active
-                                                        ? 'bg-emerald-700 text-white shadow-sm'
-                                                        : 'text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-700'
+                                                        ? 'bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-100'
+                                                        : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-800'
                                                 }`}
                                             >
-                                                <Icon name={item.icon} size={19} />
-                                            </span>
+                                                <span
+                                                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-[background-color,color,transform] duration-200 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${
+                                                        active
+                                                            ? 'bg-emerald-700 text-white shadow-sm'
+                                                            : 'text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-700'
+                                                    }`}
+                                                >
+                                                    <Icon name={item.icon} size={19} />
+                                                </span>
 
-                                            {!isDesktopCollapsed && (
-                                                <span className="truncate">
+                                                <span
+                                                    aria-hidden={isDesktopCollapsed}
+                                                    className={`overflow-hidden whitespace-nowrap transition-[max-width,opacity,transform] duration-300 ease-in-out motion-reduce:transition-none ${
+                                                        isDesktopCollapsed
+                                                            ? 'max-w-0 -translate-x-2 opacity-0'
+                                                            : 'max-w-40 translate-x-0 opacity-100'
+                                                    }`}
+                                                >
                                                     {item.label}
                                                 </span>
-                                            )}
-                                        </Link>
+                                            </Link>
+
+                                            {role === 'citizen' &&
+                                                item.href === '/citizen/feedback' &&
+                                                !isDesktopCollapsed &&
+                                                feedbackProjects.length > 0 && (
+                                                    <div className="ml-8 mt-1 space-y-1 border-l border-emerald-100 pl-4">
+                                                        {feedbackProjects.map((project) => {
+                                                            const projectHref = `/citizen/projects/${project.id}`;
+                                                            const projectIsActive = pathname === projectHref;
+
+                                                            return (
+                                                                <Link
+                                                                    key={project.id}
+                                                                    href={projectHref}
+                                                                    onClick={() => setIsMobileOpen(false)}
+                                                                    aria-current={projectIsActive ? 'page' : undefined}
+                                                                    className={`block truncate rounded-lg px-3 py-2 text-xs transition-colors ${
+                                                                        projectIsActive
+                                                                            ? 'bg-emerald-50 font-semibold text-emerald-800'
+                                                                            : 'text-slate-500 hover:bg-slate-50 hover:text-emerald-800'
+                                                                    }`}
+                                                                    title={project.project_name}
+                                                                >
+                                                                    {project.project_name}
+                                                                </Link>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )}
+                                        </div>
                                     );
                                 })}
                             </div>
@@ -332,35 +346,43 @@ export default function Sidebar({
 
                 {/* User profile and logout */}
                 <div className="shrink-0 border-t border-emerald-100 p-3">
-                    <div
-                        className={`mb-2 flex items-center rounded-xl ${
+                    <Link
+                        href="/profile"
+                        onClick={() => setIsMobileOpen(false)}
+                        aria-current={pathname === '/profile' ? 'page' : undefined}
+                        className={`mb-2 flex items-center rounded-xl transition-[background-color,transform] duration-200 motion-reduce:transition-none ${
                             isDesktopCollapsed
                                 ? 'justify-center p-1'
-                                : 'gap-3 px-2 py-2'
+                                : 'gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2'
                         }`}
-                        title={isDesktopCollapsed ? displayName : undefined}
+                        title={isDesktopCollapsed ? 'View profile' : undefined}
                     >
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800 ring-1 ring-emerald-200">
                             {getInitials(displayName)}
                         </span>
 
-                        {!isDesktopCollapsed && (
-                            <span className="min-w-0 flex-1">
+                        <span
+                            aria-hidden={isDesktopCollapsed}
+                            className={`min-w-0 flex-1 overflow-hidden transition-[max-width,opacity,transform] duration-300 ease-in-out motion-reduce:transition-none ${
+                                isDesktopCollapsed
+                                    ? 'max-w-0 -translate-x-2 opacity-0'
+                                    : 'max-w-40 translate-x-0 opacity-100'
+                            }`}
+                        >
                                 <span className="block truncate text-sm font-semibold text-slate-800">
                                     {displayName}
                                 </span>
                                 <span className="block truncate text-xs text-slate-500">
                                     {email}
                                 </span>
-                            </span>
-                        )}
-                    </div>
+                        </span>
+                    </Link>
 
                     <button
                         type="button"
                         onClick={handleLogout}
                         title={isDesktopCollapsed ? 'Log out' : undefined}
-                        className={`flex min-h-11 w-full items-center rounded-xl text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-700 ${
+                        className={`flex min-h-11 w-full items-center rounded-xl text-sm font-medium text-slate-600 transition-[background-color,color,transform] duration-200 hover:bg-red-50 hover:text-red-700 motion-reduce:transition-none ${
                             isDesktopCollapsed
                                 ? 'justify-center px-2'
                                 : 'gap-3 px-3'
@@ -370,14 +392,28 @@ export default function Sidebar({
                             <Icon name="logout" size={19} />
                         </span>
 
-                        {!isDesktopCollapsed && <span>Log out</span>}
+                        <span
+                            aria-hidden={isDesktopCollapsed}
+                            className={`overflow-hidden whitespace-nowrap transition-[max-width,opacity,transform] duration-300 ease-in-out motion-reduce:transition-none ${
+                                isDesktopCollapsed
+                                    ? 'max-w-0 -translate-x-2 opacity-0'
+                                    : 'max-w-20 translate-x-0 opacity-100'
+                            }`}
+                        >
+                            Log out
+                        </span>
                     </button>
 
-                    {!isDesktopCollapsed && (
-                        <p className="mt-3 text-center text-[10px] text-slate-400">
+                    <p
+                        aria-hidden={isDesktopCollapsed}
+                        className={`overflow-hidden whitespace-nowrap text-center text-[10px] text-slate-400 transition-[max-height,margin,opacity,transform] duration-300 ease-in-out motion-reduce:transition-none ${
+                            isDesktopCollapsed
+                                ? 'mt-0 max-h-0 -translate-y-1 opacity-0'
+                                : 'mt-3 max-h-5 translate-y-0 opacity-100'
+                        }`}
+                    >
                             Pagudpud Transparency
-                        </p>
-                    )}
+                    </p>
                 </div>
             </aside>
         </>

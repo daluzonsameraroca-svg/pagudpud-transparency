@@ -89,28 +89,24 @@ export default function Feedback({ feedback = [] }) {
         {
             label: 'Total Feedback',
             value: counts.total,
-            description: 'All citizen submissions',
             icon: '▤',
             iconClass: 'bg-emerald-50 text-emerald-700',
         },
         {
             label: 'Pending',
             value: counts.pending,
-            description: 'Waiting for review',
             icon: '◷',
             iconClass: 'bg-amber-50 text-amber-700',
         },
         {
             label: 'Reviewed',
             value: counts.reviewed,
-            description: 'Currently reviewed',
             icon: '◉',
             iconClass: 'bg-blue-50 text-blue-700',
         },
         {
             label: 'Resolved',
             value: counts.resolved,
-            description: 'Marked as resolved',
             icon: '✓',
             iconClass: 'bg-emerald-100 text-emerald-800',
         },
@@ -126,23 +122,11 @@ export default function Feedback({ feedback = [] }) {
             <div className="min-h-screen bg-slate-50 text-slate-800">
                 <header className="border-b border-slate-200 bg-white px-5 py-6 sm:px-8">
                     <div className="mx-auto max-w-[1500px]">
-                        <div className="mb-2 flex items-center gap-2 text-sm text-slate-500">
-                            <span>Administrator</span>
-                            <span>/</span>
-                            <span className="font-semibold text-emerald-700">
-                                Public Feedback
-                            </span>
-                        </div>
-
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <div>
                                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                     Public Feedback
                                 </h1>
-                                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                                    Review citizen concerns and manage feedback
-                                    about local government projects.
-                                </p>
                             </div>
 
                             <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
@@ -171,9 +155,6 @@ export default function Feedback({ feedback = [] }) {
                                         <p className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
                                             {card.value}
                                         </p>
-                                        <p className="mt-2 text-sm text-slate-500">
-                                            {card.description}
-                                        </p>
                                     </div>
 
                                     <div
@@ -192,9 +173,6 @@ export default function Feedback({ feedback = [] }) {
                                 <h2 className="text-xl font-bold text-slate-900">
                                     Citizen Submissions
                                 </h2>
-                                <p className="mt-2 text-sm leading-6 text-slate-600">
-                                    Review project feedback and update its status.
-                                </p>
                             </div>
 
                             <div className="flex flex-col gap-3 sm:flex-row">
@@ -238,11 +216,6 @@ export default function Feedback({ feedback = [] }) {
                                         : 'No matching feedback'}
                                 </h3>
 
-                                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
-                                    {feedback.length === 0
-                                        ? 'Citizen submissions will appear here when received.'
-                                        : 'Try another search term or select a different status.'}
-                                </p>
 
                                 {(search || statusFilter !== 'All') && (
                                     <button

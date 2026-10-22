@@ -186,22 +186,10 @@ export default function Projects({ projects = [] }) {
                 <header className="border-b border-slate-200 bg-white px-5 py-5 sm:px-8">
                     <div className="mx-auto flex max-w-[1500px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <div className="mb-2 flex items-center gap-2 text-xs text-slate-500">
-                                <span>Engineering Office</span>
-                                <span>/</span>
-                                <span className="font-semibold text-emerald-700">
-                                    Projects
-                                </span>
-                            </div>
-
                             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                 Projects
                             </h1>
 
-                            <p className="mt-2 text-sm leading-6 text-slate-500">
-                                Manage project records and update official
-                                status and progress.
-                            </p>
                         </div>
 
                         <Link
@@ -220,9 +208,6 @@ export default function Projects({ projects = [] }) {
                             <h2 className="text-base font-bold text-slate-900">
                                 Project Overview
                             </h2>
-                            <p className="mt-1 text-sm text-slate-500">
-                                A summary of your recorded government projects.
-                            </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -278,9 +263,6 @@ export default function Projects({ projects = [] }) {
                                 <h2 className="text-base font-bold text-slate-900">
                                     Project Records
                                 </h2>
-                                <p className="mt-1 text-sm text-slate-500">
-                                    Search projects and filter them by status.
-                                </p>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(220px,1fr)_190px] lg:w-[560px]">
@@ -516,11 +498,6 @@ export default function Projects({ projects = [] }) {
                                                     <h4 className="text-base font-bold text-slate-900">
                                                         Update Project Progress
                                                     </h4>
-                                                    <p className="mt-1 text-sm leading-6 text-slate-500">
-                                                        Record the latest
-                                                        official status and
-                                                        implementation progress.
-                                                    </p>
                                                 </div>
 
                                                 <form
@@ -699,11 +676,6 @@ export default function Projects({ projects = [] }) {
                                         : 'No matching projects'}
                                 </h3>
 
-                                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                                    {projects.length === 0
-                                        ? 'There are currently no project records. Add a project to get started.'
-                                        : 'Try another search term or change the status filter.'}
-                                </p>
 
                                 {projects.length === 0 ? (
                                     <Link

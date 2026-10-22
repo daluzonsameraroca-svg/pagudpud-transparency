@@ -80,6 +80,7 @@ class EngineeringProjectControllerTest extends TestCase
 
         $response->assertInertia(fn ($page) => $page
             ->component('Citizen/Dashboard')
+            ->where('isNewCitizen', false)
             ->has('notifications', 1)
             ->where('unreadNotificationCount', 1)
             ->where('notifications.0.data.project_name', 'Road Improvement')

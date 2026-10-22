@@ -1,5 +1,4 @@
-import { Link, router, usePage, usePoll } from '@inertiajs/react';
-import { useState } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     PieChart,
     Pie,
@@ -61,7 +60,6 @@ function Icon({ name, className = 'h-4 w-4' }) {
                 <path d="m16 16 4 4" />
             </>
         ),
-        arrow: <path d="M5 12h14m-6-6 6 6-6 6" />,
         message: (
             <path d="M21 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-4 2v-6a7.5 7.5 0 1 1 18-3.5Z" />
         ),
@@ -90,7 +88,7 @@ function Icon({ name, className = 'h-4 w-4' }) {
     );
 }
 
-function StatCard({ label, value, icon, color, note }) {
+function StatCard({ label, value, icon, color }) {
     return (
         <div className="rounded-lg border border-slate-200 bg-white px-4 py-3.5 shadow-sm">
             <div className="flex items-start justify-between gap-3">
@@ -101,11 +99,6 @@ function StatCard({ label, value, icon, color, note }) {
                     <p className="mt-1.5 text-[25px] font-semibold leading-7 tracking-tight text-slate-800">
                         {value}
                     </p>
-                    {note && (
-                        <p className="mt-1.5 text-[10px] text-slate-400">
-                            {note}
-                        </p>
-                    )}
                 </div>
 
                 <div
@@ -119,18 +112,13 @@ function StatCard({ label, value, icon, color, note }) {
     );
 }
 
-function SectionTitle({ title, description, action }) {
+function SectionTitle({ title, action }) {
     return (
         <div className="mb-3 flex items-start justify-between gap-3">
             <div>
                 <h2 className="text-[13px] font-semibold text-slate-800">
                     {title}
                 </h2>
-                {description && (
-                    <p className="mt-1 text-[10px] leading-4 text-slate-500">
-                        {description}
-                    </p>
-                )}
             </div>
             {action}
         </div>
@@ -158,42 +146,10 @@ function StatusBadge({ status }) {
 
 export default function Dashboard({
     projects = [],
-    notifications = [],
-    unreadNotificationCount = 0,
+    isNewCitizen = false,
 }) {
-    usePoll(30000, {
-        only: ['notifications', 'unreadNotificationCount'],
-    });
-
     const { props } = usePage();
-    const user = props.auth?.user;
-    const [notificationsOpen, setNotificationsOpen] = useState(false);
-
-    const openNotification = (event, notification) => {
-        event.preventDefault();
-
-        const destination =
-            notification.data.url ??
-            `/citizen/projects/${notification.data.project_id}`;
-
-        setNotificationsOpen(false);
-
-        if (notification.read_at) {
-            router.visit(destination);
-
-            return;
-        }
-
-        router.patch(
-            `/citizen/notifications/${notification.id}/read`,
-            {},
-            {
-                preserveScroll: true,
-                onSuccess: () => router.visit(destination),
-            },
-        );
-    };
-
+    const name = props.auth?.user?.name?.trim().split(/\s+/)[0] || 'there';
     const totalProjects = projects.length;
 
     const ongoingProjects = projects.filter(
@@ -260,166 +216,18 @@ export default function Dashboard({
     return (
         <DashboardLayout role="citizen">
             <div className="min-h-screen bg-slate-50">
-                <header className="flex h-12 items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7">
-                    <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                        <span>Pagudpud Transparency</span>
-                        <span>/</span>
-                        <span className="font-medium text-emerald-800">
-                            Dashboard
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <button
-                                type="button"
-                                aria-label={`Notifications${unreadNotificationCount ? `, ${unreadNotificationCount} unread` : ''}`}
-                                aria-controls="citizen-notifications-menu"
-                                aria-expanded={notificationsOpen}
-                                onClick={() =>
-                                    setNotificationsOpen((open) => !open)
-                                }
-                                className="relative flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-700"
-                            >
-                                <Icon name="bell" />
-                                {unreadNotificationCount > 0 && (
-                                    <span
-                                        aria-label={`${unreadNotificationCount} unread notifications`}
-                                        className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-600"
-                                    />
-                                )}
-                            </button>
-
-                            {notificationsOpen && (
-                                <section
-                                    id="citizen-notifications-menu"
-                                    aria-label="Recent notifications"
-                                    className="absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl"
-                                >
-                                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                                        <h2 className="text-sm font-semibold text-slate-800">
-                                            Notifications
-                                        </h2>
-                                        <span className="text-xs text-slate-500">
-                                            {unreadNotificationCount} unread
-                                        </span>
-                                    </div>
-
-                                    {notifications.length === 0 ? (
-                                        <p className="px-4 py-6 text-center text-sm text-slate-500">
-                                            You're all caught up.
-                                        </p>
-                                    ) : (
-                                        <ul className="max-h-96 divide-y divide-slate-100 overflow-y-auto">
-                                            {notifications.map(
-                                                (notification) => (
-                                                    <li
-                                                        key={notification.id}
-                                                        className={`px-4 py-3 ${
-                                                            notification.read_at
-                                                                ? 'bg-white'
-                                                                : 'bg-emerald-50/60'
-                                                        }`}
-                                                    >
-                                                        <div className="flex items-start justify-between gap-3">
-                                                            <div>
-                                                                <Link
-                                                                    href={
-                                                                        notification
-                                                                            .data
-                                                                            .url ??
-                                                                        `/citizen/projects/${notification.data.project_id}`
-                                                                    }
-                                                                    onClick={(event) =>
-                                                                        openNotification(
-                                                                        event,
-                                                                        notification,
-                                                                        )
-                                                                    }
-                                                                    className="text-sm font-medium text-slate-800 hover:text-emerald-700"
-                                                                >
-                                                                    {notification.data.title ??
-                                                                        notification
-                                                                            .data
-                                                                            .project_name}
-                                                                </Link>
-                                                                <p className="mt-1 text-xs leading-5 text-slate-600">
-                                                                    {notification.data.message}
-                                                                </p>
-                                                                {notification.data.details && (
-                                                                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                                                                        {
-                                                                            notification
-                                                                                .data
-                                                                                .details
-                                                                        }
-                                                                    </p>
-                                                                )}
-                                                                <time
-                                                                    dateTime={
-                                                                        notification.created_at
-                                                                    }
-                                                                    className="mt-1 block text-[10px] text-slate-400"
-                                                                >
-                                                                    {new Date(
-                                                                        notification.created_at,
-                                                                    ).toLocaleString()}
-                                                                </time>
-                                                            </div>
-
-                                                            {!notification.read_at && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() =>
-                                                                        router.patch(
-                                                                            `/citizen/notifications/${notification.id}/read`,
-                                                                            {},
-                                                                            {
-                                                                                preserveScroll: true,
-                                                                                preserveState: true,
-                                                                            },
-                                                                        )
-                                                                    }
-                                                                    className="shrink-0 text-[10px] font-medium text-emerald-700 hover:text-emerald-900"
-                                                                >
-                                                                    Mark read
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </li>
-                                                ),
-                                            )}
-                                        </ul>
-                                    )}
-                                </section>
-                            )}
-                        </div>
-
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-semibold text-emerald-800">
-                            {(user?.name || 'Citizen')
-                                .trim()
-                                .charAt(0)
-                                .toUpperCase()}
-                        </div>
-                    </div>
-                </header>
-
                 <main className="space-y-5 px-5 py-5 sm:px-7">
                     <section>
                         <div className="flex flex-wrap items-center gap-2">
                             <h1 className="text-[19px] font-semibold tracking-tight text-slate-800">
-                                Citizen Dashboard
+                                {isNewCitizen
+                                    ? `Welcome, ${name}!`
+                                    : `Hello, ${name}!`}
                             </h1>
 
                             
                         </div>
 
-                        <p className="mt-1 text-[11px] text-slate-500">
-                            Monitor local government projects and stay informed
-                            about project progress.
-                        </p>
-
-                        
                     </section>
 
                     <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -428,7 +236,6 @@ export default function Dashboard({
                             value={totalProjects}
                             icon="projects"
                             color="#059669"
-                            note="Projects in the register"
                         />
 
                         <StatCard
@@ -436,7 +243,6 @@ export default function Dashboard({
                             value={ongoingProjects}
                             icon="ongoing"
                             color="#059669"
-                            note="Currently in implementation"
                         />
 
                         <StatCard
@@ -444,7 +250,6 @@ export default function Dashboard({
                             value={completedProjects}
                             icon="completed"
                             color="#047857"
-                            note="Marked as completed"
                         />
 
                         <StatCard
@@ -452,7 +257,6 @@ export default function Dashboard({
                             value={`${averageProgress}%`}
                             icon="chart"
                             color="#d97706"
-                            note="Across all listed projects"
                         />
                     </section>
 
@@ -460,7 +264,6 @@ export default function Dashboard({
                         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
                             <SectionTitle
                                 title="Project Status"
-                                description="Distribution of current project statuses"
                             />
 
                             <div className="h-[220px]">
@@ -519,7 +322,6 @@ export default function Dashboard({
                         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
                             <SectionTitle
                                 title="Project Progress"
-                                description="Current progress of local government projects"
                             />
 
                             <div className="h-[220px]">
@@ -605,9 +407,6 @@ export default function Dashboard({
                                 <h2 className="text-[13px] font-semibold text-slate-800">
                                     Recent Projects
                                 </h2>
-                                <p className="mt-1 text-[10px] text-slate-500">
-                                    Recently added government projects
-                                </p>
                             </div>
 
                             <Link
@@ -615,7 +414,6 @@ export default function Dashboard({
                                 className="flex items-center gap-1 text-[10px] font-medium text-emerald-700 hover:text-emerald-900"
                             >
                                 View all
-                                <Icon name="arrow" className="h-3 w-3" />
                             </Link>
                         </div>
 
@@ -727,7 +525,6 @@ export default function Dashboard({
                     <section>
                         <SectionTitle
                             title="Quick Actions"
-                            description="Quick access to common citizen activities"
                         />
 
                         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -743,10 +540,6 @@ export default function Dashboard({
                                     <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-emerald-800">
                                         Browse Projects
                                     </h3>
-                                    <p className="mt-1 text-[10px] leading-4 text-slate-500">
-                                        Search and view local government
-                                        projects.
-                                    </p>
                                 </div>
                             </Link>
 
@@ -762,10 +555,6 @@ export default function Dashboard({
                                     <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-emerald-800">
                                         Administrative Posts
                                     </h3>
-                                    <p className="mt-1 text-[10px] leading-4 text-slate-500">
-                                        Read official announcements and
-                                        updates.
-                                    </p>
                                 </div>
                             </Link>
 
@@ -781,9 +570,6 @@ export default function Dashboard({
                                     <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-emerald-800">
                                         Submit Feedback
                                     </h3>
-                                    <p className="mt-1 text-[10px] leading-4 text-slate-500">
-                                        Share feedback about a project.
-                                    </p>
                                 </div>
                             </Link>
                         </div>

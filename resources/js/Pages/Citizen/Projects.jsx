@@ -13,7 +13,6 @@ function Icon({ name, className = 'h-4 w-4' }) {
         folder: (
             <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
         ),
-        arrow: <path d="M5 12h14m-6-6 6 6-6 6" />,
         filter: (
             <>
                 <path d="M4 7h16M7 12h10m-7 5h4" />
@@ -146,22 +145,7 @@ export default function Projects({ projects = [], search = '' }) {
     return (
         <DashboardLayout role="citizen">
             <div className="min-h-screen bg-slate-50">
-                <header className="flex h-12 items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-7">
-                    <div className="flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
-                        <span>Pagudpud Transparency</span>
-                        <span>/</span>
-                        <Link
-                            href="/citizen/dashboard"
-                            className="transition hover:text-emerald-700"
-                        >
-                            Dashboard
-                        </Link>
-                        <span>/</span>
-                        <span className="font-medium text-emerald-800">
-                            Projects
-                        </span>
-                    </div>
-
+                <header className="flex h-12 items-center justify-end border-b border-slate-200 bg-white px-5 sm:px-7">
                     <span className="hidden text-[10px] text-slate-500 sm:inline">
                         Public Project Records
                     </span>
@@ -173,16 +157,7 @@ export default function Projects({ projects = [], search = '' }) {
                             Government Projects
                         </h1>
 
-                        <p className="mt-1 text-[11px] text-slate-500">
-                            View and monitor local government projects in
-                            Pagudpud, Ilocos Norte.
-                        </p>
                     </section>
-
-                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[10px] leading-4 text-emerald-900">
-                        Project information and official progress updates are
-                        provided by the responsible municipal office.
-                    </div>
 
                     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
                         <div className="mb-3 flex items-center gap-2">
@@ -290,11 +265,6 @@ export default function Projects({ projects = [], search = '' }) {
                                 <h3 className="mt-3 text-[12px] font-semibold text-slate-800">
                                     No projects found
                                 </h3>
-
-                                <p className="mx-auto mt-1 max-w-sm text-[10px] leading-5 text-slate-500">
-                                    Try another project name or location, or
-                                    clear your filters to view all projects.
-                                </p>
 
                                 {(searchTerm || statusFilter) && (
                                     <button
@@ -417,10 +387,6 @@ export default function Projects({ projects = [], search = '' }) {
                                                         >
                                                             View details
 
-                                                            <Icon
-                                                                name="arrow"
-                                                                className="h-3 w-3"
-                                                            />
                                                         </Link>
                                                     </td>
                                                 </tr>

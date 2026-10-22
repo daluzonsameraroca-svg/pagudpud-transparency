@@ -41,61 +41,21 @@ export default function CreateProject() {
                     <div className="mx-auto flex max-w-[1200px] items-start gap-3">
                         <Link
                             href="/engineering/projects"
-                            aria-label="Back to projects"
-                            className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-lg text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+                            className="mt-1 shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
                         >
-                            ←
+                            Back
                         </Link>
 
                         <div>
-                            <div className="mb-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                                <Link
-                                    href="/engineering/dashboard"
-                                    className="transition hover:text-emerald-700"
-                                >
-                                    Engineering Office
-                                </Link>
-                                <span>/</span>
-                                <Link
-                                    href="/engineering/projects"
-                                    className="transition hover:text-emerald-700"
-                                >
-                                    Projects
-                                </Link>
-                                <span>/</span>
-                                <span className="font-medium text-emerald-700">
-                                    Add Project
-                                </span>
-                            </div>
-
                             <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
                                 Add New Project
                             </h1>
 
-                            <p className="mt-1 text-sm text-slate-500">
-                                Create an official record for a local government project.
-                            </p>
                         </div>
                     </div>
                 </header>
 
                 <main className="mx-auto max-w-[1200px] px-5 py-6 sm:px-8">
-                    <div className="mb-5 flex items-start gap-3 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3.5">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                            i
-                        </span>
-
-                        <div>
-                            <p className="text-xs font-semibold text-emerald-900">
-                                Before creating the record
-                            </p>
-                            <p className="mt-1 text-xs leading-5 text-emerald-800">
-                                Enter accurate project details, budget, location, and implementation dates.
-                                These details will be used for project monitoring and public transparency.
-                            </p>
-                        </div>
-                    </div>
-
                     <form onSubmit={submit} className="space-y-5">
                         <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                             <div className="border-b border-slate-100 px-4 py-4 sm:px-5">
@@ -108,9 +68,6 @@ export default function CreateProject() {
                                         <h2 className="text-sm font-semibold text-slate-900">
                                             Project Information
                                         </h2>
-                                        <p className="mt-1 text-xs text-slate-500">
-                                            Basic details and project scope.
-                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -215,9 +172,6 @@ export default function CreateProject() {
                                         <h2 className="text-sm font-semibold text-slate-900">
                                             Project Schedule
                                         </h2>
-                                        <p className="mt-1 text-xs text-slate-500">
-                                            Set the expected project dates.
-                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -273,9 +227,6 @@ export default function CreateProject() {
                                         <h2 className="text-sm font-semibold text-slate-900">
                                             Initial Project Status
                                         </h2>
-                                        <p className="mt-1 text-xs text-slate-500">
-                                            Define the starting status and completion percentage.
-                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -311,9 +262,6 @@ export default function CreateProject() {
                                             >
                                                 Initial Progress
                                             </label>
-                                            <p className="mt-1 text-[11px] leading-5 text-slate-500">
-                                                Set the project's current completion percentage.
-                                            </p>
                                         </div>
 
                                         <span className="shrink-0 rounded-lg bg-emerald-100 px-3 py-1.5 text-sm font-bold text-emerald-800">
@@ -349,11 +297,6 @@ export default function CreateProject() {
                         </section>
 
                         <div className="flex flex-col-reverse gap-3 rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
-                            <p className="text-[11px] leading-5 text-slate-500">
-                                Fields marked with{' '}
-                                <span className="font-semibold text-red-500">*</span>{' '}
-                                are required.
-                            </p>
 
                             <div className="flex flex-col-reverse gap-2 sm:flex-row">
                                 <Link

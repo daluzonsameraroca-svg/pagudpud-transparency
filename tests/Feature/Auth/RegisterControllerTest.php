@@ -16,19 +16,29 @@ class RegisterControllerTest extends TestCase
             'name' => 'Test Citizen',
             'email' => '  CITIZEN@example.com ',
             'phone_number' => '555-0100',
-            'address' => 'Pagudpud',
+            'barangay' => 'Aggasi',
+            'sitio' => 'Sitio Uno',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
 
         $response->assertInertia(fn ($page) => $page
             ->component('Citizen/Dashboard')
+            ->where('isNewCitizen', true)
         );
+
+        $this->get('/citizen/dashboard')
+            ->assertInertia(fn ($page) => $page
+                ->component('Citizen/Dashboard')
+                ->where('isNewCitizen', false)
+            );
+
         $this->assertAuthenticatedAs(User::where('email', 'citizen@example.com')->firstOrFail());
 
         $this->assertDatabaseHas('users', [
             'email' => 'citizen@example.com',
             'role' => 'citizen',
+            'address' => 'Sitio Uno, Aggasi, Pagudpud, Ilocos Norte',
         ]);
     }
 
@@ -39,14 +49,15 @@ class RegisterControllerTest extends TestCase
             ->post('/register', [
                 'name' => 'Test Citizen',
                 'email' => 'citizen@example.com',
+                'phone_number' => '555-0100',
                 'password' => 'password123',
                 'password_confirmation' => 'password123',
             ]);
 
         $response->assertInertia(fn ($page) => $page
             ->component('Register')
-            ->where('errors.phone_number', 'The phone number field is required.')
-            ->where('errors.address', 'The address field is required.')
+            ->where('errors.barangay', 'The barangay field is required.')
+            ->where('errors.sitio', 'The sitio field is required.')
         );
 
         $this->assertDatabaseMissing('users', [

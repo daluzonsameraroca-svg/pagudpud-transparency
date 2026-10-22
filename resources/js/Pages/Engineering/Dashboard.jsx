@@ -91,35 +91,30 @@ export default function Dashboard({ projects = [] }) {
         {
             label: 'Total Projects',
             value: totalProjects,
-            description: 'All recorded projects',
             color: 'bg-slate-100 text-slate-700',
             icon: '▤',
         },
         {
             label: 'Ongoing',
             value: ongoingProjects,
-            description: 'Currently in progress',
             color: 'bg-green-50 text-green-700',
             icon: '◷',
         },
         {
             label: 'Completed',
             value: completedProjects,
-            description: 'Finished projects',
             color: 'bg-emerald-50 text-emerald-700',
             icon: '✓',
         },
         {
             label: 'Planned',
             value: plannedProjects,
-            description: 'Awaiting implementation',
             color: 'bg-amber-50 text-amber-700',
             icon: '▦',
         },
         {
             label: 'Average Progress',
             value: `${averageProgress}%`,
-            description: 'Across all projects',
             color: 'bg-teal-50 text-teal-700',
             icon: '↗',
         },
@@ -131,22 +126,10 @@ export default function Dashboard({ projects = [] }) {
                 <header className="border-b border-slate-200 bg-white px-5 py-5 sm:px-8">
                     <div className="mx-auto flex max-w-[1500px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <div className="mb-2 flex items-center gap-2 text-xs text-slate-500">
-                                <span>Engineering Office</span>
-                                <span>/</span>
-                                <span className="font-semibold text-emerald-700">
-                                    Dashboard
-                                </span>
-                            </div>
-
                             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                 Engineering Dashboard
                             </h1>
 
-                            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-                                Monitor government projects and keep project
-                                progress information updated.
-                            </p>
                         </div>
 
                         <Link
@@ -165,9 +148,6 @@ export default function Dashboard({ projects = [] }) {
                             <h2 className="text-base font-bold text-slate-900">
                                 Project Overview
                             </h2>
-                            <p className="mt-1 text-sm text-slate-500">
-                                A summary of your recorded government projects.
-                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
@@ -193,10 +173,6 @@ export default function Dashboard({ projects = [] }) {
                                             {card.icon}
                                         </div>
                                     </div>
-
-                                    <p className="mt-3 text-xs text-slate-400">
-                                        {card.description}
-                                    </p>
                                 </div>
                             ))}
                         </div>
@@ -212,15 +188,6 @@ export default function Dashboard({ projects = [] }) {
                                 <p className="text-sm font-bold text-red-800">
                                     Suspended Projects
                                 </p>
-                                <p className="mt-1 text-sm leading-6 text-red-700">
-                                    {suspendedProjects}{' '}
-                                    {suspendedProjects === 1
-                                        ? 'project is'
-                                        : 'projects are'}{' '}
-                                    currently marked as suspended. Review their
-                                    records and update their status when
-                                    appropriate.
-                                </p>
                             </div>
                         </div>
                     )}
@@ -230,10 +197,6 @@ export default function Dashboard({ projects = [] }) {
                             <h2 className="text-base font-bold text-slate-900">
                                 Project Analytics
                             </h2>
-                            <p className="mt-1 text-sm text-slate-500">
-                                Visual summaries of project status and
-                                completion progress.
-                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
@@ -242,10 +205,6 @@ export default function Dashboard({ projects = [] }) {
                                     <h3 className="text-base font-bold text-slate-900">
                                         Project Status
                                     </h3>
-                                    <p className="mt-1 text-sm text-slate-500">
-                                        Distribution of recorded project
-                                        statuses.
-                                    </p>
                                 </div>
 
                                 <div className="h-72">
@@ -308,10 +267,6 @@ export default function Dashboard({ projects = [] }) {
                                             <p className="mt-3 text-sm font-semibold text-slate-700">
                                                 No project data available
                                             </p>
-                                            <p className="mt-1 text-xs text-slate-400">
-                                                Add a project to see the status
-                                                chart.
-                                            </p>
                                         </div>
                                     )}
                                 </div>
@@ -322,10 +277,6 @@ export default function Dashboard({ projects = [] }) {
                                     <h3 className="text-base font-bold text-slate-900">
                                         Project Progress
                                     </h3>
-                                    <p className="mt-1 text-sm text-slate-500">
-                                        Current completion percentage by
-                                        project.
-                                    </p>
                                 </div>
 
                                 <div className="h-72">
@@ -411,10 +362,6 @@ export default function Dashboard({ projects = [] }) {
                                             <p className="mt-3 text-sm font-semibold text-slate-700">
                                                 No progress data available
                                             </p>
-                                            <p className="mt-1 text-xs text-slate-400">
-                                                Project progress will appear
-                                                here.
-                                            </p>
                                         </div>
                                     )}
                                 </div>
@@ -428,16 +375,13 @@ export default function Dashboard({ projects = [] }) {
                                 <h2 className="text-base font-bold text-slate-900">
                                     Recent Projects
                                 </h2>
-                                <p className="mt-1 text-sm text-slate-500">
-                                    Projects from your current records.
-                                </p>
                             </div>
 
                             <Link
                                 href="/engineering/projects"
                                 className="self-start text-sm font-semibold text-emerald-700 transition hover:text-emerald-900 sm:self-center"
                             >
-                                View All Projects →
+                                View All Projects
                             </Link>
                         </div>
 
@@ -527,9 +471,6 @@ export default function Dashboard({ projects = [] }) {
                                 <p className="mt-4 text-sm font-semibold text-slate-800">
                                     No projects available
                                 </p>
-                                <p className="mt-1 text-sm text-slate-500">
-                                    Create a project record to get started.
-                                </p>
                                 <Link
                                     href="/engineering/projects/create"
                                     className="mt-5 inline-flex items-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
@@ -545,9 +486,6 @@ export default function Dashboard({ projects = [] }) {
                             <h2 className="text-base font-bold text-slate-900">
                                 Quick Actions
                             </h2>
-                            <p className="mt-1 text-sm text-slate-500">
-                                Shortcuts for managing project records.
-                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -563,12 +501,8 @@ export default function Dashboard({ projects = [] }) {
                                         <h3 className="text-sm font-bold text-slate-900 transition group-hover:text-emerald-700">
                                             Manage Projects
                                         </h3>
-                                        <p className="mt-2 text-sm leading-6 text-slate-500">
-                                            View project records and update
-                                            project status and progress.
-                                        </p>
                                         <span className="mt-3 inline-block text-sm font-semibold text-emerald-700">
-                                            Open projects →
+                                            Open projects
                                         </span>
                                     </div>
                                 </div>
@@ -586,12 +520,8 @@ export default function Dashboard({ projects = [] }) {
                                         <h3 className="text-sm font-bold text-slate-900 transition group-hover:text-emerald-700">
                                             Add New Project
                                         </h3>
-                                        <p className="mt-2 text-sm leading-6 text-slate-500">
-                                            Create a new local government
-                                            project record.
-                                        </p>
                                         <span className="mt-3 inline-block text-sm font-semibold text-emerald-700">
-                                            Create project →
+                                            Create project
                                         </span>
                                     </div>
                                 </div>

@@ -4,7 +4,6 @@ import DashboardLayout from '../../Layouts/DashboardLayout';
 
 function Icon({ name, className = 'h-4 w-4' }) {
     const icons = {
-        arrow: <path d="M19 12H5m7 7-7-7 7-7" />,
         location: (
             <>
                 <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
@@ -112,18 +111,13 @@ function InfoCard({ icon, label, value }) {
     );
 }
 
-function SectionHeading({ title, description, right }) {
+function SectionHeading({ title, right }) {
     return (
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
             <div>
                 <h2 className="text-sm font-semibold text-slate-800">
                     {title}
                 </h2>
-                {description && (
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                        {description}
-                    </p>
-                )}
             </div>
             {right}
         </div>
@@ -207,29 +201,6 @@ export default function ProjectDetails({ project }) {
         <DashboardLayout role="citizen">
             <div className="min-h-screen bg-slate-50">
                 <header className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-3 sm:px-7">
-                    <nav
-                        aria-label="Breadcrumb"
-                        className="flex flex-wrap items-center gap-2 text-xs text-slate-500"
-                    >
-                        <Link
-                            href="/citizen/dashboard"
-                            className="transition hover:text-emerald-700"
-                        >
-                            Dashboard
-                        </Link>
-                        <span>/</span>
-                        <Link
-                            href="/citizen/projects"
-                            className="transition hover:text-emerald-700"
-                        >
-                            Projects
-                        </Link>
-                        <span>/</span>
-                        <span className="font-medium text-emerald-800">
-                            Details
-                        </span>
-                    </nav>
-
                     <span className="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-medium text-emerald-700">
                         Public Project Record
                     </span>
@@ -241,7 +212,6 @@ export default function ProjectDetails({ project }) {
                             href="/citizen/projects"
                             className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 transition hover:text-emerald-900"
                         >
-                            <Icon name="arrow" className="h-4 w-4" />
                             Back to Projects
                         </Link>
 
@@ -281,12 +251,6 @@ export default function ProjectDetails({ project }) {
                                     ? 'Project information updated live'
                                     : 'Live Project Updates'}
                             </p>
-                            <p className="mt-1 text-xs leading-5 text-emerald-800">
-                                This page listens for project progress updates
-                                from the Municipal Engineering Office. When a
-                                new update is received, the displayed project
-                                information refreshes automatically.
-                            </p>
                         </div>
                     </section>
 
@@ -295,7 +259,6 @@ export default function ProjectDetails({ project }) {
                             <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Project Overview"
-                                    description="General information about this government project"
                                 />
 
                                 <div className="p-5">
@@ -338,7 +301,6 @@ export default function ProjectDetails({ project }) {
                             <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Current Progress"
-                                    description="Latest recorded implementation progress"
                                     right={
                                         <span className="text-2xl font-bold tracking-tight text-emerald-700">
                                             {progress}%
@@ -408,7 +370,6 @@ export default function ProjectDetails({ project }) {
                             <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Project Progress Timeline"
-                                    description="Recorded status and progress updates"
                                     right={
                                         <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                                             {updates.length} updates
@@ -502,11 +463,6 @@ export default function ProjectDetails({ project }) {
                                             <p className="mt-3 text-sm font-semibold text-slate-700">
                                                 No progress updates yet
                                             </p>
-                                            <p className="mt-1 text-xs leading-5 text-slate-500">
-                                                Recorded updates will appear
-                                                here when they are provided by
-                                                the Engineering Office.
-                                            </p>
                                         </div>
                                     )}
                                 </div>
@@ -517,7 +473,6 @@ export default function ProjectDetails({ project }) {
                             <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Project Summary"
-                                    description="Current project information"
                                 />
 
                                 <div className="space-y-4 p-5">
@@ -567,7 +522,6 @@ export default function ProjectDetails({ project }) {
                             <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                                 <SectionHeading
                                     title="Submit Public Feedback"
-                                    description="Share an observation or concern about this project"
                                 />
 
                                 <form
@@ -624,11 +578,6 @@ export default function ProjectDetails({ project }) {
                                             : 'Submit Feedback'}
                                     </button>
 
-                                    <p className="mt-3 text-xs leading-5 text-slate-500">
-                                        Please keep your feedback relevant
-                                        to the project. Submissions are
-                                        subject to administrative review.
-                                    </p>
                                 </form>
                             </section>
 
@@ -636,12 +585,6 @@ export default function ProjectDetails({ project }) {
                                 <h3 className="text-sm font-semibold text-emerald-900">
                                     About Project Information
                                 </h3>
-                                <p className="mt-2 text-xs leading-5 text-slate-600">
-                                    The Municipal Engineering Office maintains
-                                    official project progress and status.
-                                    Citizen feedback does not directly change
-                                    official project records.
-                                </p>
                             </section>
                         </aside>
                     </div>

@@ -193,22 +193,10 @@ export default function Projects({ projects = [] }) {
                 <header className="border-b border-slate-200 bg-white px-5 py-6 sm:px-8">
                     <div className="mx-auto flex max-w-[1500px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <div className="mb-2 flex items-center gap-2 text-sm text-slate-500">
-                                <span>Administrator</span>
-                                <span>/</span>
-                                <span className="font-semibold text-emerald-700">
-                                    Project Management
-                                </span>
-                            </div>
-
                             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                 Project Management
                             </h1>
 
-                            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                                Manage project records, budgets, schedules, and
-                                official project information.
-                            </p>
                         </div>
 
                         <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
@@ -224,9 +212,6 @@ export default function Projects({ projects = [] }) {
                             <h2 className="text-xl font-bold text-slate-900">
                                 Project Overview
                             </h2>
-                            <p className="mt-2 text-sm leading-6 text-slate-600">
-                                Current number of projects by status.
-                            </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-5">
@@ -273,9 +258,6 @@ export default function Projects({ projects = [] }) {
                                     <h2 className="text-xl font-bold text-slate-900">
                                         All Projects
                                     </h2>
-                                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                                        Search and manage registered LGU projects.
-                                    </p>
                                 </div>
 
                                 <div className="flex flex-col gap-3 sm:flex-row">
@@ -325,11 +307,6 @@ export default function Projects({ projects = [] }) {
                                         : 'No matching projects'}
                                 </h3>
 
-                                <p className="mt-2 text-sm leading-6 text-slate-600">
-                                    {projects.length === 0
-                                        ? 'There are currently no project records.'
-                                        : 'Try changing your search or status filter.'}
-                                </p>
 
                                 {(search || statusFilter !== 'All') && (
                                     <button
@@ -487,10 +464,6 @@ export default function Projects({ projects = [] }) {
                                                         <h4 className="text-lg font-bold text-slate-900">
                                                             Edit Project Information
                                                         </h4>
-                                                        <p className="mt-1 text-sm leading-6 text-slate-600">
-                                                            Update the project record
-                                                            using the fields below.
-                                                        </p>
                                                     </div>
 
                                                     <form

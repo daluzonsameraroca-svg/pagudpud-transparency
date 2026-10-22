@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EngineeringProjectController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Models\AdministrativePost;
 use App\Models\Feedback;
@@ -33,24 +34,20 @@ Route::get('/register', function () {
 Route::post('/login', [LoginController::class, 'store']);
 Route::post('/register', [RegisterController::class, 'store']);
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])
+        ->name('profile.show');
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+});
+
 // Citizen routes
-Route::get('/citizen/dashboard', function () {
+Route::get('/citizen/dashboard', function (Request $request) {
     $projects = Project::orderBy('created_at', 'desc')->get();
-    $user = request()->user();
 
     return Inertia::render('Citizen/Dashboard', [
         'projects' => $projects,
-        'notifications' => $user->notifications()
-            ->latest()
-            ->limit(10)
-            ->get()
-            ->map(fn ($notification) => [
-                'id' => $notification->id,
-                'data' => $notification->data,
-                'read_at' => $notification->read_at,
-                'created_at' => $notification->created_at,
-            ]),
-        'unreadNotificationCount' => $user->unreadNotifications()->count(),
+        'isNewCitizen' => $request->session()->pull('new_citizen', false),
     ]);
 })->middleware(['auth', 'role:citizen']);
 

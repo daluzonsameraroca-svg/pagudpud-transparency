@@ -3,19 +3,11 @@ import { Link, useForm } from '@inertiajs/react';
 
 function AppLogo() {
     return (
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-700 text-white">
-            <svg
-                viewBox="0 0 32 32"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                className="h-7 w-7"
-                aria-hidden="true"
-            >
-                <path d="M4 12 16 5l12 7" />
-                <path d="M7 13h18M9 13v11m7-11v11m7-11v11M5 25h22" />
-            </svg>
-        </div>
+        <img
+            src="/images/pagudpud-logo.png.png"
+            alt=""
+            className="h-28 w-28 shrink-0 object-contain"
+        />
     );
 }
 
@@ -34,136 +26,23 @@ export default function Login() {
         'w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10';
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800">
-            <div className="grid min-h-screen lg:grid-cols-2">
-
-                {/* Branding panel */}
-                <section className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-800 p-10 text-white lg:flex xl:p-14">
-                    <div
-                        className="pointer-events-none absolute inset-0 opacity-10"
-                        aria-hidden="true"
-                        style={{
-                            backgroundImage:
-                                'radial-gradient(circle at 20% 20%, white 1px, transparent 1px)',
-                            backgroundSize: '24px 24px',
-                        }}
-                    />
-
-                    <Link
-                        href="/"
-                        className="relative flex items-center gap-3"
-                    >
-                        <AppLogo />
-
-                        <div>
-                            <p className="text-base font-extrabold tracking-tight">
-                                Pagudpud Transparency
-                            </p>
-                            <p className="mt-1 text-xs text-emerald-100/75">
-                                Municipality of Pagudpud · Ilocos Norte
-                            </p>
-                        </div>
-                    </Link>
-
-                    <div className="relative my-12 max-w-xl">
-                        <p className="mb-5 text-xs font-bold tracking-[0.18em] text-emerald-300">
-                            LOCAL PROJECT MONITORING
-                        </p>
-
-                        <h1 className="text-4xl font-extrabold leading-tight tracking-tight xl:text-5xl">
-                            A clearer view of local projects.
-                        </h1>
-
-                        <p className="mt-6 max-w-lg text-base leading-8 text-emerald-50/85">
-                            Access project information, follow reported
-                            progress, and take part in your community through
-                            one centralized platform.
-                        </p>
-
-                        <div className="mt-9 space-y-5">
-                            {[
-                                'View project details and schedules',
-                                'Follow reported project progress',
-                                'Submit feedback as a citizen',
-                            ].map((item) => (
-                                <div
-                                    key={item}
-                                    className="flex items-center gap-3 text-sm text-emerald-50/90"
-                                >
-                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-white/30 text-xs">
-                                        ✓
-                                    </span>
-                                    {item}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="relative border-t border-white/15 pt-5">
-                        <p className="text-xs leading-6 text-emerald-100/65">
-                            Web-Based Local Government Project Monitoring
-                            System · Pagudpud, Ilocos Norte
-                        </p>
-                    </div>
-                </section>
-
-                {/* Login form panel */}
-                <section className="flex min-h-screen flex-col justify-between px-5 py-6 sm:px-10 lg:px-12 xl:px-20">
-                    <header className="flex items-center justify-between gap-4">
-                        <Link
-                            href="/"
-                            className="flex items-center gap-3 lg:hidden"
-                        >
+        <div className="min-h-screen bg-slate-50 px-5 py-8 text-slate-800 sm:px-8">
+            <main className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-lg flex-col justify-center">
+                <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
+                    <div className="mb-8 text-center">
+                        <Link href="/" className="mb-5 inline-flex justify-center">
                             <AppLogo />
-                            <span className="text-sm font-extrabold text-slate-950">
-                                Pagudpud Transparency
-                            </span>
                         </Link>
+                        <p className="text-sm font-bold text-emerald-900">
+                            Pagudpud Transparency
+                        </p>
+                    </div>
 
-                        <Link
-                            href="/"
-                            className="ml-auto rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-emerald-800"
-                        >
-                            ← Back to home
-                        </Link>
-                    </header>
-
-                    <main className="mx-auto w-full max-w-md py-12">
-                        <div className="mb-9">
-                            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.7"
-                                    className="h-6 w-6"
-                                    aria-hidden="true"
-                                >
-                                    <rect
-                                        x="5"
-                                        y="10"
-                                        width="14"
-                                        height="11"
-                                        rx="2"
-                                    />
-                                    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-                                    <path d="M12 14v3" />
-                                </svg>
-                            </div>
-
-                            <p className="mb-3 text-xs font-bold tracking-[0.18em] text-emerald-800">
-                                WELCOME BACK
-                            </p>
-
-                            <h2 className="text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
-                                Sign in to your account
-                            </h2>
-
-                            <p className="mt-4 text-base leading-7 text-slate-500">
-                                Enter your account details to continue to
-                                Pagudpud Transparency.
-                            </p>
-                        </div>
+                    <div className="mb-8">
+                        <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">
+                            Sign in to your account
+                        </h1>
+                    </div>
 
                         <form onSubmit={submit} className="space-y-6">
                             <div>
@@ -247,9 +126,6 @@ export default function Login() {
                             >
                                 {processing ? 'Signing in...' : 'Sign in'}
 
-                                {!processing && (
-                                    <span aria-hidden="true">→</span>
-                                )}
                             </button>
                         </form>
 
@@ -291,21 +167,22 @@ export default function Login() {
                                     <p className="text-sm font-bold text-slate-800">
                                         Account access
                                     </p>
-                                    <p className="mt-1 text-sm leading-6 text-slate-500">
-                                        Public registration is for Citizens.
-                                        Engineering and Administrator accounts
-                                        are assigned by the system administrator.
-                                    </p>
                                 </div>
                             </div>
                         </div>
-                    </main>
 
-                    <footer className="pt-5 text-center text-xs text-slate-400">
-                        © {new Date().getFullYear()} Pagudpud Transparency
-                    </footer>
+                        <button
+                            type="button"
+                            onClick={() => window.history.back()}
+                            className="mt-8 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                        >
+                            Back
+                        </button>
                 </section>
-            </div>
+                <footer className="pt-5 text-center text-xs text-slate-400">
+                    © {new Date().getFullYear()} Pagudpud Transparency
+                </footer>
+            </main>
         </div>
     );
 }

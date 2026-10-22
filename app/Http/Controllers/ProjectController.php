@@ -3,16 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Services\CitizenNotificationReadService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
+    public function __construct(
+        private readonly CitizenNotificationReadService $notificationReads,
+    ) {}
+
     /**
      * Display projects available to citizens.
      */
     public function index(Request $request)
     {
+        $this->notificationReads->markProjectNotificationsAsRead(
+            $request->user()
+        );
+
         $search = trim((string) $request->input('search', ''));
 
         $projects = Project::query()
@@ -47,6 +56,11 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        $this->notificationReads->markProjectNotificationsAsRead(
+            request()->user(),
+            (int) $project->id,
+        );
+
         $project->load([
             'progressUpdates' => function ($query) {
                 $query->orderBy('update_date', 'asc')

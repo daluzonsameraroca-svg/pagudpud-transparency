@@ -47,10 +47,6 @@ export default function Posts({ posts = [] }) {
                         Administrative Posts
                     </h1>
 
-                    <p className="mt-2 text-sm leading-6 text-slate-500">
-                        Read announcements and updates published by the
-                        municipality.
-                    </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -79,9 +75,6 @@ export default function Posts({ posts = [] }) {
                             {posts.length}
                         </p>
 
-                        <p className="mt-1 text-xs text-slate-500">
-                            Announcements available to citizens
-                        </p>
                     </div>
 
                     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -117,9 +110,6 @@ export default function Posts({ posts = [] }) {
                                 : 'No posts yet'}
                         </p>
 
-                        <p className="mt-1 text-xs text-slate-500">
-                            Most recent post in the provided list
-                        </p>
                     </div>
                 </div>
 
@@ -171,9 +161,6 @@ export default function Posts({ posts = [] }) {
                             <h2 className="text-lg font-bold text-slate-900">
                                 Announcements
                             </h2>
-                            <p className="mt-1 text-xs text-slate-500">
-                                Official municipal announcements and updates
-                            </p>
                         </div>
 
                         <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
@@ -254,11 +241,6 @@ export default function Posts({ posts = [] }) {
                                     : 'No announcements yet'}
                             </h3>
 
-                            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                                {search
-                                    ? 'Try a different search term or clear your search.'
-                                    : 'Municipal announcements will appear here when they are published.'}
-                            </p>
 
                             {search && (
                                 <button

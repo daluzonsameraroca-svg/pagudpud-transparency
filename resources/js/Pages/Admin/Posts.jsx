@@ -117,22 +117,10 @@ export default function Posts({ posts = [] }) {
                 <header className="border-b border-slate-200 bg-white px-5 py-6 sm:px-8">
                     <div className="mx-auto flex max-w-[1500px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <div className="mb-2 flex items-center gap-2 text-sm text-slate-500">
-                                <span>Administrator</span>
-                                <span>/</span>
-                                <span className="font-semibold text-emerald-700">
-                                    Administrative Posts
-                                </span>
-                            </div>
-
                             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                 Administrative Posts
                             </h1>
 
-                            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                                Publish and manage official municipal
-                                announcements and information.
-                            </p>
                         </div>
 
                         <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
@@ -156,9 +144,6 @@ export default function Posts({ posts = [] }) {
                                         <h2 className="text-lg font-bold text-slate-900">
                                             Create New Post
                                         </h2>
-                                        <p className="mt-1 text-sm text-slate-600">
-                                            Write an official announcement.
-                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -208,10 +193,6 @@ export default function Posts({ posts = [] }) {
                                         className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                                     />
 
-                                    <p className="mt-2 text-sm leading-5 text-slate-500">
-                                        Provide clear and accurate information
-                                        for citizens.
-                                    </p>
                                 </div>
 
                                 <button
@@ -224,19 +205,9 @@ export default function Posts({ posts = [] }) {
                                             ? 'Publishing...'
                                             : 'Publish Announcement'}
                                     </span>
-                                    {!isPublishing && <span aria-hidden="true">→</span>}
                                 </button>
                             </form>
 
-                            <div className="border-t border-slate-200 bg-emerald-50/60 px-5 py-4">
-                                <p className="text-sm leading-6 text-slate-600">
-                                    <span className="font-semibold text-emerald-800">
-                                        Note:
-                                    </span>{' '}
-                                    Published posts provide citizens with
-                                    official municipal information.
-                                </p>
-                            </div>
                         </section>
 
                         <section className="min-w-0">
@@ -245,9 +216,6 @@ export default function Posts({ posts = [] }) {
                                     <h2 className="text-xl font-bold text-slate-900">
                                         Published Posts
                                     </h2>
-                                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                                        View and manage existing announcements.
-                                    </p>
                                 </div>
 
                                 <div className="relative">
@@ -277,11 +245,6 @@ export default function Posts({ posts = [] }) {
                                             : 'No matching posts'}
                                     </h3>
 
-                                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
-                                        {posts.length === 0
-                                            ? 'Create your first administrative announcement using the form.'
-                                            : 'Try searching with a different title, content, or author.'}
-                                    </p>
 
                                     {search && (
                                         <button
