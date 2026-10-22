@@ -255,6 +255,7 @@ export default function Register() {
                                             )
                                         }
                                         placeholder="Enter phone number"
+                                        required
                                         aria-invalid={Boolean(
                                             errors.phone_number,
                                         )}
@@ -286,6 +287,7 @@ export default function Register() {
                                     }
                                     placeholder="Enter your barangay or address"
                                     rows={3}
+                                    required
                                     aria-invalid={Boolean(errors.address)}
                                     aria-describedby={
                                         errors.address

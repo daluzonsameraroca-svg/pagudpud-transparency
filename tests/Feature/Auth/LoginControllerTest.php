@@ -55,6 +55,39 @@ class LoginControllerTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
+    public function test_successful_login_keeps_the_session_on_the_dashboard_request(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'citizen',
+        ]);
+
+        $response = $this->followingRedirects()->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertInertia(fn ($page) => $page
+            ->component('Citizen/Dashboard')
+        );
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_invalid_credentials_are_shared_with_the_login_page(): void
+    {
+        $response = $this->followingRedirects()
+            ->from('/login')
+            ->post('/login', [
+                'email' => 'missing@example.com',
+                'password' => 'incorrect-password',
+            ]);
+
+        $response->assertInertia(fn ($page) => $page
+            ->component('Login')
+            ->where('errors.email', 'The provided email or password is incorrect.')
+        );
+        $this->assertGuest();
+    }
+
     public function test_administrator_role_can_access_the_admin_dashboard(): void
     {
         $user = User::factory()->create([
