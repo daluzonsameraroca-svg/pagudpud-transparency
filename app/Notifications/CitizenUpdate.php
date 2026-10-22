@@ -21,6 +21,7 @@ class CitizenUpdate extends Notification
         return new self([
             'type' => 'project_created',
             'title' => 'New project added',
+            'project_id' => $project->id,
             'message' => sprintf(
                 'A new project, "%s", has been added.',
                 $project->project_name,
@@ -34,6 +35,7 @@ class CitizenUpdate extends Notification
         return new self([
             'type' => 'project_updated',
             'title' => 'Project information updated',
+            'project_id' => $project->id,
             'message' => sprintf(
                 'The details for "%s" have been updated.',
                 $project->project_name,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdministrativePost;
 use App\Notifications\CitizenUpdate;
+use App\Services\CitizenNotificationReadService;
 use App\Services\CitizenNotificationService;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,7 @@ class AdminPostController extends Controller
 {
     public function __construct(
         private readonly CitizenNotificationService $citizenNotifications,
+        private readonly CitizenNotificationReadService $notificationReads,
     ) {}
 
     // Display posts for the administrator.
@@ -28,6 +30,10 @@ class AdminPostController extends Controller
     // Display published posts for citizens.
     public function citizenIndex()
     {
+        $this->notificationReads->markAnnouncementNotificationsAsRead(
+            request()->user()
+        );
+
         $posts = AdministrativePost::with('user')
             ->latest()
             ->get();

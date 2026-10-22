@@ -169,6 +169,31 @@ export default function Dashboard({
     const user = props.auth?.user;
     const [notificationsOpen, setNotificationsOpen] = useState(false);
 
+    const openNotification = (event, notification) => {
+        event.preventDefault();
+
+        const destination =
+            notification.data.url ??
+            `/citizen/projects/${notification.data.project_id}`;
+
+        setNotificationsOpen(false);
+
+        if (notification.read_at) {
+            router.visit(destination);
+
+            return;
+        }
+
+        router.patch(
+            `/citizen/notifications/${notification.id}/read`,
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => router.visit(destination),
+            },
+        );
+    };
+
     const totalProjects = projects.length;
 
     const ongoingProjects = projects.filter(
@@ -305,9 +330,10 @@ export default function Dashboard({
                                                                             .url ??
                                                                         `/citizen/projects/${notification.data.project_id}`
                                                                     }
-                                                                    onClick={() =>
-                                                                        setNotificationsOpen(
-                                                                            false,
+                                                                    onClick={(event) =>
+                                                                        openNotification(
+                                                                        event,
+                                                                        notification,
                                                                         )
                                                                     }
                                                                     className="text-sm font-medium text-slate-800 hover:text-emerald-700"

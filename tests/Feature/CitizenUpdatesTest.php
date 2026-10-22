@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\AdministrativePost;
 use App\Models\Project;
 use App\Models\User;
+use App\Notifications\CitizenUpdate;
+use App\Notifications\ProjectProgressUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -129,6 +131,110 @@ class CitizenUpdatesTest extends TestCase
             "/citizen/projects/{$project->id}",
             $notification->data['url'],
         );
+    }
+
+    public function test_viewing_a_project_marks_only_its_notifications_as_read(): void
+    {
+        $citizen = User::factory()->create([
+            'role' => 'citizen',
+        ]);
+        $project = $this->createProject();
+        $anotherProject = Project::create([
+            'project_name' => 'Water System',
+            'description' => 'Community water system.',
+            'location' => 'Pagudpud',
+            'budget' => 50000,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+
+        $citizen->notify(CitizenUpdate::projectCreated($project));
+        $citizen->notify(new ProjectProgressUpdated($project));
+        $citizen->notify(CitizenUpdate::projectCreated($anotherProject));
+
+        $response = $this->actingAs($citizen)
+            ->get("/citizen/projects/{$project->id}");
+
+        $response->assertOk();
+        $projectNotifications = $citizen->notifications()
+            ->where('data->project_id', $project->id)
+            ->get();
+        $anotherProjectNotification = $citizen->notifications()
+            ->where('data->project_id', $anotherProject->id)
+            ->firstOrFail();
+
+        $this->assertCount(2, $projectNotifications);
+        $this->assertTrue($projectNotifications->every(
+            fn ($notification) => $notification->read_at !== null
+        ));
+        $this->assertNull($anotherProjectNotification->read_at);
+    }
+
+    public function test_viewing_the_project_list_marks_project_notifications_as_read(): void
+    {
+        $citizen = User::factory()->create([
+            'role' => 'citizen',
+        ]);
+        $project = $this->createProject();
+        $post = AdministrativePost::create([
+            'title' => 'Town Hall Meeting',
+            'content' => 'Join the meeting.',
+            'user_id' => User::factory()->create([
+                'role' => 'admin',
+            ])->id,
+        ]);
+
+        $citizen->notify(CitizenUpdate::projectCreated($project));
+        $citizen->notify(CitizenUpdate::announcementPublished($post));
+
+        $response = $this->actingAs($citizen)->get('/citizen/projects');
+
+        $response->assertOk();
+        $projectNotification = $citizen->notifications()
+            ->where('data->type', 'project_created')
+            ->firstOrFail();
+        $announcementNotification = $citizen->notifications()
+            ->where('data->type', 'announcement')
+            ->firstOrFail();
+
+        $this->assertNotNull($projectNotification->read_at);
+        $this->assertNull($announcementNotification->read_at);
+    }
+
+    public function test_viewing_announcements_marks_announcement_notifications_as_read(): void
+    {
+        $citizen = User::factory()->create([
+            'role' => 'citizen',
+        ]);
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+        $post = AdministrativePost::create([
+            'title' => 'Town Hall Meeting',
+            'content' => 'Join the meeting.',
+            'user_id' => $admin->id,
+        ]);
+        $project = $this->createProject();
+
+        $citizen->notify(CitizenUpdate::announcementPublished($post));
+        $citizen->notify(CitizenUpdate::announcementPublished($post, updated: true));
+        $citizen->notify(CitizenUpdate::projectCreated($project));
+
+        $response = $this->actingAs($citizen)->get('/citizen/posts');
+
+        $response->assertOk();
+        $announcementNotifications = $citizen->notifications()
+            ->whereIn('data->type', ['announcement', 'announcement_updated'])
+            ->get();
+        $projectNotification = $citizen->notifications()
+            ->where('data->type', 'project_created')
+            ->firstOrFail();
+
+        $this->assertCount(2, $announcementNotifications);
+        $this->assertTrue($announcementNotifications->every(
+            fn ($notification) => $notification->read_at !== null
+        ));
+        $this->assertNull($projectNotification->read_at);
     }
 
     private function createProject(): Project
