@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Sidebar from '../Components/Sidebar';
 
 export default function DashboardLayout({ children, role }) {
-    const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(true);
+    const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800">
