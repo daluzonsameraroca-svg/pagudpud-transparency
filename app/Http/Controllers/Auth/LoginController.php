@@ -24,12 +24,12 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        $user = $request->user();
+        $role = strtolower(trim((string) $request->user()->role));
 
-        return match ($user->role) {
+        return match ($role) {
             'citizen' => redirect('/citizen/dashboard'),
             'engineering' => redirect('/engineering/dashboard'),
-            'admin' => redirect('/admin/dashboard'),
+            'admin', 'administrator' => redirect('/admin/dashboard'),
             default => $this->logoutInvalidRole($request),
         };
     }
