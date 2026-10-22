@@ -1,4 +1,5 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage, usePoll } from '@inertiajs/react';
+import { useState } from 'react';
 import {
     PieChart,
     Pie,
@@ -155,9 +156,18 @@ function StatusBadge({ status }) {
     );
 }
 
-export default function Dashboard({ projects = [] }) {
+export default function Dashboard({
+    projects = [],
+    notifications = [],
+    unreadNotificationCount = 0,
+}) {
+    usePoll(30000, {
+        only: ['notifications', 'unreadNotificationCount'],
+    });
+
     const { props } = usePage();
     const user = props.auth?.user;
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
 
     const totalProjects = projects.length;
 
@@ -235,13 +245,129 @@ export default function Dashboard({ projects = [] }) {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button
-                            type="button"
-                            aria-label="Notifications"
-                            className="relative flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-700"
-                        >
-                            <Icon name="bell" />
-                        </button>
+                        <div className="relative">
+                            <button
+                                type="button"
+                                aria-label={`Notifications${unreadNotificationCount ? `, ${unreadNotificationCount} unread` : ''}`}
+                                aria-controls="citizen-notifications-menu"
+                                aria-expanded={notificationsOpen}
+                                onClick={() =>
+                                    setNotificationsOpen((open) => !open)
+                                }
+                                className="relative flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-700"
+                            >
+                                <Icon name="bell" />
+                                {unreadNotificationCount > 0 && (
+                                    <span
+                                        aria-label={`${unreadNotificationCount} unread notifications`}
+                                        className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-600"
+                                    />
+                                )}
+                            </button>
+
+                            {notificationsOpen && (
+                                <section
+                                    id="citizen-notifications-menu"
+                                    aria-label="Recent notifications"
+                                    className="absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl"
+                                >
+                                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                                        <h2 className="text-sm font-semibold text-slate-800">
+                                            Notifications
+                                        </h2>
+                                        <span className="text-xs text-slate-500">
+                                            {unreadNotificationCount} unread
+                                        </span>
+                                    </div>
+
+                                    {notifications.length === 0 ? (
+                                        <p className="px-4 py-6 text-center text-sm text-slate-500">
+                                            You're all caught up.
+                                        </p>
+                                    ) : (
+                                        <ul className="max-h-96 divide-y divide-slate-100 overflow-y-auto">
+                                            {notifications.map(
+                                                (notification) => (
+                                                    <li
+                                                        key={notification.id}
+                                                        className={`px-4 py-3 ${
+                                                            notification.read_at
+                                                                ? 'bg-white'
+                                                                : 'bg-emerald-50/60'
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            <div>
+                                                                <Link
+                                                                    href={
+                                                                        notification
+                                                                            .data
+                                                                            .url ??
+                                                                        `/citizen/projects/${notification.data.project_id}`
+                                                                    }
+                                                                    onClick={() =>
+                                                                        setNotificationsOpen(
+                                                                            false,
+                                                                        )
+                                                                    }
+                                                                    className="text-sm font-medium text-slate-800 hover:text-emerald-700"
+                                                                >
+                                                                    {notification.data.title ??
+                                                                        notification
+                                                                            .data
+                                                                            .project_name}
+                                                                </Link>
+                                                                <p className="mt-1 text-xs leading-5 text-slate-600">
+                                                                    {notification.data.message}
+                                                                </p>
+                                                                {notification.data.details && (
+                                                                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                                                                        {
+                                                                            notification
+                                                                                .data
+                                                                                .details
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                                <time
+                                                                    dateTime={
+                                                                        notification.created_at
+                                                                    }
+                                                                    className="mt-1 block text-[10px] text-slate-400"
+                                                                >
+                                                                    {new Date(
+                                                                        notification.created_at,
+                                                                    ).toLocaleString()}
+                                                                </time>
+                                                            </div>
+
+                                                            {!notification.read_at && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        router.patch(
+                                                                            `/citizen/notifications/${notification.id}/read`,
+                                                                            {},
+                                                                            {
+                                                                                preserveScroll: true,
+                                                                                preserveState: true,
+                                                                            },
+                                                                        )
+                                                                    }
+                                                                    className="shrink-0 text-[10px] font-medium text-emerald-700 hover:text-emerald-900"
+                                                                >
+                                                                    Mark read
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </li>
+                                                ),
+                                            )}
+                                        </ul>
+                                    )}
+                                </section>
+                            )}
+                        </div>
 
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-semibold text-emerald-800">
                             {(user?.name || 'Citizen')

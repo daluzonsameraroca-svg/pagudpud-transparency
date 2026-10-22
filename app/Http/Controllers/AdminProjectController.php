@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Notifications\CitizenUpdate;
+use App\Services\CitizenNotificationService;
 use Illuminate\Http\Request;
 
 class AdminProjectController extends Controller
 {
+    public function __construct(
+        private readonly CitizenNotificationService $citizenNotifications,
+    ) {}
+
     public function index()
     {
         $projects = Project::latest()->get();
@@ -72,11 +78,16 @@ class AdminProjectController extends Controller
             'location' => $validated['location'],
             'budget' => $validated['budget'],
             'start_date' => $validated['start_date'] ?? null,
-            'target_completion_date' =>
-                $validated['target_completion_date'] ?? null,
+            'target_completion_date' => $validated['target_completion_date'] ?? null,
             'status' => $validated['status'],
             'progress' => $validated['progress'],
         ]);
+
+        if ($project->wasChanged()) {
+            $this->citizenNotifications->sendToCitizens(
+                CitizenUpdate::projectInformationUpdated($project)
+            );
+        }
 
         return back()->with(
             'success',

@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdministrativePost;
+use App\Notifications\CitizenUpdate;
+use App\Services\CitizenNotificationService;
 use Illuminate\Http\Request;
 
 class AdminPostController extends Controller
 {
+    public function __construct(
+        private readonly CitizenNotificationService $citizenNotifications,
+    ) {}
+
     // Display posts for the administrator.
     public function index()
     {
@@ -46,11 +52,15 @@ class AdminPostController extends Controller
             ],
         ]);
 
-        AdministrativePost::create([
+        $post = AdministrativePost::create([
             'title' => $validated['title'],
             'content' => $validated['content'],
             'user_id' => auth()->id(),
         ]);
+
+        $this->citizenNotifications->sendToCitizens(
+            CitizenUpdate::announcementPublished($post)
+        );
 
         return back()->with(
             'success',
@@ -76,6 +86,12 @@ class AdminPostController extends Controller
         ]);
 
         $post->update($validated);
+
+        if ($post->wasChanged()) {
+            $this->citizenNotifications->sendToCitizens(
+                CitizenUpdate::announcementPublished($post, updated: true)
+            );
+        }
 
         return back()->with(
             'success',

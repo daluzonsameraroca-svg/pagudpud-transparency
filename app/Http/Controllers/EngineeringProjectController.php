@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ProjectProgressUpdated;
+use App\Events\ProjectProgressUpdated as ProjectProgressBroadcast;
 use App\Models\Project;
+use App\Notifications\CitizenUpdate;
+use App\Notifications\ProjectProgressUpdated as ProjectProgressNotification;
+use App\Services\CitizenNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -11,6 +14,10 @@ use Inertia\Inertia;
 
 class EngineeringProjectController extends Controller
 {
+    public function __construct(
+        private readonly CitizenNotificationService $citizenNotifications,
+    ) {}
+
     public function index()
     {
         $projects = Project::orderBy('created_at', 'desc')->get();
@@ -55,18 +62,22 @@ class EngineeringProjectController extends Controller
             (int) $validated['progress']
         );
 
-        DB::transaction(function () use ($validated) {
+        $project = DB::transaction(function () use ($validated) {
             $project = Project::create($validated);
 
             $project->progressUpdates()->create([
                 'status' => $project->status,
                 'progress' => $project->progress,
-                'update_description' =>
-                    'Project created and initial status recorded.',
-                'update_date' =>
-                    $project->start_date ?? now()->toDateString(),
+                'update_description' => 'Project created and initial status recorded.',
+                'update_date' => $project->start_date ?? now()->toDateString(),
             ]);
+
+            return $project;
         });
+
+        $this->citizenNotifications->sendToCitizens(
+            CitizenUpdate::projectCreated($project)
+        );
 
         return redirect('/engineering/projects')
             ->with('success', 'Project created successfully.');
@@ -123,24 +134,19 @@ class EngineeringProjectController extends Controller
             $lockedProject->progressUpdates()->create([
                 'status' => $validated['status'],
                 'progress' => $validated['progress'],
-                'update_description' =>
-                    $validated['update_description'] ?? null,
+                'update_description' => $validated['update_description'] ?? null,
                 'update_date' => $validated['update_date'],
             ]);
 
             return $lockedProject->fresh();
         });
 
-        // Broadcast only after the database transaction succeeds.
-        $updatedProject->load([
-    'progressUpdates' => function ($query) {
-        $query->orderBy('update_date', 'asc')
-            ->orderBy('created_at', 'asc')
-            ->orderBy('id', 'asc');
-    },
-]);
+        $this->citizenNotifications->sendToCitizens(
+            new ProjectProgressNotification($updatedProject)
+        );
 
-broadcast(new ProjectProgressUpdated($updatedProject));
+        broadcast(new ProjectProgressBroadcast($updatedProject));
+
         return back()->with(
             'success',
             'Project progress updated successfully.'
@@ -153,15 +159,13 @@ broadcast(new ProjectProgressUpdated($updatedProject));
     ): void {
         if ($status === 'Completed' && $progress !== 100) {
             throw ValidationException::withMessages([
-                'progress' =>
-                    'A completed project must have 100% progress.',
+                'progress' => 'A completed project must have 100% progress.',
             ]);
         }
 
         if ($progress === 100 && $status !== 'Completed') {
             throw ValidationException::withMessages([
-                'status' =>
-                    'A project with 100% progress must have Completed status.',
+                'status' => 'A project with 100% progress must have Completed status.',
             ]);
         }
     }
