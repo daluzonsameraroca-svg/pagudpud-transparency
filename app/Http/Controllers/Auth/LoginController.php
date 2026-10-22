@@ -16,6 +16,8 @@ class LoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
+        $credentials['email'] = strtolower(trim($credentials['email']));
+
         if (! Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
                 'email' => 'The provided email or password is incorrect.',
