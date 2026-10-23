@@ -21,7 +21,7 @@ export default function Users({ users = [] }) {
             case 'engineering':
                 return 'bg-blue-50 text-blue-700 ring-blue-200';
             case 'citizen':
-                return 'bg-emerald-50 text-emerald-700 ring-emerald-200';
+                return 'bg-blue-50 text-blue-700 ring-blue-200';
             default:
                 return 'bg-gray-100 text-gray-600 ring-gray-200';
         }
@@ -57,17 +57,17 @@ export default function Users({ users = [] }) {
             label: 'Total Users',
             value: users.length,
             icon: '♙',
-            color: 'text-emerald-700',
-            iconBg: 'bg-emerald-50',
-            border: 'border-l-emerald-500',
+            color: 'text-blue-700',
+            iconBg: 'bg-blue-50',
+            border: 'border-l-blue-500',
         },
         {
             label: 'Citizens',
             value: citizenCount,
             icon: '♧',
-            color: 'text-emerald-700',
-            iconBg: 'bg-emerald-50',
-            border: 'border-l-emerald-500',
+            color: 'text-blue-700',
+            iconBg: 'bg-blue-50',
+            border: 'border-l-blue-500',
         },
         {
             label: 'Engineering',
@@ -90,8 +90,8 @@ export default function Users({ users = [] }) {
     const systemRoles = [
         {
             role: 'Citizen',
-            badge: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-            marker: 'bg-emerald-500',
+            badge: 'bg-blue-50 text-blue-700 ring-blue-200',
+            marker: 'bg-blue-500',
         },
         {
             role: 'Municipal Engineering Office',
@@ -108,11 +108,11 @@ export default function Users({ users = [] }) {
     return (
         <DashboardLayout role="admin">
             <div className="min-h-screen bg-slate-50 font-sans">
-                <header className="border-b border-emerald-100 bg-white px-5 py-6 sm:px-8">
+                <header className="border-b border-blue-100 bg-white px-5 py-6 sm:px-8">
                     <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
                         <div>
                             <div className="flex items-center gap-3">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-2xl text-emerald-700">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-2xl text-blue-700">
                                     ♙
                                 </div>
 
@@ -125,12 +125,12 @@ export default function Users({ users = [] }) {
                             </div>
                         </div>
 
-                        <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-5 py-3">
-                            <p className="text-sm font-medium text-emerald-700">
+                        <div className="rounded-xl border border-blue-100 bg-blue-50 px-5 py-3">
+                            <p className="text-sm font-medium text-blue-700">
                                 Registered Accounts
                             </p>
 
-                            <p className="mt-1 text-2xl font-bold text-emerald-800">
+                            <p className="mt-1 text-2xl font-bold text-blue-800">
                                 {users.length}
                                 <span className="ml-2 text-sm font-medium">
                                     users
@@ -184,14 +184,14 @@ export default function Users({ users = [] }) {
                                 </h2>
                             </div>
 
-                            <span className="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                            <span className="rounded-lg bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 ring-1 ring-blue-200">
                                 {users.length} records
                             </span>
                         </div>
 
                         {users.length === 0 ? (
                             <div className="px-5 py-16 text-center">
-                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-3xl text-emerald-700">
+                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-3xl text-blue-700">
                                     ♙
                                 </div>
 
@@ -203,8 +203,8 @@ export default function Users({ users = [] }) {
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full min-w-[900px] text-left">
-                                    <thead className="bg-emerald-50/70">
-                                        <tr className="border-b border-emerald-100">
+                                    <thead className="bg-blue-50/70">
+                                        <tr className="border-b border-blue-100">
                                             {[
                                                 'User Information',
                                                 'Contact Number',
@@ -214,7 +214,7 @@ export default function Users({ users = [] }) {
                                             ].map((heading) => (
                                                 <th
                                                     key={heading}
-                                                    className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-emerald-900"
+                                                    className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-blue-900"
                                                 >
                                                     {heading}
                                                 </th>
@@ -226,11 +226,11 @@ export default function Users({ users = [] }) {
                                         {users.map((user) => (
                                             <tr
                                                 key={user.id}
-                                                className="transition hover:bg-emerald-50/30"
+                                                className="transition hover:bg-blue-50/30"
                                             >
                                                 <td className="px-5 py-5">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-base font-bold text-emerald-800 ring-1 ring-emerald-200">
+                                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-base font-bold text-blue-800 ring-1 ring-blue-200">
                                                             {(user.name || 'U')
                                                                 .trim()
                                                                 .charAt(0)
@@ -284,7 +284,7 @@ export default function Users({ users = [] }) {
                                                             )
                                                         }
                                                         aria-label={`Change role for ${user.name}`}
-                                                        className="w-full max-w-[210px] rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                                        className="w-full max-w-[210px] rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                                     >
                                                         <option value="citizen">
                                                             Citizen
@@ -352,7 +352,7 @@ export default function Users({ users = [] }) {
                     </section>
 
                     <footer className="border-t border-slate-200 pt-5 text-center text-sm text-slate-500">
-                        <p className="font-medium text-emerald-800">
+                        <p className="font-medium text-blue-800">
                             Pagudpud Transparency
                         </p>
                         <p className="mt-1">

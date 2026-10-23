@@ -60,10 +60,12 @@ function DashboardTopbar({ role }) {
     };
 
     return (
-        <header className="sticky top-0 z-30 flex h-12 items-center justify-between border-b border-slate-200 bg-white px-5 pl-16 sm:px-7">
-            <span className="min-w-0 truncate text-xs font-semibold tracking-tight text-emerald-900">
-                Pagudpud Transparency
-            </span>
+        <header className="sticky top-0 z-30 flex min-h-12 items-center justify-between gap-3 border-b border-slate-200 bg-white px-3 pl-16 sm:px-7">
+            <div className="flex min-w-0 items-center">
+                <span className="hidden min-w-0 truncate text-xs font-semibold tracking-tight text-blue-900 min-[480px]:block">
+                    Pagudpud Transparency
+                </span>
+            </div>
 
             <div className="flex items-center gap-3">
                 {role === 'citizen' && (
@@ -76,7 +78,7 @@ function DashboardTopbar({ role }) {
                             onClick={() =>
                                 setNotificationsOpen((open) => !open)
                             }
-                            className="relative flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                            className="relative flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
                             <BellIcon />
                             {unreadNotificationCount > 0 && (
@@ -114,7 +116,7 @@ function DashboardTopbar({ role }) {
                                                 className={`px-4 py-3 ${
                                                     notification.read_at
                                                         ? 'bg-white'
-                                                        : 'bg-emerald-50/60'
+                                                        : 'bg-blue-50/60'
                                                 }`}
                                             >
                                                 <div className="flex items-start justify-between gap-3">
@@ -131,7 +133,7 @@ function DashboardTopbar({ role }) {
                                                                     notification,
                                                                 )
                                                             }
-                                                            className="text-sm font-medium text-slate-800 hover:text-emerald-700"
+                                                            className="text-sm font-medium text-slate-800 hover:text-blue-700"
                                                         >
                                                             {notification.data.title ??
                                                                 notification
@@ -180,7 +182,7 @@ function DashboardTopbar({ role }) {
                                                                     },
                                                                 )
                                                             }
-                                                            className="shrink-0 text-[10px] font-medium text-emerald-700 hover:text-emerald-900"
+                                                            className="shrink-0 text-[10px] font-medium text-blue-700 hover:text-blue-900"
                                                         >
                                                             Mark read
                                                         </button>
@@ -199,7 +201,7 @@ function DashboardTopbar({ role }) {
                     href="/profile"
                     aria-label="View your profile"
                     title="View profile"
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-semibold text-emerald-800 transition hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-[10px] font-semibold text-blue-800 transition hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                     {(user?.name || 'User').trim().charAt(0).toUpperCase()}
                 </Link>

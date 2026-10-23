@@ -39,7 +39,7 @@ export default function Posts({ posts = [] }) {
 
             <div className="min-h-screen space-y-6 bg-slate-50 p-5 sm:p-6 md:p-8">
                 <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
                         Community Updates
                     </p>
 
@@ -56,7 +56,7 @@ export default function Posts({ posts = [] }) {
                                 Published Posts
                             </p>
 
-                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
                                 <svg
                                     viewBox="0 0 24 24"
                                     fill="none"
@@ -71,7 +71,7 @@ export default function Posts({ posts = [] }) {
                             </span>
                         </div>
 
-                        <p className="mt-3 text-3xl font-bold text-emerald-800">
+                        <p className="mt-3 text-3xl font-bold text-blue-800">
                             {posts.length}
                         </p>
 
@@ -83,7 +83,7 @@ export default function Posts({ posts = [] }) {
                                 Latest Update
                             </p>
 
-                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50 text-green-700">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
                                 <svg
                                     viewBox="0 0 24 24"
                                     fill="none"
@@ -140,7 +140,7 @@ export default function Posts({ posts = [] }) {
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
                             placeholder="Search by title, content, or author..."
-                            className="w-full rounded-lg border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                            className="w-full rounded-lg border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
                     </div>
 
@@ -148,7 +148,7 @@ export default function Posts({ posts = [] }) {
                         <button
                             type="button"
                             onClick={() => setSearch('')}
-                            className="mt-3 text-xs font-semibold text-emerald-700 transition hover:text-emerald-900"
+                            className="mt-3 text-xs font-semibold text-blue-700 transition hover:text-blue-900"
                         >
                             Clear search
                         </button>
@@ -163,7 +163,7 @@ export default function Posts({ posts = [] }) {
                             </h2>
                         </div>
 
-                        <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+                        <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
                             {filteredPosts.length}{' '}
                             {filteredPosts.length === 1 ? 'result' : 'results'}
                         </span>
@@ -174,7 +174,7 @@ export default function Posts({ posts = [] }) {
                             {filteredPosts.map((post) => (
                                 <article
                                     key={post.id}
-                                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md md:p-6"
+                                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md md:p-6"
                                 >
                                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                         <div className="min-w-0">
@@ -193,7 +193,7 @@ export default function Posts({ posts = [] }) {
                                             </p>
                                         </div>
 
-                                        <span className="w-fit shrink-0 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-100">
+                                        <span className="w-fit shrink-0 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 ring-1 ring-inset ring-blue-100">
                                             Announcement
                                         </span>
                                     </div>
@@ -208,7 +208,7 @@ export default function Posts({ posts = [] }) {
                                             fill="none"
                                             stroke="currentColor"
                                             strokeWidth="1.7"
-                                            className="h-4 w-4 text-emerald-600"
+                                            className="h-4 w-4 text-blue-600"
                                             aria-hidden="true"
                                         >
                                             <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" />
@@ -220,8 +220,8 @@ export default function Posts({ posts = [] }) {
                             ))}
                         </div>
                     ) : (
-                        <div className="rounded-xl border border-dashed border-emerald-200 bg-white px-6 py-12 text-center">
-                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                        <div className="rounded-xl border border-dashed border-blue-200 bg-white px-6 py-12 text-center">
+                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-700">
                                 <svg
                                     viewBox="0 0 24 24"
                                     fill="none"
@@ -246,7 +246,7 @@ export default function Posts({ posts = [] }) {
                                 <button
                                     type="button"
                                     onClick={() => setSearch('')}
-                                    className="mt-4 rounded-lg bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-800"
+                                    className="mt-4 rounded-lg bg-blue-700 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-800"
                                 >
                                     Clear Search
                                 </button>

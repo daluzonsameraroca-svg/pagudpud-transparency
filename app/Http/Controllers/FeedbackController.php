@@ -6,6 +6,9 @@ use App\Models\Feedback;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
+use Throwable;
 
 class FeedbackController extends Controller
 {
@@ -19,15 +22,40 @@ class FeedbackController extends Controller
                 'min:5',
                 'max:2000',
             ],
+            'image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+            ],
         ]);
 
-        DB::transaction(function () use ($validated, $project) {
-            Feedback::create([
-                'user_id' => auth()->id(),
-                'project_id' => $project->id,
-                'message' => trim($validated['message']),
-            ]);
-        });
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('feedback', 'public');
+
+            if ($imagePath === false) {
+                throw new RuntimeException('The feedback image could not be saved.');
+            }
+        }
+
+        try {
+            DB::transaction(function () use ($validated, $project, $imagePath) {
+                Feedback::create([
+                    'user_id' => auth()->id(),
+                    'project_id' => $project->id,
+                    'message' => trim($validated['message']),
+                    'image_path' => $imagePath,
+                ]);
+            });
+        } catch (Throwable $exception) {
+            if ($imagePath !== null) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            throw $exception;
+        }
 
         return back()->with(
             'success',

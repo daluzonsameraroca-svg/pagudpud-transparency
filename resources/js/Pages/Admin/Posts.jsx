@@ -123,8 +123,8 @@ export default function Posts({ posts = [] }) {
 
                         </div>
 
-                        <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
-                            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                        <div className="flex w-fit items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-800">
+                            <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
                             {posts.length} published{' '}
                             {posts.length === 1 ? 'post' : 'posts'}
                         </div>
@@ -136,7 +136,7 @@ export default function Posts({ posts = [] }) {
                         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                             <div className="border-b border-slate-200 px-5 py-5">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-2xl font-bold text-emerald-800">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-2xl font-bold text-blue-800">
                                         +
                                     </div>
 
@@ -165,7 +165,7 @@ export default function Posts({ posts = [] }) {
                                         onChange={handleChange}
                                         placeholder="Enter announcement title"
                                         required
-                                        className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                        className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                     />
                                 </div>
 
@@ -190,7 +190,7 @@ export default function Posts({ posts = [] }) {
                                         rows={9}
                                         placeholder="Write the announcement details here..."
                                         required
-                                        className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                        className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                     />
 
                                 </div>
@@ -198,7 +198,7 @@ export default function Posts({ posts = [] }) {
                                 <button
                                     type="submit"
                                     disabled={isPublishing}
-                                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <span>
                                         {isPublishing
@@ -228,14 +228,14 @@ export default function Posts({ posts = [] }) {
                                         onChange={(e) => setSearch(e.target.value)}
                                         placeholder="Search posts..."
                                         aria-label="Search published posts"
-                                        className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 sm:w-72"
+                                        className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 sm:w-72"
                                     />
                                 </div>
                             </div>
 
                             {filteredPosts.length === 0 ? (
                                 <div className="rounded-2xl border border-slate-200 bg-white px-5 py-16 text-center shadow-sm">
-                                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-2xl text-emerald-700">
+                                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-700">
                                         ▤
                                     </div>
 
@@ -250,7 +250,7 @@ export default function Posts({ posts = [] }) {
                                         <button
                                             type="button"
                                             onClick={() => setSearch('')}
-                                            className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+                                            className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
                                         >
                                             Clear search
                                         </button>
@@ -261,12 +261,12 @@ export default function Posts({ posts = [] }) {
                                     {filteredPosts.map((post) => (
                                         <article
                                             key={post.id}
-                                            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-emerald-200 hover:shadow-md"
+                                            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-blue-200 hover:shadow-md"
                                         >
                                             <div className="p-5 sm:p-6">
                                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                                     <div className="flex min-w-0 gap-4">
-                                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl text-emerald-800">
+                                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl text-blue-800">
                                                             ▤
                                                         </div>
 
@@ -282,7 +282,7 @@ export default function Posts({ posts = [] }) {
                                                         </div>
                                                     </div>
 
-                                                    <span className="w-fit shrink-0 rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-600/20">
+                                                    <span className="w-fit shrink-0 rounded-full bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-800 ring-1 ring-inset ring-blue-600/20">
                                                         Official Post
                                                     </span>
                                                 </div>
@@ -295,7 +295,7 @@ export default function Posts({ posts = [] }) {
 
                                                 {post.user && (
                                                     <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
-                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800">
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-800">
                                                             {post.user.name
                                                                 ?.trim()
                                                                 ?.charAt(0)
@@ -321,7 +321,7 @@ export default function Posts({ posts = [] }) {
                                                             ? closeEditForm()
                                                             : openEditForm(post)
                                                     }
-                                                    className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800"
+                                                    className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800"
                                                 >
                                                     {editingPost === post.id
                                                         ? 'Close Editor'
@@ -338,7 +338,7 @@ export default function Posts({ posts = [] }) {
                                             </div>
 
                                             {editingPost === post.id && (
-                                                <div className="border-t border-emerald-200 bg-emerald-50/40 p-5 sm:p-6">
+                                                <div className="border-t border-blue-200 bg-blue-50/40 p-5 sm:p-6">
                                                     <div className="mb-5">
                                                         <h4 className="text-lg font-bold text-slate-900">
                                                             Edit Announcement
@@ -368,7 +368,7 @@ export default function Posts({ posts = [] }) {
                                                                 value={form.title}
                                                                 onChange={handleChange}
                                                                 required
-                                                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                                             />
                                                         </div>
 
@@ -386,11 +386,11 @@ export default function Posts({ posts = [] }) {
                                                                 onChange={handleChange}
                                                                 rows={6}
                                                                 required
-                                                                className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                                             />
                                                         </div>
 
-                                                        <div className="flex flex-col-reverse gap-3 border-t border-emerald-100 pt-5 sm:flex-row sm:justify-end">
+                                                        <div className="flex flex-col-reverse gap-3 border-t border-blue-100 pt-5 sm:flex-row sm:justify-end">
                                                             <button
                                                                 type="button"
                                                                 onClick={closeEditForm}
@@ -403,7 +403,7 @@ export default function Posts({ posts = [] }) {
                                                             <button
                                                                 type="submit"
                                                                 disabled={isSaving}
-                                                                className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                                                                className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
                                                             >
                                                                 {isSaving
                                                                     ? 'Saving...'
@@ -435,7 +435,7 @@ export default function Posts({ posts = [] }) {
                                     <button
                                         type="button"
                                         onClick={() => setSearch('')}
-                                        className="self-start rounded-lg px-3 py-2 font-semibold text-emerald-700 transition hover:bg-emerald-50 sm:self-auto"
+                                        className="self-start rounded-lg px-3 py-2 font-semibold text-blue-700 transition hover:bg-blue-50 sm:self-auto"
                                     >
                                         Clear search
                                     </button>

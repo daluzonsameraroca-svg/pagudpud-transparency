@@ -7,3 +7,18 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.project-map-marker {
+    border: 0;
+    background: transparent;
+}
+
+.project-map-marker span {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border: 3px solid white;
+    border-radius: 50%;
+    background: #2563eb;
+    box-shadow: 0 1px 5px rgb(15 23 42 / 45%);
+}

@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Feedback extends Model
 {
     protected $table = 'feedback';
 
     public const STATUS_PENDING = 'Pending';
+
     public const STATUS_REVIEWED = 'Reviewed';
+
     public const STATUS_RESOLVED = 'Resolved';
 
     public const STATUSES = [
@@ -23,7 +26,17 @@ class Feedback extends Model
         'project_id',
         'message',
         'status',
+        'image_path',
     ];
+
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path
+            ? Storage::disk('public')->url($this->image_path)
+            : null;
+    }
 
     public function user()
     {

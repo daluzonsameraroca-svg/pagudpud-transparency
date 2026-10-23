@@ -1,7 +1,9 @@
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 import PagudpudProjectLocationFields from '../../Components/PagudpudProjectLocationFields';
+import ProjectLocationMap from '../../Components/ProjectLocationMap';
 import usePagudpudBarangays from '../../Hooks/usePagudpudBarangays';
+import usePagudpudProjectGeocoder from '../../Hooks/usePagudpudProjectGeocoder';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 import {
     formatPagudpudProjectLocation,
@@ -9,6 +11,8 @@ import {
 } from '../../Utils/pagudpudProjectLocation';
 
 export default function Projects({ projects = [] }) {
+    const { props } = usePage();
+    const errors = props.errors ?? {};
     const {
         barangays,
         loading: barangaysLoading,
@@ -21,13 +25,24 @@ export default function Projects({ projects = [] }) {
     const [isSaving, setIsSaving] = useState(false);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
+    const [focusCoordinates, setFocusCoordinates] = useState(null);
+    const {
+        locate,
+        cancelLookup,
+        isLocating,
+        message: lookupMessage,
+    } = usePagudpudProjectGeocoder();
 
     const emptyForm = {
         project_name: '',
         description: '',
+        implementing_office: '',
+        contractor: '',
         location: '',
         barangay: '',
         sitio: '',
+        latitude: null,
+        longitude: null,
         budget: '',
         start_date: '',
         target_completion_date: '',
@@ -68,7 +83,7 @@ export default function Projects({ projects = [] }) {
             status: null,
             color: 'text-slate-900',
             icon: '▦',
-            iconClass: 'bg-emerald-50 text-emerald-700',
+            iconClass: 'bg-blue-50 text-blue-700',
         },
         {
             label: 'Ongoing',
@@ -80,9 +95,9 @@ export default function Projects({ projects = [] }) {
         {
             label: 'Completed',
             status: 'Completed',
-            color: 'text-emerald-700',
+            color: 'text-blue-700',
             icon: '✓',
-            iconClass: 'bg-emerald-50 text-emerald-700',
+            iconClass: 'bg-blue-50 text-blue-700',
         },
         {
             label: 'Planned',
@@ -102,7 +117,7 @@ export default function Projects({ projects = [] }) {
 
     const getStatusClass = (status) => {
         const classes = {
-            Completed: 'bg-emerald-50 text-emerald-800 ring-emerald-600/20',
+            Completed: 'bg-blue-50 text-blue-800 ring-blue-600/20',
             Ongoing: 'bg-blue-50 text-blue-800 ring-blue-600/20',
             Planned: 'bg-amber-50 text-amber-800 ring-amber-600/20',
             Suspended: 'bg-red-50 text-red-800 ring-red-600/20',
@@ -155,13 +170,19 @@ export default function Projects({ projects = [] }) {
     }, [projects, search, statusFilter]);
 
     const openEditForm = (project) => {
+        cancelLookup();
+        setFocusCoordinates(null);
         setEditingProject(project.id);
         setForm({
             project_name: project.project_name || '',
             description: project.description || '',
+            implementing_office: project.implementing_office || '',
+            contractor: project.contractor || '',
             location: project.location || '',
             barangay: '',
             sitio: '',
+            latitude: project.latitude ?? null,
+            longitude: project.longitude ?? null,
             budget: project.budget ?? '',
             start_date: project.start_date
                 ? String(project.start_date).slice(0, 10)
@@ -175,6 +196,8 @@ export default function Projects({ projects = [] }) {
     };
 
     const closeEditForm = () => {
+        cancelLookup();
+        setFocusCoordinates(null);
         setEditingProject(null);
         setForm(emptyForm);
     };
@@ -189,15 +212,32 @@ export default function Projects({ projects = [] }) {
     };
 
     const handleLocationChange = (field, value) => {
+        cancelLookup();
+        setFocusCoordinates(null);
         const nextForm = { ...form, [field]: value };
+        nextForm.latitude = null;
+        nextForm.longitude = null;
+        nextForm.location = formatPagudpudProjectLocation(
+            nextForm.sitio,
+            nextForm.barangay,
+        );
 
-        setForm({
-            ...nextForm,
-            location: formatPagudpudProjectLocation(
-                nextForm.sitio,
-                nextForm.barangay,
-            ),
-        });
+        setForm(nextForm);
+
+        if (field === 'barangay' && value) {
+            locate(nextForm.location, applyLocatedCoordinates);
+        }
+    };
+
+    const applyLocatedCoordinates = (coordinates) => {
+        setForm((current) => ({ ...current, ...coordinates }));
+        setFocusCoordinates(coordinates);
+    };
+
+    const updateMapPin = (coordinates) => {
+        cancelLookup();
+        setFocusCoordinates(null);
+        setForm((current) => ({ ...current, ...coordinates }));
     };
 
     const saveProject = (e, projectId) => {
@@ -252,8 +292,8 @@ export default function Projects({ projects = [] }) {
 
                         </div>
 
-                        <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
-                            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                        <div className="flex w-fit items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-800">
+                            <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
                             {projects.length} project records
                         </div>
                     </div>
@@ -279,7 +319,7 @@ export default function Projects({ projects = [] }) {
                                 return (
                                     <div
                                         key={item.label}
-                                        className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
+                                        className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <p className="text-sm font-medium leading-5 text-slate-600">
@@ -326,7 +366,7 @@ export default function Projects({ projects = [] }) {
                                             }
                                             placeholder="Search projects..."
                                             aria-label="Search projects"
-                                            className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 sm:w-64"
+                                            className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 sm:w-64"
                                         />
                                     </div>
 
@@ -336,7 +376,7 @@ export default function Projects({ projects = [] }) {
                                             setStatusFilter(e.target.value)
                                         }
                                         aria-label="Filter projects by status"
-                                        className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                        className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                     >
                                         <option value="All">All statuses</option>
                                         <option value="Planned">Planned</option>
@@ -350,7 +390,7 @@ export default function Projects({ projects = [] }) {
 
                         {filteredProjects.length === 0 ? (
                             <div className="px-5 py-16 text-center">
-                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-2xl text-emerald-700">
+                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-700">
                                     ▦
                                 </div>
 
@@ -365,7 +405,7 @@ export default function Projects({ projects = [] }) {
                                     <button
                                         type="button"
                                         onClick={clearFilters}
-                                        className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+                                        className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
                                     >
                                         Clear filters
                                     </button>
@@ -425,7 +465,7 @@ export default function Projects({ projects = [] }) {
                                                                     ? closeEditForm()
                                                                     : openEditForm(project)
                                                             }
-                                                            className="rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50"
+                                                            className="rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-sm font-semibold text-blue-800 transition hover:bg-blue-50"
                                                         >
                                                             {isEditing
                                                                 ? 'Close Editor'
@@ -444,7 +484,7 @@ export default function Projects({ projects = [] }) {
                                                     </div>
                                                 </div>
 
-                                                <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                                                <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                                                     <div className="rounded-xl bg-slate-50 p-4">
                                                         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                                                             Budget
@@ -495,7 +535,7 @@ export default function Projects({ projects = [] }) {
                                                             <div
                                                                 className={`h-full rounded-full transition-all ${
                                                                     project.status === 'Completed'
-                                                                        ? 'bg-emerald-500'
+                                                                        ? 'bg-blue-500'
                                                                         : project.status === 'Suspended'
                                                                           ? 'bg-red-400'
                                                                           : project.status === 'Planned'
@@ -508,11 +548,31 @@ export default function Projects({ projects = [] }) {
                                                             />
                                                         </div>
                                                     </div>
+
+                                                    <div className="rounded-xl bg-slate-50 p-4">
+                                                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                                            Implementing Office
+                                                        </p>
+                                                        <p className="mt-2 break-words text-sm font-semibold text-slate-800">
+                                                            {project.implementing_office ||
+                                                                'Not specified'}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="rounded-xl bg-slate-50 p-4">
+                                                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                                            Contractor
+                                                        </p>
+                                                        <p className="mt-2 break-words text-sm font-semibold text-slate-800">
+                                                            {project.contractor ||
+                                                                'Not specified'}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             {isEditing && (
-                                                <div className="border-t border-emerald-100 bg-emerald-50/40 px-5 py-6 sm:px-6">
+                                                <div className="border-t border-blue-100 bg-blue-50/40 px-5 py-6 sm:px-6">
                                                     <div className="mb-5">
                                                         <h4 className="text-lg font-bold text-slate-900">
                                                             Edit Project Information
@@ -540,7 +600,7 @@ export default function Projects({ projects = [] }) {
                                                                     value={form.project_name}
                                                                     onChange={handleChange}
                                                                     required
-                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                                                 />
                                                             </div>
 
@@ -549,7 +609,7 @@ export default function Projects({ projects = [] }) {
                                                                     htmlFor={`description-${project.id}`}
                                                                     className="mb-2 block text-sm font-semibold text-slate-700"
                                                                 >
-                                                                    Description
+                                                                    Contract Description
                                                                 </label>
                                                                 <textarea
                                                                     id={`description-${project.id}`}
@@ -557,23 +617,84 @@ export default function Projects({ projects = [] }) {
                                                                     value={form.description}
                                                                     onChange={handleChange}
                                                                     rows={4}
-                                                                    className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                    className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-7 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                                                                />
+                                                            </div>
+
+                                                            <div>
+                                                                <label
+                                                                htmlFor={`implementing_office-${project.id}`}
+                                                                className="mb-2 block text-sm font-semibold text-slate-700"
+                                                                >
+                                                                Implementing Office
+                                                                </label>
+                                                                <input
+                                                                id={`implementing_office-${project.id}`}
+                                                                type="text"
+                                                                name="implementing_office"
+                                                                value={form.implementing_office}
+                                                                onChange={handleChange}
+                                                                maxLength={255}
+                                                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                                                                />
+                                                            </div>
+
+                                                            <div>
+                                                                <label
+                                                                htmlFor={`contractor-${project.id}`}
+                                                                className="mb-2 block text-sm font-semibold text-slate-700"
+                                                                >
+                                                                Contractor
+                                                                </label>
+                                                                <input
+                                                                id={`contractor-${project.id}`}
+                                                                type="text"
+                                                                name="contractor"
+                                                                value={form.contractor}
+                                                                onChange={handleChange}
+                                                                maxLength={255}
+                                                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                                                 />
                                                             </div>
 
                                                             <div className="sm:col-span-2">
                                                                 <h5 className="mb-2 text-sm font-semibold text-slate-700">
-                                                                    Location
+                                                                Location
                                                                 </h5>
                                                                 <PagudpudProjectLocationFields
                                                                     idPrefix={`project-${project.id}-location`}
                                                                     barangay={form.barangay}
                                                                     sitio={form.sitio}
                                                                     onChange={handleLocationChange}
+                                                                    onSitioBlur={() => locate(form.location, applyLocatedCoordinates)}
                                                                     barangays={barangays}
                                                                     loading={barangaysLoading}
                                                                     barangaysError={barangaysError}
                                                                     retry={retryBarangays}
+                                                                />
+                                                            </div>
+
+                                                            <div className="sm:col-span-2">
+                                                                <h5 className="mb-2 text-sm font-semibold text-slate-700">
+                                                                    Project Map Pin
+                                                                </h5>
+                                                                <ProjectLocationMap
+                                                                    latitude={form.latitude}
+                                                                    longitude={form.longitude}
+                                                                    interactive
+                                                                    onChange={updateMapPin}
+                                                                    address={form.location}
+                                                                    onLocate={() =>
+                                                                        locate(form.location, applyLocatedCoordinates)
+                                                                    }
+                                                                    isLocating={isLocating}
+                                                                    lookupMessage={lookupMessage}
+                                                                    focusCoordinates={focusCoordinates}
+                                                                    error={
+                                                                        errors?.latitude ||
+                                                                        errors?.longitude
+                                                                    }
+                                                                    projectName={`Set map pin for ${form.project_name}`}
                                                                 />
                                                             </div>
 
@@ -593,7 +714,7 @@ export default function Projects({ projects = [] }) {
                                                                     min="0"
                                                                     step="0.01"
                                                                     required
-                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                                                 />
                                                             </div>
 
@@ -610,7 +731,7 @@ export default function Projects({ projects = [] }) {
                                                                     name="start_date"
                                                                     value={form.start_date}
                                                                     onChange={handleChange}
-                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                                                 />
                                                             </div>
 
@@ -627,7 +748,7 @@ export default function Projects({ projects = [] }) {
                                                                     name="target_completion_date"
                                                                     value={form.target_completion_date}
                                                                     onChange={handleChange}
-                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                                                 />
                                                             </div>
 
@@ -643,7 +764,7 @@ export default function Projects({ projects = [] }) {
                                                                     name="status"
                                                                     value={form.status}
                                                                     onChange={handleChange}
-                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                                                 >
                                                                     <option value="Planned">Planned</option>
                                                                     <option value="Ongoing">Ongoing</option>
@@ -660,7 +781,7 @@ export default function Projects({ projects = [] }) {
                                                                     >
                                                                         Project Progress
                                                                     </label>
-                                                                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800">
+                                                                    <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-800">
                                                                         {form.progress}%
                                                                     </span>
                                                                 </div>
@@ -672,7 +793,7 @@ export default function Projects({ projects = [] }) {
                                                                     max="100"
                                                                     value={form.progress}
                                                                     onChange={handleChange}
-                                                                    className="w-full cursor-pointer accent-emerald-600"
+                                                                    className="w-full cursor-pointer accent-blue-600"
                                                                 />
                                                                 <div className="mt-2 flex justify-between text-xs text-slate-500">
                                                                     <span>0%</span>
@@ -681,7 +802,7 @@ export default function Projects({ projects = [] }) {
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex flex-col-reverse gap-3 border-t border-emerald-100 pt-5 sm:flex-row sm:justify-end">
+                                                        <div className="flex flex-col-reverse gap-3 border-t border-blue-100 pt-5 sm:flex-row sm:justify-end">
                                                             <button
                                                                 type="button"
                                                                 onClick={closeEditForm}
@@ -699,7 +820,7 @@ export default function Projects({ projects = [] }) {
                                                                     Boolean(barangaysError) ||
                                                                     !form.barangay
                                                                 }
-                                                                className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                                                                className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
                                                             >
                                                                 {isSaving
                                                                     ? 'Saving Changes...'

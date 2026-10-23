@@ -5,14 +5,11 @@ import {
     Cell,
     Tooltip,
     Legend,
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
     ResponsiveContainer,
 } from 'recharts';
 
+import ProjectCompletionLineChart from '../../Components/ProjectCompletionLineChart';
+import ProjectProgressLineChart from '../../Components/ProjectProgressLineChart';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 export default function Dashboard({
@@ -20,6 +17,7 @@ export default function Dashboard({
     totalUsers = 0,
     totalFeedback = 0,
     totalPosts = 0,
+    completionStats = [],
 }) {
     const totalProjects = projects.length;
 
@@ -58,35 +56,22 @@ export default function Dashboard({
     ].filter((item) => item.value > 0);
 
     const chartColors = {
-        Ongoing: '#059669',
-        Completed: '#047857',
+        Ongoing: '#3b82f6',
+        Completed: '#1d4ed8',
         Planned: '#d97706',
         Suspended: '#dc2626',
     };
 
-    const progressData = projects.map((project) => {
-        const name = project.project_name || 'Untitled Project';
-
-        return {
-            name:
-                name.length > 19
-                    ? `${name.substring(0, 19)}...`
-                    : name,
-            progress: Math.min(
-                100,
-                Math.max(0, Number(project.progress || 0))
-            ),
-        };
-    });
-
-    const recentProjects = projects.slice(0, 5);
+    const recentProjects = projects
+        .filter((project) => project.status !== 'Completed')
+        .slice(0, 5);
 
     const getStatusClass = (status) => {
         switch (status) {
             case 'Completed':
-                return 'bg-emerald-50 text-emerald-800';
+                return 'bg-blue-50 text-blue-800';
             case 'Ongoing':
-                return 'bg-green-50 text-green-800';
+                return 'bg-blue-50 text-blue-800';
             case 'Planned':
                 return 'bg-amber-50 text-amber-800';
             case 'Suspended':
@@ -101,22 +86,22 @@ export default function Dashboard({
             label: 'Total Users',
             value: totalUsers,
             icon: '♙',
-            color: 'text-emerald-800',
-            iconBg: 'bg-emerald-50',
+            color: 'text-blue-800',
+            iconBg: 'bg-blue-50',
         },
         {
             label: 'Total Projects',
             value: totalProjects,
             icon: '▤',
-            color: 'text-emerald-800',
-            iconBg: 'bg-emerald-50',
+            color: 'text-blue-800',
+            iconBg: 'bg-blue-50',
         },
         {
             label: 'Citizen Feedback',
             value: totalFeedback,
             icon: '☷',
-            color: 'text-teal-800',
-            iconBg: 'bg-teal-50',
+            color: 'text-blue-800',
+            iconBg: 'bg-blue-50',
         },
         {
             label: 'Administrative Posts',
@@ -129,8 +114,8 @@ export default function Dashboard({
             label: 'Average Progress',
             value: `${averageProgress}%`,
             icon: '↗',
-            color: 'text-emerald-800',
-            iconBg: 'bg-emerald-50',
+            color: 'text-blue-800',
+            iconBg: 'bg-blue-50',
         },
     ];
 
@@ -161,16 +146,16 @@ export default function Dashboard({
         {
             label: 'Ongoing Projects',
             value: ongoingProjects,
-            color: 'bg-green-500',
-            text: 'text-green-800',
-            bg: 'bg-green-50',
+            color: 'bg-blue-500',
+            text: 'text-blue-800',
+            bg: 'bg-blue-50',
         },
         {
             label: 'Completed Projects',
             value: completedProjects,
-            color: 'bg-emerald-600',
-            text: 'text-emerald-800',
-            bg: 'bg-emerald-50',
+            color: 'bg-blue-600',
+            text: 'text-blue-800',
+            bg: 'bg-blue-50',
         },
         {
             label: 'Planned Projects',
@@ -202,7 +187,7 @@ export default function Dashboard({
 
                         <Link
                             href="/admin/projects"
-                            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
                         >
                             <span className="text-lg leading-none">+</span>
                             View Projects
@@ -222,7 +207,7 @@ export default function Dashboard({
                             {statCards.map((card) => (
                                 <div
                                     key={card.label}
-                                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200"
+                                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200"
                                 >
                                     <div className="flex items-start justify-between gap-3">
                                         <p className="text-sm font-medium leading-5 text-slate-600">
@@ -340,78 +325,19 @@ export default function Dashboard({
                                 </div>
 
                                 <div className="mt-4 h-[280px]">
-                                    {progressData.length > 0 ? (
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart
-                                                data={progressData}
-                                                margin={{
-                                                    top: 8,
-                                                    right: 8,
-                                                    left: 0,
-                                                    bottom: 8,
-                                                }}
-                                            >
-                                                <CartesianGrid
-                                                    stroke="#e2e8f0"
-                                                    strokeDasharray="3 3"
-                                                    vertical={false}
-                                                />
-
-                                                <XAxis
-                                                    dataKey="name"
-                                                    tick={{
-                                                        fontSize: 11,
-                                                        fill: '#64748b',
-                                                    }}
-                                                    axisLine={false}
-                                                    tickLine={false}
-                                                    interval={0}
-                                                    angle={-15}
-                                                    textAnchor="end"
-                                                    height={60}
-                                                />
-
-                                                <YAxis
-                                                    domain={[0, 100]}
-                                                    tickFormatter={(value) => `${value}%`}
-                                                    tick={{
-                                                        fontSize: 12,
-                                                        fill: '#64748b',
-                                                    }}
-                                                    axisLine={false}
-                                                    tickLine={false}
-                                                />
-
-                                                <Tooltip
-                                                    formatter={(value) => [
-                                                        `${value}%`,
-                                                        'Progress',
-                                                    ]}
-                                                    contentStyle={{
-                                                        borderRadius: '8px',
-                                                        border: '1px solid #e2e8f0',
-                                                        fontSize: '13px',
-                                                    }}
-                                                />
-
-                                                <Bar
-                                                    dataKey="progress"
-                                                    name="Progress"
-                                                    fill="#059669"
-                                                    radius={[4, 4, 0, 0]}
-                                                    maxBarSize={40}
-                                                />
-                                            </BarChart>
-                                        </ResponsiveContainer>
+                                    {projects.some((project) => project.progress_updates?.length > 0) ? (
+                                        <ProjectProgressLineChart projects={projects} />
                                     ) : (
                                         <div className="flex h-full items-center justify-center text-sm text-slate-500">
-                                            No project data available.
+                                            No progress history available.
                                         </div>
                                     )}
                                 </div>
                             </div>
                         </div>
                     </section>
+
+                    <ProjectCompletionLineChart data={completionStats} />
 
                     <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
@@ -423,7 +349,7 @@ export default function Dashboard({
 
                             <Link
                                 href="/admin/projects"
-                                className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-900"
+                                className="text-sm font-semibold text-blue-700 transition hover:text-blue-900"
                             >
                                 Manage Projects
                             </Link>
@@ -452,12 +378,12 @@ export default function Dashboard({
                                                 return (
                                                     <tr
                                                         key={project.id}
-                                                        className="transition hover:bg-emerald-50/40"
+                                                        className="transition hover:bg-blue-50/40"
                                                     >
                                                         <td className="max-w-[260px] px-5 py-4">
                                                             <Link
                                                                 href="/admin/projects"
-                                                                className="block truncate text-sm font-semibold text-slate-800 transition hover:text-emerald-700"
+                                                                className="block truncate text-sm font-semibold text-slate-800 transition hover:text-blue-700"
                                                             >
                                                                 {project.project_name || 'Untitled Project'}
                                                             </Link>
@@ -486,7 +412,7 @@ export default function Dashboard({
 
                                                                 <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                                                                     <div
-                                                                        className="h-full rounded-full bg-emerald-600 transition-all"
+                                                                        className="h-full rounded-full bg-blue-600 transition-all"
                                                                         style={{ width: `${progress}%` }}
                                                                     />
                                                                 </div>
@@ -538,7 +464,7 @@ export default function Dashboard({
 
                                                     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                                                         <div
-                                                            className="h-full rounded-full bg-emerald-600"
+                                                            className="h-full rounded-full bg-blue-600"
                                                             style={{ width: `${progress}%` }}
                                                         />
                                                     </div>
@@ -551,7 +477,9 @@ export default function Dashboard({
                         ) : (
                             <div className="px-5 py-12 text-center">
                                 <p className="text-base font-semibold text-slate-700">
-                                    No projects available
+                                    {projects.length === 0
+                                        ? 'No projects available'
+                                        : 'No recent projects. Completed projects remain available in Manage Projects.'}
                                 </p>
                             </div>
                         )}
@@ -569,10 +497,10 @@ export default function Dashboard({
                                 <Link
                                     key={item.title}
                                     href={item.href}
-                                    className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
+                                    className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
                                 >
                                     <div className="flex items-start justify-between">
-                                        <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-xl text-emerald-800">
+                                        <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-xl text-blue-800">
                                             {item.icon}
                                         </span>
 

@@ -1,6 +1,7 @@
 
 import { Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
+import BackButton from '../Components/BackButton';
 import usePagudpudBarangays from '../Hooks/usePagudpudBarangays';
 
 function AppLogo() {
@@ -46,7 +47,7 @@ export default function Register() {
     };
 
     const inputClass =
-        'w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10';
+        'w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-700 focus:ring-4 focus:ring-blue-700/10';
 
     const labelClass =
         'mb-2 block text-sm font-semibold text-slate-700';
@@ -59,7 +60,7 @@ export default function Register() {
                         <Link href="/" className="mb-3 inline-flex justify-center">
                             <AppLogo />
                         </Link>
-                        <p className="text-sm font-bold text-emerald-900">
+                        <p className="text-sm font-bold text-blue-900">
                             Pagudpud Transparency
                         </p>
                     </div>
@@ -362,7 +363,7 @@ export default function Register() {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-900/10 transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-900/10 transition hover:bg-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {processing
                                     ? 'Creating account...'
@@ -375,19 +376,13 @@ export default function Register() {
                             Already have an account?{' '}
                             <Link
                                 href="/login"
-                                className="font-bold text-emerald-800 hover:text-emerald-950 hover:underline"
+                                className="font-bold text-blue-800 hover:text-blue-950 hover:underline"
                             >
                                 Sign in
                             </Link>
                         </p>
 
-                        <button
-                            type="button"
-                            onClick={() => window.history.back()}
-                            className="mt-8 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-                        >
-                            Back
-                        </button>
+                        <BackButton fallback="/" className="mt-8" />
                 </section>
                 <footer className="pt-5 text-center text-xs text-slate-400">
                     © {new Date().getFullYear()} Pagudpud Transparency

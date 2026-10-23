@@ -35,9 +35,9 @@ export default function Feedback({ feedback = [] }) {
     const getStatusStyle = (status) => {
         switch ((status ?? 'Pending').toLowerCase()) {
             case 'resolved':
-                return 'bg-green-50 text-green-700 ring-green-200';
+                return 'bg-blue-50 text-blue-700 ring-blue-200';
             case 'reviewed':
-                return 'bg-emerald-50 text-emerald-700 ring-emerald-200';
+                return 'bg-blue-50 text-blue-700 ring-blue-200';
             case 'pending':
                 return 'bg-amber-50 text-amber-700 ring-amber-200';
             default:
@@ -62,8 +62,8 @@ export default function Feedback({ feedback = [] }) {
             label: 'Total Feedback',
             count: feedback.length,
             icon: 'total',
-            color: 'text-emerald-800',
-            iconBg: 'bg-emerald-50 text-emerald-700',
+            color: 'text-blue-800',
+            iconBg: 'bg-blue-50 text-blue-700',
         },
         {
             label: 'Pending',
@@ -76,15 +76,15 @@ export default function Feedback({ feedback = [] }) {
             label: 'Reviewed',
             count: reviewedCount,
             icon: 'reviewed',
-            color: 'text-emerald-700',
-            iconBg: 'bg-emerald-50 text-emerald-700',
+            color: 'text-blue-700',
+            iconBg: 'bg-blue-50 text-blue-700',
         },
         {
             label: 'Resolved',
             count: resolvedCount,
             icon: 'resolved',
-            color: 'text-green-700',
-            iconBg: 'bg-green-50 text-green-700',
+            color: 'text-blue-700',
+            iconBg: 'bg-blue-50 text-blue-700',
         },
     ];
 
@@ -94,7 +94,7 @@ export default function Feedback({ feedback = [] }) {
 
             <div className="min-h-screen space-y-6 bg-slate-50 p-5 sm:p-6 md:p-8">
                 <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
                         Citizen Participation
                     </p>
 
@@ -108,7 +108,7 @@ export default function Feedback({ feedback = [] }) {
                     {summaryCards.map((card) => (
                         <div
                             key={card.label}
-                            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
+                            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
                         >
                             <div className="flex items-center justify-between gap-3">
                                 <p className="text-sm font-medium text-slate-500">
@@ -204,7 +204,7 @@ export default function Feedback({ feedback = [] }) {
                             onChange={(event) =>
                                 setStatusFilter(event.target.value)
                             }
-                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         >
                             <option value="All">All statuses</option>
                             <option value="Pending">Pending</option>
@@ -217,7 +217,7 @@ export default function Feedback({ feedback = [] }) {
                         <button
                             type="button"
                             onClick={() => setStatusFilter('All')}
-                            className="mt-4 text-xs font-semibold text-emerald-700 transition hover:text-emerald-900"
+                            className="mt-4 text-xs font-semibold text-blue-700 transition hover:text-blue-900"
                         >
                             Clear all filters
                         </button>
@@ -232,7 +232,7 @@ export default function Feedback({ feedback = [] }) {
                             </h2>
                         </div>
 
-                        <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+                        <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
                             {filteredFeedback.length}{' '}
                             {filteredFeedback.length === 1
                                 ? 'result'
@@ -248,11 +248,11 @@ export default function Feedback({ feedback = [] }) {
                                 return (
                                     <article
                                         key={item.id}
-                                        className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md md:p-6"
+                                        className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md md:p-6"
                                     >
                                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                             <div className="min-w-0">
-                                                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                                                <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
                                                     Related Project
                                                 </p>
 
@@ -274,8 +274,8 @@ export default function Feedback({ feedback = [] }) {
                                             </span>
                                         </div>
 
-                                        <div className="mt-4 rounded-lg border border-emerald-100 bg-emerald-50/40 p-4">
-                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-800">
+                                        <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50/40 p-4">
+                                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-800">
                                                 Your message
                                             </p>
 
@@ -284,6 +284,15 @@ export default function Feedback({ feedback = [] }) {
                                             </p>
                                         </div>
 
+                                        {item.image_url && (
+                                            <img
+                                                src={item.image_url}
+                                                alt={`Photo attached to feedback for ${item.project?.project_name || 'project'}`}
+                                                loading="lazy"
+                                                className="mt-4 max-h-80 w-full rounded-lg border border-slate-200 object-contain sm:w-auto"
+                                            />
+                                        )}
+
                                         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
                                             <p className="text-xs text-slate-500">
                                                 Last updated:{' '}
@@ -291,7 +300,7 @@ export default function Feedback({ feedback = [] }) {
                                             </p>
 
                                             <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                                <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
                                                 Feedback record
                                             </span>
                                         </div>
@@ -300,8 +309,8 @@ export default function Feedback({ feedback = [] }) {
                             })}
                         </div>
                     ) : (
-                        <div className="rounded-xl border border-dashed border-emerald-200 bg-white px-6 py-12 text-center">
-                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                        <div className="rounded-xl border border-dashed border-blue-200 bg-white px-6 py-12 text-center">
+                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-700">
                                 <svg
                                     viewBox="0 0 24 24"
                                     fill="none"
@@ -324,7 +333,7 @@ export default function Feedback({ feedback = [] }) {
                                 <button
                                     type="button"
                                     onClick={() => setStatusFilter('All')}
-                                    className="mt-4 rounded-lg bg-emerald-700 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-emerald-800"
+                                    className="mt-4 rounded-lg bg-blue-700 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-blue-800"
                                 >
                                     Clear Filters
                                 </button>

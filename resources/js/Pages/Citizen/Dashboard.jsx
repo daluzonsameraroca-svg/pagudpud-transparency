@@ -5,19 +5,16 @@ import {
     Cell,
     Tooltip,
     Legend,
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
     ResponsiveContainer,
 } from 'recharts';
 
+import ProjectCompletionLineChart from '../../Components/ProjectCompletionLineChart';
+import ProjectProgressLineChart from '../../Components/ProjectProgressLineChart';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 const COLORS = {
-    Ongoing: '#059669',
-    Completed: '#047857',
+    Ongoing: '#3b82f6',
+    Completed: '#1d4ed8',
     Planned: '#d97706',
     Suspended: '#dc2626',
 };
@@ -127,8 +124,8 @@ function SectionTitle({ title, action }) {
 
 function StatusBadge({ status }) {
     const classes = {
-        Ongoing: 'bg-emerald-50 text-emerald-700',
-        Completed: 'bg-green-50 text-green-700',
+        Ongoing: 'bg-blue-50 text-blue-700',
+        Completed: 'bg-blue-50 text-blue-700',
         Planned: 'bg-amber-50 text-amber-700',
         Suspended: 'bg-red-50 text-red-700',
     };
@@ -146,6 +143,7 @@ function StatusBadge({ status }) {
 
 export default function Dashboard({
     projects = [],
+    completionStats = [],
     isNewCitizen = false,
 }) {
     const { props } = usePage();
@@ -194,24 +192,9 @@ export default function Dashboard({
         },
     ].filter((item) => item.value > 0);
 
-    const progressData = projects.map((project) => ({
-        name: project.project_name || 'Untitled Project',
-        progress: Math.min(
-            100,
-            Math.max(0, Number(project.progress || 0))
-        ),
-    }));
-
-    const recentProjects = projects.slice(0, 5);
-
-    const formatBudget = (budget) =>
-        budget == null
-            ? '—'
-            : Number(budget).toLocaleString('en-PH', {
-                  style: 'currency',
-                  currency: 'PHP',
-                  maximumFractionDigits: 0,
-              });
+    const recentProjects = projects
+        .filter((project) => project.status !== 'Completed')
+        .slice(0, 5);
 
     return (
         <DashboardLayout role="citizen">
@@ -235,21 +218,21 @@ export default function Dashboard({
                             label="Total Projects"
                             value={totalProjects}
                             icon="projects"
-                            color="#059669"
+                            color="#3b82f6"
                         />
 
                         <StatCard
                             label="Ongoing Projects"
                             value={ongoingProjects}
                             icon="ongoing"
-                            color="#059669"
+                            color="#3b82f6"
                         />
 
                         <StatCard
                             label="Completed Projects"
                             value={completedProjects}
                             icon="completed"
-                            color="#047857"
+                            color="#1d4ed8"
                         />
 
                         <StatCard
@@ -325,81 +308,12 @@ export default function Dashboard({
                             />
 
                             <div className="h-[220px]">
-                                {progressData.length > 0 ? (
-                                    <ResponsiveContainer
-                                        width="100%"
-                                        height="100%"
-                                    >
-                                        <BarChart
-                                            data={progressData}
-                                            margin={{
-                                                top: 8,
-                                                right: 8,
-                                                left: -15,
-                                                bottom: 38,
-                                            }}
-                                        >
-                                            <CartesianGrid
-                                                stroke="#e2e8f0"
-                                                strokeDasharray="3 3"
-                                                vertical={false}
-                                            />
-
-                                            <XAxis
-                                                dataKey="name"
-                                                tick={{
-                                                    fontSize: 9,
-                                                    fill: '#64748b',
-                                                }}
-                                                angle={-22}
-                                                textAnchor="end"
-                                                interval={0}
-                                                axisLine={false}
-                                                tickLine={false}
-                                            />
-
-                                            <YAxis
-                                                domain={[0, 100]}
-                                                tickFormatter={(value) =>
-                                                    `${value}%`
-                                                }
-                                                tick={{
-                                                    fontSize: 9,
-                                                    fill: '#64748b',
-                                                }}
-                                                axisLine={false}
-                                                tickLine={false}
-                                            />
-
-                                            <Tooltip
-                                                formatter={(value) => [
-                                                    `${value}%`,
-                                                    'Progress',
-                                                ]}
-                                                contentStyle={{
-                                                    fontSize: 11,
-                                                    borderRadius: 8,
-                                                    borderColor: '#e2e8f0',
-                                                }}
-                                            />
-
-                                            <Bar
-                                                dataKey="progress"
-                                                name="Progress"
-                                                fill="#059669"
-                                                maxBarSize={34}
-                                                radius={[4, 4, 0, 0]}
-                                            />
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                ) : (
-                                    <div className="flex h-full items-center justify-center text-[11px] text-slate-500">
-                                        No project data available.
-                                    </div>
-                                )}
+                                <ProjectProgressLineChart projects={projects} />
                             </div>
                         </div>
                     </section>
+
+                    <ProjectCompletionLineChart data={completionStats} />
 
                     <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
@@ -411,113 +325,55 @@ export default function Dashboard({
 
                             <Link
                                 href="/citizen/projects"
-                                className="flex items-center gap-1 text-[10px] font-medium text-emerald-700 hover:text-emerald-900"
+                                className="flex items-center gap-1 text-[10px] font-medium text-blue-700 hover:text-blue-900"
                             >
                                 View all
                             </Link>
                         </div>
 
                         {recentProjects.length > 0 ? (
-                            <div className="overflow-x-auto">
-                                <table className="w-full min-w-[650px] text-left">
-                                    <thead className="bg-slate-50">
-                                        <tr className="text-[9px] font-semibold uppercase tracking-wide text-slate-500">
-                                            <th className="px-4 py-2.5">
-                                                Project
-                                            </th>
-                                            <th className="px-4 py-2.5">
-                                                Budget
-                                            </th>
-                                            <th className="px-4 py-2.5">
-                                                Status
-                                            </th>
-                                            <th className="px-4 py-2.5">
-                                                Progress
-                                            </th>
-                                            <th className="px-4 py-2.5">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody className="divide-y divide-slate-100">
-                                        {recentProjects.map((project) => {
-                                            const progress = Math.min(
-                                                100,
-                                                Math.max(
-                                                    0,
-                                                    Number(project.progress || 0)
-                                                )
-                                            );
-
-                                            return (
-                                                <tr
-                                                    key={project.id}
-                                                    className="transition hover:bg-emerald-50/40"
-                                                >
-                                                    <td className="px-4 py-3">
-                                                        <p className="max-w-[220px] truncate text-[11px] font-medium text-slate-700">
-                                                            {project.project_name ||
-                                                                'Untitled Project'}
-                                                        </p>
-
-                                                        <p className="mt-1 text-[10px] text-slate-500">
-                                                            {project.location ||
-                                                                'Location not provided'}
-                                                        </p>
-                                                    </td>
-
-                                                    <td className="whitespace-nowrap px-4 py-3 text-[10px] text-slate-600">
-                                                        {formatBudget(
-                                                            project.budget
-                                                        )}
-                                                    </td>
-
-                                                    <td className="px-4 py-3">
-                                                        <StatusBadge
-                                                            status={project.status}
-                                                        />
-                                                    </td>
-
-                                                    <td className="px-4 py-3">
-                                                        <div className="w-24">
-                                                            <div className="mb-1 flex justify-between text-[9px] text-slate-500">
-                                                                <span>
-                                                                    Progress
-                                                                </span>
-                                                                <span>
-                                                                    {progress}%
-                                                                </span>
-                                                            </div>
-
-                                                            <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
-                                                                <div
-                                                                    className="h-full rounded-full bg-emerald-600"
-                                                                    style={{
-                                                                        width: `${progress}%`,
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </td>
-
-                                                    <td className="px-4 py-3">
-                                                        <Link
-                                                            href={`/citizen/projects/${project.id}`}
-                                                            className="whitespace-nowrap text-[10px] font-medium text-emerald-700 hover:text-emerald-900 hover:underline"
-                                                        >
-                                                            View details
-                                                        </Link>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                            <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3">
+                                {recentProjects.map((project) => (
+                                    <Link
+                                        key={project.id}
+                                        href={`/citizen/projects/${project.id}`}
+                                        className="group overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:border-blue-300 hover:shadow-md"
+                                    >
+                                        {project.image_url ? (
+                                            <img
+                                                src={project.image_url}
+                                                alt={project.project_name || 'Project'}
+                                                loading="lazy"
+                                                className="aspect-video w-full object-cover transition duration-200 group-hover:scale-[1.02]"
+                                            />
+                                        ) : (
+                                            <div
+                                                className="flex aspect-video items-center justify-center bg-slate-100 text-sm font-medium text-slate-500"
+                                                role="img"
+                                                aria-label="No project image available"
+                                            >
+                                                Project image unavailable
+                                            </div>
+                                        )}
+                                        <div className="flex items-start justify-between gap-3 p-3.5">
+                                            <div className="min-w-0">
+                                                <h3 className="line-clamp-2 text-sm font-semibold text-slate-800 group-hover:text-blue-800">
+                                                    {project.project_name ||
+                                                        'Untitled Project'}
+                                                </h3>
+                                                <p className="mt-1 truncate text-xs text-slate-500">
+                                                    {project.location ||
+                                                        'Location not provided'}
+                                                </p>
+                                            </div>
+                                            <StatusBadge status={project.status} />
+                                        </div>
+                                    </Link>
+                                ))}
                             </div>
                         ) : (
                             <div className="px-4 py-10 text-center text-[11px] text-slate-500">
-                                No projects available.
+                                No recent projects. Completed projects remain available in all projects.
                             </div>
                         )}
                     </section>
@@ -530,14 +386,14 @@ export default function Dashboard({
                         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                             <Link
                                 href="/citizen/projects"
-                                className="group flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3.5 transition hover:border-emerald-300 hover:shadow-sm"
+                                className="group flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3.5 transition hover:border-blue-300 hover:shadow-sm"
                             >
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
                                     <Icon name="search" />
                                 </div>
 
                                 <div>
-                                    <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-emerald-800">
+                                    <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-blue-800">
                                         Browse Projects
                                     </h3>
                                 </div>
@@ -545,14 +401,14 @@ export default function Dashboard({
 
                             <Link
                                 href="/citizen/posts"
-                                className="group flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3.5 transition hover:border-emerald-300 hover:shadow-sm"
+                                className="group flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3.5 transition hover:border-blue-300 hover:shadow-sm"
                             >
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
                                     <Icon name="announcement" />
                                 </div>
 
                                 <div>
-                                    <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-emerald-800">
+                                    <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-blue-800">
                                         Administrative Posts
                                     </h3>
                                 </div>
@@ -560,14 +416,14 @@ export default function Dashboard({
 
                             <Link
                                 href="/citizen/feedback"
-                                className="group flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3.5 transition hover:border-emerald-300 hover:shadow-sm"
+                                className="group flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3.5 transition hover:border-blue-300 hover:shadow-sm"
                             >
                                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700">
                                     <Icon name="message" />
                                 </div>
 
                                 <div>
-                                    <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-emerald-800">
+                                    <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-blue-800">
                                         Submit Feedback
                                     </h3>
                                 </div>

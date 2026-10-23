@@ -31,7 +31,7 @@ export default function Feedback({ feedback = [] }) {
             case 'Reviewed':
                 return 'bg-blue-50 text-blue-800 ring-blue-600/20';
             case 'Resolved':
-                return 'bg-emerald-50 text-emerald-800 ring-emerald-600/20';
+                return 'bg-blue-50 text-blue-800 ring-blue-600/20';
             default:
                 return 'bg-slate-100 text-slate-700 ring-slate-500/20';
         }
@@ -90,7 +90,7 @@ export default function Feedback({ feedback = [] }) {
             label: 'Total Feedback',
             value: counts.total,
             icon: '▤',
-            iconClass: 'bg-emerald-50 text-emerald-700',
+            iconClass: 'bg-blue-50 text-blue-700',
         },
         {
             label: 'Pending',
@@ -108,7 +108,7 @@ export default function Feedback({ feedback = [] }) {
             label: 'Resolved',
             value: counts.resolved,
             icon: '✓',
-            iconClass: 'bg-emerald-100 text-emerald-800',
+            iconClass: 'bg-blue-100 text-blue-800',
         },
     ];
 
@@ -129,8 +129,8 @@ export default function Feedback({ feedback = [] }) {
                                 </h1>
                             </div>
 
-                            <div className="flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
-                                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                            <div className="flex w-fit items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-800">
+                                <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
                                 Citizen submissions
                             </div>
                         </div>
@@ -145,7 +145,7 @@ export default function Feedback({ feedback = [] }) {
                         {summaryCards.map((card) => (
                             <div
                                 key={card.label}
-                                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
+                                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
                             >
                                 <div className="flex items-start justify-between gap-4">
                                     <div>
@@ -186,7 +186,7 @@ export default function Feedback({ feedback = [] }) {
                                         onChange={(e) => setSearch(e.target.value)}
                                         placeholder="Search feedback..."
                                         aria-label="Search citizen feedback"
-                                        className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 sm:w-72"
+                                        className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 sm:w-72"
                                     />
                                 </div>
 
@@ -194,7 +194,7 @@ export default function Feedback({ feedback = [] }) {
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
                                     aria-label="Filter feedback by status"
-                                    className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                    className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                 >
                                     <option value="All">All statuses</option>
                                     <option value="Pending">Pending</option>
@@ -206,7 +206,7 @@ export default function Feedback({ feedback = [] }) {
 
                         {filteredFeedback.length === 0 ? (
                             <div className="rounded-2xl border border-slate-200 bg-white px-5 py-16 text-center shadow-sm">
-                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-2xl text-emerald-700">
+                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-700">
                                     ▤
                                 </div>
 
@@ -221,7 +221,7 @@ export default function Feedback({ feedback = [] }) {
                                     <button
                                         type="button"
                                         onClick={clearFilters}
-                                        className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+                                        className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
                                     >
                                         Clear filters
                                     </button>
@@ -236,12 +236,12 @@ export default function Feedback({ feedback = [] }) {
                                     >
                                         <div className="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-start sm:justify-between sm:px-6">
                                             <div className="flex min-w-0 gap-4">
-                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-lg font-bold text-emerald-800">
+                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-lg font-bold text-blue-800">
                                                     P
                                                 </div>
 
                                                 <div className="min-w-0">
-                                                    <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                                                    <p className="text-xs font-bold uppercase tracking-wider text-blue-700">
                                                         Related Project
                                                     </p>
                                                     <h3 className="mt-1.5 break-words text-base font-bold leading-6 text-slate-900 sm:text-lg">
@@ -266,8 +266,8 @@ export default function Feedback({ feedback = [] }) {
                                         </div>
 
                                         <div className="px-5 py-5 sm:px-6">
-                                            <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-5">
-                                                <p className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                                            <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-5">
+                                                <p className="text-xs font-bold uppercase tracking-wider text-blue-800">
                                                     Citizen Feedback
                                                 </p>
                                                 <p className="mt-3 whitespace-pre-line break-words text-sm leading-7 text-slate-700">
@@ -276,9 +276,20 @@ export default function Feedback({ feedback = [] }) {
                                             </div>
                                         </div>
 
+                                        {item.image_url && (
+                                            <div className="px-5 pb-5 sm:px-6">
+                                                <img
+                                                    src={item.image_url}
+                                                    alt={`Photo attached to feedback for ${item.project?.project_name || 'project'}`}
+                                                    loading="lazy"
+                                                    className="max-h-96 w-full rounded-xl border border-slate-200 object-contain sm:w-auto"
+                                                />
+                                            </div>
+                                        )}
+
                                         <div className="grid gap-5 border-t border-slate-100 px-5 py-5 sm:grid-cols-2 lg:grid-cols-3 sm:px-6">
                                             <div className="flex min-w-0 items-start gap-3">
-                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800">
+                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-800">
                                                     {item.user?.name
                                                         ?.trim()
                                                         ?.charAt(0)
@@ -329,7 +340,7 @@ export default function Feedback({ feedback = [] }) {
                                             <div className="flex flex-wrap items-center gap-3">
                                                 {updatingId === item.id && (
                                                     <span
-                                                        className="text-sm font-medium text-emerald-700"
+                                                        className="text-sm font-medium text-blue-700"
                                                         aria-live="polite"
                                                     >
                                                         Updating...
@@ -346,7 +357,7 @@ export default function Feedback({ feedback = [] }) {
                                                         )
                                                     }
                                                     aria-label={`Update status for feedback on ${item.project?.project_name || 'project'}`}
-                                                    className="min-w-40 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 disabled:cursor-wait disabled:opacity-60"
+                                                    className="min-w-40 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:cursor-wait disabled:opacity-60"
                                                 >
                                                     <option value="Pending">
                                                         Pending
@@ -382,7 +393,7 @@ export default function Feedback({ feedback = [] }) {
                                 <button
                                     type="button"
                                     onClick={clearFilters}
-                                    className="self-start rounded-lg px-3 py-2 font-semibold text-emerald-700 transition hover:bg-emerald-50 sm:self-auto"
+                                    className="self-start rounded-lg px-3 py-2 font-semibold text-blue-700 transition hover:bg-blue-50 sm:self-auto"
                                 >
                                     Clear filters
                                 </button>

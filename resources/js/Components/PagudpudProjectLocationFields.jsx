@@ -8,9 +8,10 @@ export default function PagudpudProjectLocationFields({
     loading,
     barangaysError,
     retry,
+    onSitioBlur,
 }) {
     const inputClass =
-        'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100';
+        'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100';
     const labelClass = 'mb-1.5 block text-xs font-medium text-slate-700';
     const barangayId = `${idPrefix}-barangay`;
     const sitioId = `${idPrefix}-sitio`;
@@ -68,6 +69,7 @@ export default function PagudpudProjectLocationFields({
                     type="text"
                     value={sitio}
                     onChange={(event) => onChange('sitio', event.target.value)}
+                    onBlur={onSitioBlur}
                     placeholder="Optional"
                     maxLength={100}
                     className={inputClass}

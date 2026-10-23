@@ -6,11 +6,60 @@ use App\Models\Project;
 use App\Models\User;
 use App\Notifications\ProjectProgressUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class EngineeringProjectControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_engineer_must_provide_a_valid_map_pin_when_creating_a_project(): void
+    {
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+        ]);
+
+        $response = $this->actingAs($engineer)
+            ->from('/engineering/projects/create')
+            ->post('/engineering/projects', [
+                'project_name' => 'Road Improvement',
+                'location' => 'Balaoi, Pagudpud, Ilocos Norte',
+                'budget' => 100000,
+                'status' => 'Planned',
+                'progress' => 0,
+                'latitude' => 95,
+                'longitude' => 120.79,
+                'image' => UploadedFile::fake()->image('project.jpg'),
+            ]);
+
+        $response->assertRedirect('/engineering/projects/create');
+        $response->assertSessionHasErrors(['latitude']);
+        $this->assertDatabaseCount('projects', 0);
+    }
+
+    public function test_engineer_must_upload_a_project_image(): void
+    {
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+        ]);
+
+        $response = $this->actingAs($engineer)
+            ->from('/engineering/projects/create')
+            ->post('/engineering/projects', [
+                'project_name' => 'Road Improvement',
+                'location' => 'Balaoi, Pagudpud, Ilocos Norte',
+                'latitude' => 18.6024,
+                'longitude' => 120.8532,
+                'budget' => 100000,
+                'status' => 'Planned',
+                'progress' => 0,
+            ]);
+
+        $response->assertRedirect('/engineering/projects/create');
+        $response->assertSessionHasErrors(['image']);
+        $this->assertDatabaseCount('projects', 0);
+    }
 
     public function test_progress_update_creates_notifications_for_all_citizens(): void
     {
@@ -58,6 +107,118 @@ class EngineeringProjectControllerTest extends TestCase
             'id' => $project->id,
             'status' => 'Ongoing',
             'progress' => 25,
+        ]);
+    }
+
+    public function test_engineer_can_replace_a_project_image_during_a_progress_update(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('projects/old.jpg', 'old image');
+
+        $engineer = User::factory()->create(['role' => 'engineering']);
+        $project = Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Ongoing',
+            'progress' => 25,
+            'image_path' => 'projects/old.jpg',
+        ]);
+
+        $response = $this->actingAs($engineer)
+            ->from('/engineering/projects')
+            ->put("/engineering/projects/{$project->id}", [
+                'status' => 'Ongoing',
+                'progress' => 50,
+                'update_description' => 'Work is halfway complete',
+                'update_date' => '2026-10-23',
+                'image' => UploadedFile::fake()->image('updated-project.png'),
+            ]);
+
+        $response->assertRedirect('/engineering/projects');
+        $project->refresh();
+        $this->assertNotSame('projects/old.jpg', $project->image_path);
+        Storage::disk('public')->assertMissing('projects/old.jpg');
+        Storage::disk('public')->assertExists($project->image_path);
+        $this->assertDatabaseHas('projects', [
+            'id' => $project->id,
+            'progress' => 50,
+            'image_path' => $project->image_path,
+        ]);
+    }
+
+    public function test_engineer_can_remove_a_project_image_during_a_progress_update(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('projects/current.jpg', 'current image');
+
+        $engineer = User::factory()->create(['role' => 'engineering']);
+        $project = Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Ongoing',
+            'progress' => 25,
+            'image_path' => 'projects/current.jpg',
+        ]);
+
+        $response = $this->actingAs($engineer)
+            ->from('/engineering/projects')
+            ->put("/engineering/projects/{$project->id}", [
+                'status' => 'Ongoing',
+                'progress' => 50,
+                'update_description' => 'Work is halfway complete',
+                'update_date' => '2026-10-23',
+                'remove_image' => '1',
+            ]);
+
+        $response->assertRedirect('/engineering/projects');
+        $project->refresh();
+        $this->assertNull($project->image_path);
+        Storage::disk('public')->assertMissing('projects/current.jpg');
+        $this->assertDatabaseHas('projects', [
+            'id' => $project->id,
+            'progress' => 50,
+            'image_path' => null,
+        ]);
+    }
+
+    public function test_engineer_cannot_replace_a_project_image_with_an_invalid_file(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('projects/current.jpg', 'current image');
+
+        $engineer = User::factory()->create(['role' => 'engineering']);
+        $project = Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Ongoing',
+            'progress' => 25,
+            'image_path' => 'projects/current.jpg',
+        ]);
+
+        $response = $this->actingAs($engineer)
+            ->from('/engineering/projects')
+            ->put("/engineering/projects/{$project->id}", [
+                'status' => 'Ongoing',
+                'progress' => 50,
+                'update_date' => '2026-10-23',
+                'image' => UploadedFile::fake()->create(
+                    'document.pdf',
+                    100,
+                    'application/pdf',
+                ),
+            ]);
+
+        $response->assertRedirect('/engineering/projects');
+        $response->assertSessionHasErrors(['image']);
+        $this->assertSame('projects/current.jpg', $project->fresh()->image_path);
+        Storage::disk('public')->assertExists('projects/current.jpg');
+        $this->assertDatabaseHas('projects', [
+            'id' => $project->id,
+            'progress' => 25,
+            'image_path' => 'projects/current.jpg',
         ]);
     }
 

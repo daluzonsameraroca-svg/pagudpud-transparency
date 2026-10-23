@@ -39,8 +39,8 @@ function Icon({ name, className = 'h-4 w-4' }) {
 
 function StatusBadge({ status }) {
     const styles = {
-        Ongoing: 'bg-emerald-50 text-emerald-700',
-        Completed: 'bg-green-50 text-green-700',
+        Ongoing: 'bg-blue-50 text-blue-700',
+        Completed: 'bg-blue-50 text-blue-700',
         Planned: 'bg-amber-50 text-amber-700',
         Suspended: 'bg-red-50 text-red-700',
     };
@@ -163,7 +163,7 @@ export default function Projects({ projects = [], search = '' }) {
                         <div className="mb-3 flex items-center gap-2">
                             <Icon
                                 name="search"
-                                className="h-4 w-4 text-emerald-700"
+                                className="h-4 w-4 text-blue-700"
                             />
 
                             <h2 className="text-[12px] font-semibold text-slate-800">
@@ -188,7 +188,7 @@ export default function Projects({ projects = [], search = '' }) {
                                         setSearchTerm(event.target.value)
                                     }
                                     placeholder="Search by project name or location..."
-                                    className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[11px] text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                    className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[11px] text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
 
@@ -203,7 +203,7 @@ export default function Projects({ projects = [], search = '' }) {
                                     onChange={(event) =>
                                         setStatusFilter(event.target.value)
                                     }
-                                    className="h-9 w-full appearance-none rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[11px] text-slate-600 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                    className="h-9 w-full appearance-none rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[11px] text-slate-600 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 >
                                     <option value="">All statuses</option>
                                     <option value="Planned">Planned</option>
@@ -215,7 +215,7 @@ export default function Projects({ projects = [], search = '' }) {
 
                             <button
                                 type="submit"
-                                className="h-9 rounded-lg bg-emerald-700 px-5 text-[11px] font-medium text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-1"
+                                className="h-9 rounded-lg bg-blue-700 px-5 text-[11px] font-medium text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-1"
                             >
                                 Search
                             </button>
@@ -248,14 +248,14 @@ export default function Projects({ projects = [], search = '' }) {
                                 </p>
                             </div>
 
-                            <span className="rounded-lg border border-emerald-100 bg-emerald-50 px-2.5 py-1.5 text-[9px] text-emerald-700">
+                            <span className="rounded-lg border border-blue-100 bg-blue-50 px-2.5 py-1.5 text-[9px] text-blue-700">
                                 Updated project records
                             </span>
                         </div>
 
                         {projects.length === 0 ? (
                             <div className="px-4 py-12 text-center">
-                                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-700">
                                     <Icon
                                         name="folder"
                                         className="h-5 w-5"
@@ -270,7 +270,7 @@ export default function Projects({ projects = [], search = '' }) {
                                     <button
                                         type="button"
                                         onClick={clearFilters}
-                                        className="mt-3 text-[10px] font-medium text-emerald-700 hover:text-emerald-900 hover:underline"
+                                        className="mt-3 text-[10px] font-medium text-blue-700 hover:text-blue-900 hover:underline"
                                     >
                                         Clear filters
                                     </button>
@@ -285,19 +285,25 @@ export default function Projects({ projects = [], search = '' }) {
                                                 Project
                                             </th>
                                             <th className="px-4 py-3">
-                                                Budget
+                                                Implementing Office
                                             </th>
                                             <th className="px-4 py-3">
-                                                Target Completion
+                                                Contractor
+                                            </th>
+                                            <th className="px-4 py-3">
+                                                Cost
+                                            </th>
+                                            <th className="px-4 py-3">
+                                                Completion Date
                                             </th>
                                             <th className="px-4 py-3">
                                                 Status
                                             </th>
                                             <th className="px-4 py-3">
-                                                Progress
+                                                Accomplishment
                                             </th>
                                             <th className="px-4 py-3">
-                                                Details
+                                                Report
                                             </th>
                                         </tr>
                                     </thead>
@@ -323,7 +329,7 @@ export default function Projects({ projects = [], search = '' }) {
                                             return (
                                                 <tr
                                                     key={project.id}
-                                                    className="transition hover:bg-emerald-50/40"
+                                                    className="transition hover:bg-blue-50/40"
                                                 >
                                                     <td className="px-4 py-3.5">
                                                         <p className="max-w-[230px] truncate text-[11px] font-medium text-slate-700">
@@ -335,6 +341,16 @@ export default function Projects({ projects = [], search = '' }) {
                                                             {project.location ||
                                                                 'Location not specified'}
                                                         </p>
+                                                    </td>
+
+                                                    <td className="max-w-[180px] px-4 py-3.5 text-[10px] text-slate-600">
+                                                        {project.implementing_office ||
+                                                            'Not specified'}
+                                                    </td>
+
+                                                    <td className="max-w-[180px] px-4 py-3.5 text-[10px] text-slate-600">
+                                                        {project.contractor ||
+                                                            'Not specified'}
                                                     </td>
 
                                                     <td className="whitespace-nowrap px-4 py-3.5 text-[10px] text-slate-600">
@@ -371,7 +387,7 @@ export default function Projects({ projects = [], search = '' }) {
 
                                                             <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
                                                                 <div
-                                                                    className="h-full rounded-full bg-emerald-600 transition-all"
+                                                                    className="h-full rounded-full bg-blue-600 transition-all"
                                                                     style={{
                                                                         width: `${progress}%`,
                                                                     }}
@@ -382,11 +398,10 @@ export default function Projects({ projects = [], search = '' }) {
 
                                                     <td className="px-4 py-3.5">
                                                         <Link
-                                                            href={`/citizen/projects/${project.id}`}
-                                                            className="inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-medium text-emerald-700 hover:text-emerald-900 hover:underline"
+                                                            href={`/citizen/projects/${project.id}#project-feedback`}
+                                                            className="inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-medium text-blue-700 hover:text-blue-900 hover:underline"
                                                         >
-                                                            View details
-
+                                                            View &amp; report
                                                         </Link>
                                                     </td>
                                                 </tr>

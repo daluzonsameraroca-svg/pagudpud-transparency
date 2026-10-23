@@ -1,11 +1,14 @@
 import { Link, useForm } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import PagudpudProjectLocationFields from '../../Components/PagudpudProjectLocationFields';
+import ProjectLocationMap from '../../Components/ProjectLocationMap';
 import usePagudpudBarangays from '../../Hooks/usePagudpudBarangays';
+import usePagudpudProjectGeocoder from '../../Hooks/usePagudpudProjectGeocoder';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 import { formatPagudpudProjectLocation } from '../../Utils/pagudpudProjectLocation';
 
 const inputClass =
-    'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100';
+    'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100';
 
 const labelClass =
     'mb-1.5 block text-xs font-medium text-slate-700';
@@ -21,6 +24,14 @@ function FieldError({ message }) {
 }
 
 export default function CreateProject() {
+    const [focusCoordinates, setFocusCoordinates] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
+    const {
+        locate,
+        cancelLookup,
+        isLocating,
+        message: lookupMessage,
+    } = usePagudpudProjectGeocoder();
     const {
         barangays,
         loading: barangaysLoading,
@@ -30,9 +41,14 @@ export default function CreateProject() {
     const { data, setData, post, processing, errors } = useForm({
         project_name: '',
         description: '',
+        implementing_office: '',
+        contractor: '',
         location: '',
         barangay: '',
         sitio: '',
+        latitude: null,
+        longitude: null,
+        image: null,
         budget: '',
         start_date: '',
         target_completion_date: '',
@@ -40,21 +56,54 @@ export default function CreateProject() {
         progress: 0,
     });
 
+    useEffect(() => {
+        if (!data.image) {
+            setImagePreview('');
+
+            return undefined;
+        }
+
+        const previewUrl = URL.createObjectURL(data.image);
+        setImagePreview(previewUrl);
+
+        return () => URL.revokeObjectURL(previewUrl);
+    }, [data.image]);
+
     const submit = (e) => {
         e.preventDefault();
         post('/engineering/projects');
     };
 
     const updateLocation = (field, value) => {
-        const nextData = { ...data, [field]: value };
+        cancelLookup();
+        setFocusCoordinates(null);
+        const nextData = {
+            ...data,
+            [field]: value,
+            latitude: null,
+            longitude: null,
+        };
+        nextData.location = formatPagudpudProjectLocation(
+            nextData.sitio,
+            nextData.barangay,
+        );
 
-        setData({
-            ...nextData,
-            location: formatPagudpudProjectLocation(
-                nextData.sitio,
-                nextData.barangay,
-            ),
-        });
+        setData(nextData);
+
+        if (field === 'barangay' && value) {
+            locate(nextData.location, applyLocatedCoordinates);
+        }
+    };
+
+    const applyLocatedCoordinates = (coordinates) => {
+        setData((current) => ({ ...current, ...coordinates }));
+        setFocusCoordinates(coordinates);
+    };
+
+    const updateMapPin = (coordinates) => {
+        cancelLookup();
+        setFocusCoordinates(null);
+        setData((current) => ({ ...current, ...coordinates }));
     };
 
     return (
@@ -62,13 +111,6 @@ export default function CreateProject() {
             <div className="min-h-screen bg-slate-50 text-slate-800">
                 <header className="border-b border-slate-200 bg-white px-5 py-5 sm:px-8">
                     <div className="mx-auto flex max-w-[1200px] items-start gap-3">
-                        <Link
-                            href="/engineering/projects"
-                            className="mt-1 shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
-                        >
-                            Back
-                        </Link>
-
                         <div>
                             <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
                                 Add New Project
@@ -83,7 +125,7 @@ export default function CreateProject() {
                         <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                             <div className="border-b border-slate-100 px-4 py-4 sm:px-5">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-base text-emerald-700">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-base text-blue-700">
                                         ▤
                                     </div>
 
@@ -117,6 +159,38 @@ export default function CreateProject() {
                                 </div>
 
                                 <div className="md:col-span-2">
+                                    <label htmlFor="image" className={labelClass}>
+                                        Project Image
+                                        <span className="ml-1 text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        id="image"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        required
+                                        onChange={(event) =>
+                                            setData(
+                                                'image',
+                                                event.target.files?.[0] ?? null,
+                                            )
+                                        }
+                                        aria-invalid={Boolean(errors.image)}
+                                        className={`${inputClass} file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-blue-700`}
+                                    />
+                                    <p className="mt-1.5 text-xs text-slate-500">
+                                        JPG, PNG, or WebP. Maximum 5 MB.
+                                    </p>
+                                    <FieldError message={errors.image} />
+                                    {imagePreview && (
+                                        <img
+                                            src={imagePreview}
+                                            alt="Selected project preview"
+                                            className="mt-3 h-48 w-full rounded-lg border border-slate-200 object-cover sm:max-w-md"
+                                        />
+                                    )}
+                                </div>
+
+                                <div className="md:col-span-2">
                                     <h3 className={labelClass}>
                                         Project Location
                                     </h3>
@@ -125,11 +199,37 @@ export default function CreateProject() {
                                         barangay={data.barangay}
                                         sitio={data.sitio}
                                         onChange={updateLocation}
+                                        onSitioBlur={() => locate(data.location, applyLocatedCoordinates)}
                                         error={errors.location}
                                         barangays={barangays}
                                         loading={barangaysLoading}
                                         barangaysError={barangaysError}
                                         retry={retryBarangays}
+                                    />
+                                </div>
+
+                                <div className="md:col-span-2">
+                                    <h3 className={labelClass}>
+                                        Project Map Pin
+                                        <span className="ml-1 text-red-500">*</span>
+                                    </h3>
+                                    <ProjectLocationMap
+                                        latitude={data.latitude}
+                                        longitude={data.longitude}
+                                        interactive
+                                        onChange={updateMapPin}
+                                        address={data.location}
+                                        onLocate={() =>
+                                            locate(data.location, applyLocatedCoordinates)
+                                        }
+                                        isLocating={isLocating}
+                                        lookupMessage={lookupMessage}
+                                        focusCoordinates={focusCoordinates}
+                                        error={
+                                            errors.latitude ||
+                                            errors.longitude
+                                        }
+                                        projectName="Choose project location on map"
                                     />
                                 </div>
 
@@ -163,7 +263,7 @@ export default function CreateProject() {
 
                                 <div className="md:col-span-2">
                                     <label htmlFor="description" className={labelClass}>
-                                        Project Description
+                                        Contract Description
                                     </label>
 
                                     <textarea
@@ -178,13 +278,61 @@ export default function CreateProject() {
 
                                     <FieldError message={errors.description} />
                                 </div>
+
+                                <div>
+                                    <label
+                                        htmlFor="implementing_office"
+                                        className={labelClass}
+                                    >
+                                        Implementing Office
+                                    </label>
+                                    <input
+                                        id="implementing_office"
+                                        type="text"
+                                        value={data.implementing_office}
+                                        onChange={(e) =>
+                                            setData(
+                                                'implementing_office',
+                                                e.target.value,
+                                            )
+                                        }
+                                        maxLength={255}
+                                        placeholder="Office responsible for the project"
+                                        aria-invalid={Boolean(
+                                            errors.implementing_office,
+                                        )}
+                                        className={inputClass}
+                                    />
+                                    <FieldError
+                                        message={errors.implementing_office}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label htmlFor="contractor" className={labelClass}>
+                                        Contractor
+                                    </label>
+                                    <input
+                                        id="contractor"
+                                        type="text"
+                                        value={data.contractor}
+                                        onChange={(e) =>
+                                            setData('contractor', e.target.value)
+                                        }
+                                        maxLength={255}
+                                        placeholder="Contractor name"
+                                        aria-invalid={Boolean(errors.contractor)}
+                                        className={inputClass}
+                                    />
+                                    <FieldError message={errors.contractor} />
+                                </div>
                             </div>
                         </section>
 
                         <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                             <div className="border-b border-slate-100 px-4 py-4 sm:px-5">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-base text-emerald-700">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-base text-blue-700">
                                         ▦
                                     </div>
 
@@ -239,7 +387,7 @@ export default function CreateProject() {
                         <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                             <div className="border-b border-slate-100 px-4 py-4 sm:px-5">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-base text-emerald-700">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-base text-blue-700">
                                         ◷
                                     </div>
 
@@ -273,7 +421,7 @@ export default function CreateProject() {
                                     <FieldError message={errors.status} />
                                 </div>
 
-                                <div className="rounded-lg border border-emerald-100 bg-emerald-50/50 p-4">
+                                <div className="rounded-lg border border-blue-100 bg-blue-50/50 p-4">
                                     <div className="mb-4 flex items-start justify-between gap-3">
                                         <div>
                                             <label
@@ -284,7 +432,7 @@ export default function CreateProject() {
                                             </label>
                                         </div>
 
-                                        <span className="shrink-0 rounded-lg bg-emerald-100 px-3 py-1.5 text-sm font-bold text-emerald-800">
+                                        <span className="shrink-0 rounded-lg bg-blue-100 px-3 py-1.5 text-sm font-bold text-blue-800">
                                             {data.progress}%
                                         </span>
                                     </div>
@@ -300,7 +448,7 @@ export default function CreateProject() {
                                             setData('progress', Number(e.target.value))
                                         }
                                         aria-valuetext={`${data.progress}% complete`}
-                                        className="w-full cursor-pointer accent-emerald-600"
+                                        className="w-full cursor-pointer accent-blue-600"
                                     />
 
                                     <div className="mt-2 flex justify-between text-[10px] text-slate-400">
@@ -321,7 +469,7 @@ export default function CreateProject() {
                             <div className="flex flex-col-reverse gap-2 sm:flex-row">
                                 <Link
                                     href="/engineering/projects"
-                                    className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-center text-xs font-semibold text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+                                    className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-center text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
                                 >
                                     Cancel
                                 </Link>
@@ -332,9 +480,12 @@ export default function CreateProject() {
                                         processing ||
                                         barangaysLoading ||
                                         Boolean(barangaysError) ||
-                                        !data.barangay
+                                        !data.barangay ||
+                                        !data.image ||
+                                        data.latitude === null ||
+                                        data.longitude === null
                                     }
-                                    className="rounded-lg bg-emerald-700 px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="rounded-lg bg-blue-700 px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {processing ? 'Creating Project...' : 'Create Project'}
                                 </button>

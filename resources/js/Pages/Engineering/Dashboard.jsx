@@ -5,23 +5,23 @@ import {
     Cell,
     Tooltip,
     Legend,
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
     ResponsiveContainer,
 } from 'recharts';
+import ProjectCompletionLineChart from '../../Components/ProjectCompletionLineChart';
+import ProjectProgressLineChart from '../../Components/ProjectProgressLineChart';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 const STATUS_COLORS = {
-    Ongoing: '#059669',
-    Completed: '#047857',
+    Ongoing: '#3b82f6',
+    Completed: '#1d4ed8',
     Planned: '#f59e0b',
     Suspended: '#ef4444',
 };
 
-export default function Dashboard({ projects = [] }) {
+export default function Dashboard({
+    projects = [],
+    completionStats = [],
+}) {
     const totalProjects = projects.length;
 
     const ongoingProjects = projects.filter(
@@ -58,26 +58,16 @@ export default function Dashboard({ projects = [] }) {
         { name: 'Suspended', value: suspendedProjects },
     ].filter((item) => item.value > 0);
 
-    const progressData = projects.map((project) => ({
-        name:
-            (project.project_name || '').length > 18
-                ? `${project.project_name.substring(0, 18)}...`
-                : project.project_name || 'Untitled Project',
-        fullName: project.project_name || 'Untitled Project',
-        progress: Math.min(
-            100,
-            Math.max(0, Number(project.progress || 0)),
-        ),
-    }));
-
-    const recentProjects = projects.slice(0, 5);
+    const recentProjects = projects
+        .filter((project) => project.status !== 'Completed')
+        .slice(0, 5);
 
     const getStatusClass = (status) => {
         switch (status) {
             case 'Completed':
-                return 'bg-emerald-50 text-emerald-700 ring-emerald-600/20';
+                return 'bg-blue-50 text-blue-700 ring-blue-600/20';
             case 'Ongoing':
-                return 'bg-green-50 text-green-700 ring-green-600/20';
+                return 'bg-blue-50 text-blue-700 ring-blue-600/20';
             case 'Planned':
                 return 'bg-amber-50 text-amber-700 ring-amber-600/20';
             case 'Suspended':
@@ -97,13 +87,13 @@ export default function Dashboard({ projects = [] }) {
         {
             label: 'Ongoing',
             value: ongoingProjects,
-            color: 'bg-green-50 text-green-700',
+            color: 'bg-blue-50 text-blue-700',
             icon: '◷',
         },
         {
             label: 'Completed',
             value: completedProjects,
-            color: 'bg-emerald-50 text-emerald-700',
+            color: 'bg-blue-50 text-blue-700',
             icon: '✓',
         },
         {
@@ -115,7 +105,7 @@ export default function Dashboard({ projects = [] }) {
         {
             label: 'Average Progress',
             value: `${averageProgress}%`,
-            color: 'bg-teal-50 text-teal-700',
+            color: 'bg-blue-50 text-blue-700',
             icon: '↗',
         },
     ];
@@ -127,14 +117,14 @@ export default function Dashboard({ projects = [] }) {
                     <div className="mx-auto flex max-w-[1500px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-                                Engineering Dashboard
+                                Engineering 
                             </h1>
 
                         </div>
 
                         <Link
                             href="/engineering/projects/create"
-                            className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 sm:self-center"
+                            className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:self-center"
                         >
                             <span className="text-lg">+</span>
                             Add New Project
@@ -261,7 +251,7 @@ export default function Dashboard({ projects = [] }) {
                                         </ResponsiveContainer>
                                     ) : (
                                         <div className="flex h-full flex-col items-center justify-center rounded-xl bg-slate-50 text-center">
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-xl text-emerald-700">
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-xl text-blue-700">
                                                 ◔
                                             </div>
                                             <p className="mt-3 text-sm font-semibold text-slate-700">
@@ -280,87 +270,15 @@ export default function Dashboard({ projects = [] }) {
                                 </div>
 
                                 <div className="h-72">
-                                    {progressData.length > 0 ? (
-                                        <ResponsiveContainer
-                                            width="100%"
-                                            height="100%"
-                                        >
-                                            <BarChart
-                                                data={progressData}
-                                                margin={{
-                                                    top: 12,
-                                                    right: 8,
-                                                    left: -15,
-                                                    bottom: 12,
-                                                }}
-                                            >
-                                                <CartesianGrid
-                                                    stroke="#e2e8f0"
-                                                    strokeDasharray="3 3"
-                                                    vertical={false}
-                                                />
-
-                                                <XAxis
-                                                    dataKey="name"
-                                                    angle={-20}
-                                                    textAnchor="end"
-                                                    height={60}
-                                                    interval={0}
-                                                    tick={{
-                                                        fontSize: 10,
-                                                        fill: '#64748b',
-                                                    }}
-                                                    axisLine={false}
-                                                    tickLine={false}
-                                                />
-
-                                                <YAxis
-                                                    domain={[0, 100]}
-                                                    ticks={[0, 25, 50, 75, 100]}
-                                                    tickFormatter={(value) =>
-                                                        `${value}%`
-                                                    }
-                                                    tick={{
-                                                        fontSize: 10,
-                                                        fill: '#64748b',
-                                                    }}
-                                                    axisLine={false}
-                                                    tickLine={false}
-                                                />
-
-                                                <Tooltip
-                                                    cursor={{
-                                                        fill: '#f0fdf4',
-                                                    }}
-                                                    formatter={(value) => [
-                                                        `${value}%`,
-                                                        'Progress',
-                                                    ]}
-                                                    labelFormatter={(
-                                                        label,
-                                                        payload,
-                                                    ) =>
-                                                        payload?.[0]?.payload
-                                                            ?.fullName || label
-                                                    }
-                                                />
-
-                                                <Bar
-                                                    dataKey="progress"
-                                                    name="Progress"
-                                                    fill="#059669"
-                                                    maxBarSize={38}
-                                                    radius={[6, 6, 0, 0]}
-                                                />
-                                            </BarChart>
-                                        </ResponsiveContainer>
+                                    {projects.some((project) => project.progress_updates?.length > 0) ? (
+                                        <ProjectProgressLineChart projects={projects} />
                                     ) : (
                                         <div className="flex h-full flex-col items-center justify-center rounded-xl bg-slate-50 text-center">
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-xl text-emerald-700">
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-xl text-blue-700">
                                                 ↗
                                             </div>
                                             <p className="mt-3 text-sm font-semibold text-slate-700">
-                                                No progress data available
+                                                No progress history available
                                             </p>
                                         </div>
                                     )}
@@ -368,6 +286,8 @@ export default function Dashboard({ projects = [] }) {
                             </section>
                         </div>
                     </section>
+
+                    <ProjectCompletionLineChart data={completionStats} />
 
                     <section className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                         <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
@@ -379,7 +299,7 @@ export default function Dashboard({ projects = [] }) {
 
                             <Link
                                 href="/engineering/projects"
-                                className="self-start text-sm font-semibold text-emerald-700 transition hover:text-emerald-900 sm:self-center"
+                                className="self-start text-sm font-semibold text-blue-700 transition hover:text-blue-900 sm:self-center"
                             >
                                 View All Projects
                             </Link>
@@ -402,14 +322,14 @@ export default function Dashboard({ projects = [] }) {
                                             className="flex flex-col gap-4 px-5 py-5 transition hover:bg-slate-50 sm:px-6 md:flex-row md:items-center md:justify-between"
                                         >
                                             <div className="flex min-w-0 items-start gap-3">
-                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-lg text-emerald-700">
+                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg text-blue-700">
                                                     ▤
                                                 </div>
 
                                                 <div className="min-w-0">
                                                     <Link
                                                         href="/engineering/projects"
-                                                        className="break-words text-sm font-semibold text-slate-900 transition hover:text-emerald-700"
+                                                        className="break-words text-sm font-semibold text-slate-900 transition hover:text-blue-700"
                                                     >
                                                         {project.project_name ||
                                                             'Untitled Project'}
@@ -449,8 +369,8 @@ export default function Dashboard({ projects = [] }) {
                                                             className={`h-full rounded-full transition-all ${
                                                                 project.status ===
                                                                 'Completed'
-                                                                    ? 'bg-emerald-700'
-                                                                    : 'bg-emerald-500'
+                                                                    ? 'bg-blue-700'
+                                                                    : 'bg-blue-500'
                                                             }`}
                                                             style={{
                                                                 width: `${progress}%`,
@@ -465,18 +385,26 @@ export default function Dashboard({ projects = [] }) {
                             </div>
                         ) : (
                             <div className="px-5 py-14 text-center">
-                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-2xl text-emerald-700">
+                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-700">
                                     ▤
                                 </div>
                                 <p className="mt-4 text-sm font-semibold text-slate-800">
-                                    No projects available
+                                    {projects.length === 0
+                                        ? 'No projects available'
+                                        : 'No recent projects'}
                                 </p>
-                                <Link
-                                    href="/engineering/projects/create"
-                                    className="mt-5 inline-flex items-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
-                                >
-                                    Add First Project
-                                </Link>
+                                {projects.length === 0 ? (
+                                    <Link
+                                        href="/engineering/projects/create"
+                                        className="mt-5 inline-flex items-center rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800"
+                                    >
+                                        Add First Project
+                                    </Link>
+                                ) : (
+                                    <p className="mt-2 text-sm text-slate-500">
+                                        Completed projects remain in View All Projects.
+                                    </p>
+                                )}
                             </div>
                         )}
                     </section>
@@ -491,17 +419,17 @@ export default function Dashboard({ projects = [] }) {
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <Link
                                 href="/engineering/projects"
-                                className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+                                className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:shadow-md"
                             >
                                 <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700 transition group-hover:bg-emerald-100">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl text-blue-700 transition group-hover:bg-blue-100">
                                         ▤
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-bold text-slate-900 transition group-hover:text-emerald-700">
+                                        <h3 className="text-sm font-bold text-slate-900 transition group-hover:text-blue-700">
                                             Manage Projects
                                         </h3>
-                                        <span className="mt-3 inline-block text-sm font-semibold text-emerald-700">
+                                        <span className="mt-3 inline-block text-sm font-semibold text-blue-700">
                                             Open projects
                                         </span>
                                     </div>
@@ -510,17 +438,17 @@ export default function Dashboard({ projects = [] }) {
 
                             <Link
                                 href="/engineering/projects/create"
-                                className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+                                className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:shadow-md"
                             >
                                 <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-xl font-bold text-emerald-700 transition group-hover:bg-emerald-100">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl font-bold text-blue-700 transition group-hover:bg-blue-100">
                                         +
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-bold text-slate-900 transition group-hover:text-emerald-700">
+                                        <h3 className="text-sm font-bold text-slate-900 transition group-hover:text-blue-700">
                                             Add New Project
                                         </h3>
-                                        <span className="mt-3 inline-block text-sm font-semibold text-emerald-700">
+                                        <span className="mt-3 inline-block text-sm font-semibold text-blue-700">
                                             Create project
                                         </span>
                                     </div>

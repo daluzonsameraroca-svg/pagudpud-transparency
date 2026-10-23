@@ -50,7 +50,7 @@ function Field({ label, name, value, onChange, error, readOnly = false }) {
                 value={value ?? ''}
                 onChange={onChange}
                 readOnly={readOnly}
-                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 ${
+                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
                     readOnly
                         ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-500'
                         : 'border-slate-300 bg-white text-slate-800'
@@ -145,7 +145,7 @@ export default function Show({ user }) {
 
             <div className="min-h-screen bg-slate-50">
                 <header className="border-b border-slate-200 bg-white px-5 py-5 sm:px-7">
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">
                         Account
                     </p>
                     <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
@@ -155,8 +155,8 @@ export default function Show({ user }) {
 
                 <main className="mx-auto max-w-3xl space-y-5 p-5 sm:p-7">
                     <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                        <div className="flex items-center gap-4 border-b border-slate-100 bg-emerald-50/60 px-5 py-5 sm:px-7">
-                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-lg font-bold text-white">
+                        <div className="flex items-center gap-4 border-b border-slate-100 bg-blue-50/60 px-5 py-5 sm:px-7">
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-700 text-lg font-bold text-white">
                                 {(user.name || 'User')
                                     .trim()
                                     .charAt(0)
@@ -223,7 +223,7 @@ export default function Show({ user }) {
                                                         Boolean(barangaysError)
                                                     }
                                                     placeholder="Enter your sitio or purok"
-                                                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+                                                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100"
                                                 />
                                             </div>
                                             <div>
@@ -242,7 +242,7 @@ export default function Show({ user }) {
                                                         barangaysLoading ||
                                                         Boolean(barangaysError)
                                                     }
-                                                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+                                                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100"
                                                 >
                                                     <option value="">
                                                         {barangaysLoading
@@ -284,7 +284,7 @@ export default function Show({ user }) {
                                                 <button
                                                     type="button"
                                                     onClick={retryBarangays}
-                                                    className="font-semibold text-emerald-800 hover:text-emerald-950 hover:underline"
+                                                    className="font-semibold text-blue-800 hover:text-blue-950 hover:underline"
                                                 >
                                                     Try again
                                                 </button>
@@ -307,7 +307,7 @@ export default function Show({ user }) {
                                 {recentlySuccessful && (
                                     <p
                                         role="status"
-                                        className="mr-auto text-sm font-medium text-emerald-700"
+                                        className="mr-auto text-sm font-medium text-blue-700"
                                     >
                                         Profile updated.
                                     </p>
@@ -315,7 +315,7 @@ export default function Show({ user }) {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="inline-flex min-h-10 items-center justify-center rounded-lg bg-emerald-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="inline-flex min-h-10 items-center justify-center rounded-lg bg-blue-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {processing ? 'Saving...' : 'Save changes'}
                                 </button>

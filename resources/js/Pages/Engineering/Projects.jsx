@@ -1,5 +1,5 @@
-import { Link, router } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 const STATUS_OPTIONS = [
@@ -10,24 +10,38 @@ const STATUS_OPTIONS = [
 ];
 
 const STATUS_STYLES = {
-    Completed: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
-    Ongoing: 'bg-green-50 text-green-700 ring-green-600/20',
+    Completed: 'bg-blue-50 text-blue-700 ring-blue-600/20',
+    Ongoing: 'bg-blue-50 text-blue-700 ring-blue-600/20',
     Planned: 'bg-amber-50 text-amber-700 ring-amber-600/20',
     Suspended: 'bg-red-50 text-red-700 ring-red-600/20',
 };
 
 export default function Projects({ projects = [] }) {
+    const { props } = usePage();
+    const errors = props.errors ?? {};
     const [updatingProject, setUpdatingProject] = useState(null);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [imagePreview, setImagePreview] = useState('');
 
     const [form, setForm] = useState({
         status: '',
         progress: 0,
         update_description: '',
         update_date: '',
+        image: null,
+        remove_image: false,
     });
+
+    useEffect(
+        () => () => {
+            if (imagePreview.startsWith('blob:')) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        },
+        [imagePreview],
+    );
 
     const totalProjects = projects.length;
 
@@ -67,6 +81,7 @@ export default function Projects({ projects = [] }) {
 
     const openUpdateForm = (project) => {
         setUpdatingProject(project.id);
+        setImagePreview(project.image_url || '');
 
         setForm({
             status: project.status || 'Planned',
@@ -76,6 +91,8 @@ export default function Projects({ projects = [] }) {
             ),
             update_description: '',
             update_date: new Date().toLocaleDateString('en-CA'),
+            image: null,
+            remove_image: false,
         });
     };
 
@@ -88,7 +105,10 @@ export default function Projects({ projects = [] }) {
             progress: 0,
             update_description: '',
             update_date: '',
+            image: null,
+            remove_image: false,
         });
+        setImagePreview('');
     };
 
     const handleChange = (e) => {
@@ -100,6 +120,38 @@ export default function Projects({ projects = [] }) {
         }));
     };
 
+    const handleImageChange = (e) => {
+        const image = e.target.files?.[0] || null;
+        const currentProject = projects.find(
+            (project) => project.id === updatingProject,
+        );
+
+        setForm((previous) => ({
+            ...previous,
+            image,
+            remove_image: false,
+        }));
+        setImagePreview(
+            image
+                ? URL.createObjectURL(image)
+                : currentProject?.image_url || '',
+        );
+    };
+
+    const handleRemoveImageChange = (e) => {
+        const removeImage = e.target.checked;
+        const currentProject = projects.find(
+            (project) => project.id === updatingProject,
+        );
+
+        setForm((previous) => ({
+            ...previous,
+            image: null,
+            remove_image: removeImage,
+        }));
+        setImagePreview(removeImage ? '' : currentProject?.image_url || '');
+    };
+
     const submitUpdate = (e, projectId) => {
         e.preventDefault();
 
@@ -107,13 +159,16 @@ export default function Projects({ projects = [] }) {
 
         setIsSubmitting(true);
 
-        router.put(
+        router.post(
             `/engineering/projects/${projectId}`,
             {
+                _method: 'put',
                 status: form.status,
                 progress: Number(form.progress),
                 update_description: form.update_description,
                 update_date: form.update_date,
+                image: form.image,
+                remove_image: form.remove_image ? '1' : '0',
             },
             {
                 preserveScroll: true,
@@ -163,13 +218,13 @@ export default function Projects({ projects = [] }) {
         {
             label: 'Ongoing',
             value: ongoingCount,
-            color: 'bg-green-50 text-green-700',
+            color: 'bg-blue-50 text-blue-700',
             icon: '◷',
         },
         {
             label: 'Completed',
             value: completedCount,
-            color: 'bg-emerald-50 text-emerald-700',
+            color: 'bg-blue-50 text-blue-700',
             icon: '✓',
         },
         {
@@ -194,7 +249,7 @@ export default function Projects({ projects = [] }) {
 
                         <Link
                             href="/engineering/projects/create"
-                            className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 sm:self-center"
+                            className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:self-center"
                         >
                             <span className="text-lg">+</span>
                             Add Project
@@ -287,7 +342,7 @@ export default function Projects({ projects = [] }) {
                                                 setSearch(e.target.value)
                                             }
                                             placeholder="Name, location, description..."
-                                            className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                            className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                         />
                                     </div>
                                 </div>
@@ -306,7 +361,7 @@ export default function Projects({ projects = [] }) {
                                         onChange={(e) =>
                                             setStatusFilter(e.target.value)
                                         }
-                                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                     >
                                         <option value="All">All statuses</option>
 
@@ -336,7 +391,7 @@ export default function Projects({ projects = [] }) {
                                         setSearch('');
                                         setStatusFilter('All');
                                     }}
-                                    className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-900"
+                                    className="text-sm font-semibold text-blue-700 transition hover:text-blue-900"
                                 >
                                     Clear filters
                                 </button>
@@ -358,7 +413,7 @@ export default function Projects({ projects = [] }) {
                                     >
                                         <div className="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:px-6 md:flex-row md:items-start md:justify-between">
                                             <div className="flex min-w-0 items-start gap-4">
-                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700">
+                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl text-blue-700">
                                                     ▤
                                                 </div>
 
@@ -390,7 +445,7 @@ export default function Projects({ projects = [] }) {
                                             </span>
                                         </div>
 
-                                        <div className="grid grid-cols-1 gap-x-5 gap-y-6 px-5 py-6 min-[480px]:grid-cols-2 sm:grid-cols-4 sm:px-6">
+                                        <div className="grid grid-cols-1 gap-x-5 gap-y-6 px-5 py-6 min-[480px]:grid-cols-2 xl:grid-cols-3 sm:px-6">
                                             <div>
                                                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                                     Budget
@@ -424,8 +479,28 @@ export default function Projects({ projects = [] }) {
                                                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                                     Current Progress
                                                 </p>
-                                                <p className="mt-2 text-sm font-bold text-emerald-700">
+                                                <p className="mt-2 text-sm font-bold text-blue-700">
                                                     {progress}%
+                                                </p>
+                                            </div>
+
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                                    Implementing Office
+                                                </p>
+                                                <p className="mt-2 break-words text-sm font-medium text-slate-700">
+                                                    {project.implementing_office ||
+                                                        'Not specified'}
+                                                </p>
+                                            </div>
+
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                                    Contractor
+                                                </p>
+                                                <p className="mt-2 break-words text-sm font-medium text-slate-700">
+                                                    {project.contractor ||
+                                                        'Not specified'}
                                                 </p>
                                             </div>
                                         </div>
@@ -446,7 +521,7 @@ export default function Projects({ projects = [] }) {
                                                 <p className="text-sm font-semibold text-slate-700">
                                                     Project Progress
                                                 </p>
-                                                <p className="text-sm font-bold text-emerald-700">
+                                                <p className="text-sm font-bold text-blue-700">
                                                     {progress}%
                                                 </p>
                                             </div>
@@ -464,7 +539,7 @@ export default function Projects({ projects = [] }) {
                                                         project.status ===
                                                         'Suspended'
                                                             ? 'bg-red-400'
-                                                            : 'bg-emerald-500'
+                                                            : 'bg-blue-500'
                                                     }`}
                                                     style={{
                                                         width: `${progress}%`,
@@ -485,7 +560,7 @@ export default function Projects({ projects = [] }) {
                                                     onClick={() =>
                                                         openUpdateForm(project)
                                                     }
-                                                    className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                                                    className="inline-flex items-center justify-center rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                                 >
                                                     Update Progress
                                                 </button>
@@ -526,7 +601,7 @@ export default function Projects({ projects = [] }) {
                                                                     handleChange
                                                                 }
                                                                 required
-                                                                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                                                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                                             >
                                                                 {STATUS_OPTIONS.map(
                                                                     (status) => (
@@ -566,7 +641,7 @@ export default function Projects({ projects = [] }) {
                                                                     handleChange
                                                                 }
                                                                 required
-                                                                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                                                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                                             />
                                                         </div>
                                                     </div>
@@ -581,7 +656,7 @@ export default function Projects({ projects = [] }) {
                                                                 Progress
                                                             </label>
 
-                                                            <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-bold text-emerald-700">
+                                                            <span className="rounded-lg bg-blue-50 px-3 py-1.5 text-sm font-bold text-blue-700">
                                                                 {form.progress}%
                                                             </span>
                                                         </div>
@@ -597,7 +672,7 @@ export default function Projects({ projects = [] }) {
                                                             onChange={
                                                                 handleChange
                                                             }
-                                                            className="w-full cursor-pointer accent-emerald-600"
+                                                            className="w-full cursor-pointer accent-blue-600"
                                                         />
 
                                                         <div className="mt-3 flex justify-between text-xs text-slate-400">
@@ -628,8 +703,58 @@ export default function Projects({ projects = [] }) {
                                                             }
                                                             rows={4}
                                                             placeholder="Describe completed work, recent developments, or issues encountered..."
-                                                            className="w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                                            className="w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                                         />
+                                                    </div>
+
+                                                    <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5">
+                                                        <div>
+                                                            <label
+                                                                htmlFor={`project-image-${project.id}`}
+                                                                className="block text-sm font-semibold text-slate-700"
+                                                            >
+                                                                Project Photo
+                                                            </label>
+                                                            <p className="mt-1 text-xs text-slate-500">
+                                                                Upload a new JPG, PNG, or WebP image (up to 5 MB), or remove the current one.
+                                                            </p>
+                                                        </div>
+
+                                                        {imagePreview && (
+                                                            <img
+                                                                src={imagePreview}
+                                                                alt={`${project.project_name || 'Project'} preview`}
+                                                                className="h-40 w-full rounded-xl border border-slate-200 object-cover sm:w-64"
+                                                            />
+                                                        )}
+
+                                                        <input
+                                                            id={`project-image-${project.id}`}
+                                                            type="file"
+                                                            accept="image/jpeg,image/png,image/webp"
+                                                            onChange={handleImageChange}
+                                                            disabled={isSubmitting}
+                                                            className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+                                                        />
+
+                                                        {errors.image && (
+                                                            <p className="text-sm text-red-600" role="alert">
+                                                                {errors.image}
+                                                            </p>
+                                                        )}
+
+                                                        {project.image_url && (
+                                                            <label className="flex items-center gap-2 text-sm text-slate-700">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={form.remove_image}
+                                                                    onChange={handleRemoveImageChange}
+                                                                    disabled={isSubmitting}
+                                                                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                                />
+                                                                Remove current photo
+                                                            </label>
+                                                        )}
                                                     </div>
 
                                                     <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
@@ -651,7 +776,7 @@ export default function Projects({ projects = [] }) {
                                                             disabled={
                                                                 isSubmitting
                                                             }
-                                                            className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                                                            className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
                                                         >
                                                             {isSubmitting
                                                                 ? 'Saving Update...'
@@ -666,7 +791,7 @@ export default function Projects({ projects = [] }) {
                             })
                         ) : (
                             <div className="rounded-2xl border border-slate-200 bg-white px-5 py-14 text-center shadow-sm">
-                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-2xl text-emerald-700">
+                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-blue-700">
                                     ▤
                                 </div>
 
@@ -680,7 +805,7 @@ export default function Projects({ projects = [] }) {
                                 {projects.length === 0 ? (
                                     <Link
                                         href="/engineering/projects/create"
-                                        className="mt-5 inline-flex rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                                        className="mt-5 inline-flex rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800"
                                     >
                                         Add First Project
                                     </Link>
@@ -691,7 +816,7 @@ export default function Projects({ projects = [] }) {
                                             setSearch('');
                                             setStatusFilter('All');
                                         }}
-                                        className="mt-5 text-sm font-semibold text-emerald-700 hover:text-emerald-900"
+                                        className="mt-5 text-sm font-semibold text-blue-700 hover:text-blue-900"
                                     >
                                         Clear filters
                                     </button>

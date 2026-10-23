@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Notifications\CitizenUpdate;
 use App\Notifications\ProjectProgressUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CitizenUpdatesTest extends TestCase
@@ -16,6 +18,8 @@ class CitizenUpdatesTest extends TestCase
 
     public function test_new_project_creation_notifies_citizens_only(): void
     {
+        Storage::fake('public');
+
         $engineer = User::factory()->create([
             'role' => 'engineering',
         ]);
@@ -29,7 +33,12 @@ class CitizenUpdatesTest extends TestCase
         $response = $this->actingAs($engineer)->post('/engineering/projects', [
             'project_name' => 'Community Health Center',
             'description' => 'A new health center.',
+            'implementing_office' => 'Municipal Engineering Office',
+            'contractor' => 'Pagudpud Builders',
             'location' => 'Pagudpud',
+            'latitude' => 18.5601,
+            'longitude' => 120.7862,
+            'image' => UploadedFile::fake()->image('health-center.jpg'),
             'budget' => 250000,
             'status' => 'Planned',
             'progress' => 0,
@@ -38,6 +47,7 @@ class CitizenUpdatesTest extends TestCase
         $response->assertRedirect('/engineering/projects');
         $notification = $citizen->notifications()->firstOrFail();
         $project = Project::query()->firstOrFail();
+        Storage::disk('public')->assertExists($project->image_path);
 
         $this->assertSame('project_created', $notification->data['type']);
         $this->assertSame(
@@ -45,6 +55,36 @@ class CitizenUpdatesTest extends TestCase
             $notification->data['url'],
         );
         $this->assertSame(0, $admin->notifications()->count());
+        $this->assertDatabaseHas('projects', [
+            'id' => $project->id,
+            'implementing_office' => 'Municipal Engineering Office',
+            'contractor' => 'Pagudpud Builders',
+            'latitude' => 18.5601,
+            'longitude' => 120.7862,
+            'image_path' => $project->image_path,
+        ]);
+
+        $this->actingAs($citizen)
+            ->get('/citizen/dashboard')
+            ->assertInertia(fn ($page) => $page
+                ->component('Citizen/Dashboard')
+                ->where('projects.0.project_name', 'Community Health Center')
+                ->where('projects.0.image_path', $project->image_path)
+                ->where('projects.0.image_url', $project->image_url)
+            );
+
+        $this->actingAs($citizen)
+            ->get("/citizen/projects/{$project->id}")
+            ->assertInertia(fn ($page) => $page
+                ->component('Citizen/ProjectDetails')
+                ->where(
+                    'project.implementing_office',
+                    'Municipal Engineering Office',
+                )
+                ->where('project.contractor', 'Pagudpud Builders')
+                ->where('project.latitude', '18.5601000')
+                ->where('project.longitude', '120.7862000')
+            );
     }
 
     public function test_publishing_an_announcement_notifies_citizens(): void
@@ -116,7 +156,11 @@ class CitizenUpdatesTest extends TestCase
             [
                 'project_name' => 'Road Improvement Phase 2',
                 'description' => 'Updated road paving project.',
+                'implementing_office' => 'Municipal Engineering Office',
+                'contractor' => 'North Coast Construction',
                 'location' => 'Pagudpud',
+                'latitude' => 18.5612,
+                'longitude' => 120.7873,
                 'budget' => 150000,
                 'status' => 'Ongoing',
                 'progress' => 25,
@@ -124,6 +168,13 @@ class CitizenUpdatesTest extends TestCase
         );
 
         $response->assertRedirect();
+        $this->assertDatabaseHas('projects', [
+            'id' => $project->id,
+            'implementing_office' => 'Municipal Engineering Office',
+            'contractor' => 'North Coast Construction',
+            'latitude' => 18.5612,
+            'longitude' => 120.7873,
+        ]);
         $notification = $citizen->notifications()->firstOrFail();
 
         $this->assertSame('project_updated', $notification->data['type']);
@@ -131,6 +182,32 @@ class CitizenUpdatesTest extends TestCase
             "/citizen/projects/{$project->id}",
             $notification->data['url'],
         );
+    }
+
+    public function test_deleting_a_project_removes_its_uploaded_image(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+        $imagePath = UploadedFile::fake()
+            ->image('project.jpg')
+            ->store('projects', 'public');
+        $project = Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Planned',
+            'progress' => 0,
+            'image_path' => $imagePath,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->delete("/admin/projects/{$project->id}");
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
+        Storage::disk('public')->assertMissing($imagePath);
     }
 
     public function test_viewing_a_project_marks_only_its_notifications_as_read(): void

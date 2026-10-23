@@ -173,7 +173,7 @@ export default function Sidebar({
                 type="button"
                 onClick={() => setIsMobileOpen(true)}
                 aria-label="Open navigation menu"
-                className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-100 bg-white text-emerald-800 shadow-sm transition duration-200 hover:scale-105 hover:bg-emerald-50 motion-reduce:transition-none motion-reduce:hover:scale-100 lg:hidden"
+                className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-xl border border-blue-100 bg-white text-blue-800 shadow-sm transition duration-200 hover:scale-105 hover:bg-blue-50 motion-reduce:transition-none motion-reduce:hover:scale-100 lg:hidden"
             >
                 <Icon name="menu" size={22} />
             </button>
@@ -193,12 +193,12 @@ export default function Sidebar({
             />
 
             <aside
-                className={`fixed inset-y-0 left-0 z-50 flex max-w-[85vw] flex-col border-r border-emerald-100 bg-white shadow-xl transition-[width,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:max-w-none lg:translate-x-0 lg:shadow-sm ${
+                className={`fixed inset-y-0 left-0 z-50 flex max-w-[85vw] flex-col border-r border-blue-100 bg-white shadow-xl transition-[width,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:max-w-none lg:translate-x-0 lg:shadow-sm ${
                     isMobileOpen ? 'w-72 translate-x-0' : '-translate-x-full'
                 } ${isDesktopCollapsed ? 'lg:w-20' : 'lg:w-64'}`}
             >
                 <div
-                    className={`flex min-h-[84px] shrink-0 items-center border-b border-emerald-100 ${
+                    className={`flex min-h-[84px] shrink-0 items-center border-b border-blue-100 ${
                         isDesktopCollapsed
                             ? 'justify-center px-2 lg:flex-col lg:gap-1 lg:py-2'
                             : 'px-4'
@@ -219,7 +219,7 @@ export default function Sidebar({
 
                         {!isDesktopCollapsed && (
                             <span className="min-w-0 text-left">
-                                <span className="block truncate text-sm font-bold tracking-tight text-emerald-950">
+                                <span className="block truncate text-sm font-bold tracking-tight text-blue-950">
                                     Pagudpud
                                 </span>
                                 <span className="block truncate text-xs font-medium text-slate-500">
@@ -234,7 +234,7 @@ export default function Sidebar({
                         onClick={toggleSidebar}
                         title={isDesktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                         aria-label={isDesktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                        className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-emerald-50 hover:text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 lg:flex"
+                        className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 lg:flex"
                     >
                         <Icon name="menu" size={18} />
                     </button>
@@ -282,15 +282,15 @@ export default function Sidebar({
                                                         : 'gap-3 px-3 hover:translate-x-1 motion-reduce:hover:translate-x-0'
                                                 } ${
                                                     active
-                                                        ? 'bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-100'
-                                                        : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-800'
+                                                        ? 'bg-blue-50 text-blue-800 ring-1 ring-inset ring-blue-100'
+                                                        : 'text-slate-600 hover:bg-slate-50 hover:text-blue-800'
                                                 }`}
                                             >
                                                 <span
                                                     className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-[background-color,color,transform] duration-200 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${
                                                         active
-                                                            ? 'bg-emerald-700 text-white shadow-sm'
-                                                            : 'text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-700'
+                                                            ? 'bg-blue-700 text-white shadow-sm'
+                                                            : 'text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-700'
                                                     }`}
                                                 >
                                                     <Icon name={item.icon} size={19} />
@@ -312,7 +312,7 @@ export default function Sidebar({
                                                 item.href === '/citizen/feedback' &&
                                                 !isDesktopCollapsed &&
                                                 feedbackProjects.length > 0 && (
-                                                    <div className="ml-8 mt-1 space-y-1 border-l border-emerald-100 pl-4">
+                                                    <div className="ml-8 mt-1 space-y-1 border-l border-blue-100 pl-4">
                                                         {feedbackProjects.map((project) => {
                                                             const projectHref = `/citizen/projects/${project.id}`;
                                                             const projectIsActive = pathname === projectHref;
@@ -325,8 +325,8 @@ export default function Sidebar({
                                                                     aria-current={projectIsActive ? 'page' : undefined}
                                                                     className={`block truncate rounded-lg px-3 py-2 text-xs transition-colors ${
                                                                         projectIsActive
-                                                                            ? 'bg-emerald-50 font-semibold text-emerald-800'
-                                                                            : 'text-slate-500 hover:bg-slate-50 hover:text-emerald-800'
+                                                                            ? 'bg-blue-50 font-semibold text-blue-800'
+                                                                            : 'text-slate-500 hover:bg-slate-50 hover:text-blue-800'
                                                                     }`}
                                                                     title={project.project_name}
                                                                 >
@@ -345,7 +345,7 @@ export default function Sidebar({
                 </nav>
 
                 {/* User profile and logout */}
-                <div className="shrink-0 border-t border-emerald-100 p-3">
+                <div className="shrink-0 border-t border-blue-100 p-3">
                     <Link
                         href="/profile"
                         onClick={() => setIsMobileOpen(false)}
@@ -353,11 +353,11 @@ export default function Sidebar({
                         className={`mb-2 flex items-center rounded-xl transition-[background-color,transform] duration-200 motion-reduce:transition-none ${
                             isDesktopCollapsed
                                 ? 'justify-center p-1'
-                                : 'gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2'
+                                : 'gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
                         }`}
                         title={isDesktopCollapsed ? 'View profile' : undefined}
                     >
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800 ring-1 ring-emerald-200">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-800 ring-1 ring-blue-200">
                             {getInitials(displayName)}
                         </span>
 
