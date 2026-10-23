@@ -12,6 +12,11 @@ import Pusher from 'pusher-js';
 // Temporarily disable Reverb while developing login and registration.
 window.Echo = null;
 
+window.addEventListener('vite:preloadError', (event) => {
+    event.preventDefault();
+    window.location.reload();
+});
+
 createInertiaApp({
     title: (title) => `${title} - Pagudpud Transparency`,
 
