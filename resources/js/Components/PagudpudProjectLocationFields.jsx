@@ -74,7 +74,7 @@ export default function PagudpudProjectLocationFields({
                 />
             </div>
 
-            <div className="grid grid-cols-2 gap-3 rounded-lg bg-slate-50 px-3 py-2.5 text-xs sm:col-span-2">
+            <div className="grid grid-cols-1 gap-3 rounded-lg bg-slate-50 px-3 py-2.5 text-xs sm:col-span-2 sm:grid-cols-2">
                 <p>
                     <span className="block text-slate-500">Municipality</span>
                     <span className="font-medium text-slate-800">Pagudpud</span>

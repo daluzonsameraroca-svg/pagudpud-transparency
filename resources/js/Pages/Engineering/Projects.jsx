@@ -210,7 +210,7 @@ export default function Projects({ projects = [] }) {
                             </h2>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:grid-cols-4">
                             {summaryCards.map((card) => (
                                 <div
                                     key={card.label}
@@ -390,7 +390,7 @@ export default function Projects({ projects = [] }) {
                                             </span>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-x-5 gap-y-6 px-5 py-6 sm:grid-cols-4 sm:px-6">
+                                        <div className="grid grid-cols-1 gap-x-5 gap-y-6 px-5 py-6 min-[480px]:grid-cols-2 sm:grid-cols-4 sm:px-6">
                                             <div>
                                                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                                     Budget

@@ -267,7 +267,7 @@ export default function Projects({ projects = [] }) {
                             </h2>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-5">
+                        <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
                             {projectStatuses.map((item) => {
                                 const count = item.status
                                     ? projects.filter(

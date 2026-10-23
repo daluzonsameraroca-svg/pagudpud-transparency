@@ -6,29 +6,31 @@ export default function Home() {
     return (
         <div className="min-h-screen overflow-hidden bg-[#fbfcf8] text-slate-800">
             <header className="relative z-10 border-b border-emerald-950/10 bg-white/90">
-                <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-8">
+                <nav className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between sm:px-8">
                     <a
                         href="#home"
-                        className="flex items-center gap-3 text-base font-bold tracking-tight text-emerald-950 sm:text-lg"
+                        className="flex items-center gap-2 text-sm font-bold tracking-tight text-emerald-950 min-[480px]:gap-3 min-[480px]:text-base sm:text-lg"
                     >
                         <img
                             src="/images/pagudpud-logo.png.png"
                             alt="Pagudpud Transparency logo"
-                            className="h-12 w-12 shrink-0 object-contain"
+                            className="h-10 w-10 shrink-0 object-contain min-[480px]:h-12 min-[480px]:w-12"
                         />
-                        <span>Pagudpud Transparency</span>
+                        <span className="whitespace-nowrap">
+                            Pagudpud Transparency
+                        </span>
                     </a>
 
-                    <div className="flex items-center gap-2 sm:gap-4">
+                    <div className="flex w-full items-center justify-end gap-3 min-[480px]:w-auto min-[480px]:gap-4">
                         <Link
                             href="/login"
-                            className="rounded-full px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-900"
+                            className="whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-900"
                         >
                             Log in
                         </Link>
                         <Link
                             href="/register"
-                            className="rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+                            className="whitespace-nowrap rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
                         >
                             Join now
                         </Link>
@@ -45,7 +47,7 @@ export default function Home() {
                         aria-hidden="true"
                         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_78%_42%,rgba(167,243,208,0.35),transparent_38%),linear-gradient(135deg,#f4f8ee_0%,#fbfcf8_52%,#edf6ef_100%)]"
                     />
-                    <div className="mx-auto grid min-h-[610px] max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:py-24">
+                    <div className="mx-auto grid min-h-[610px] max-w-7xl items-center gap-16 px-5 py-20 sm:px-8 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:py-24">
                         <div className="max-w-2xl">
                             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-900/10 bg-white/75 px-3.5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-emerald-900 shadow-sm">
                                 <span
@@ -105,9 +107,12 @@ export default function Home() {
                                         Your community, in the know.
                                     </p>
                                 </div>
-                                <div className="relative mt-5 grid grid-cols-3 divide-x divide-emerald-900/10 rounded-2xl bg-emerald-950 px-2 py-4 text-center text-xs font-semibold leading-5 text-white sm:text-sm">
+                                <div className="relative mt-5 grid grid-cols-1 gap-2 rounded-2xl bg-emerald-950 p-3 text-center text-xs font-semibold leading-5 text-white sm:grid-cols-3 sm:gap-0 sm:px-2 sm:py-4 sm:text-sm">
                                     {highlights.map((highlight) => (
-                                        <span key={highlight} className="px-2">
+                                        <span
+                                            key={highlight}
+                                            className="rounded-xl bg-white/10 px-3 py-3 sm:rounded-none sm:bg-transparent sm:px-2 sm:py-0"
+                                        >
                                             {highlight}
                                         </span>
                                     ))}
