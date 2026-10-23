@@ -1,5 +1,8 @@
 import { Link, useForm } from '@inertiajs/react';
+import PagudpudProjectLocationFields from '../../Components/PagudpudProjectLocationFields';
+import usePagudpudBarangays from '../../Hooks/usePagudpudBarangays';
 import DashboardLayout from '../../Layouts/DashboardLayout';
+import { formatPagudpudProjectLocation } from '../../Utils/pagudpudProjectLocation';
 
 const inputClass =
     'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100';
@@ -18,10 +21,18 @@ function FieldError({ message }) {
 }
 
 export default function CreateProject() {
+    const {
+        barangays,
+        loading: barangaysLoading,
+        error: barangaysError,
+        retry: retryBarangays,
+    } = usePagudpudBarangays();
     const { data, setData, post, processing, errors } = useForm({
         project_name: '',
         description: '',
         location: '',
+        barangay: '',
+        sitio: '',
         budget: '',
         start_date: '',
         target_completion_date: '',
@@ -32,6 +43,18 @@ export default function CreateProject() {
     const submit = (e) => {
         e.preventDefault();
         post('/engineering/projects');
+    };
+
+    const updateLocation = (field, value) => {
+        const nextData = { ...data, [field]: value };
+
+        setData({
+            ...nextData,
+            location: formatPagudpudProjectLocation(
+                nextData.sitio,
+                nextData.barangay,
+            ),
+        });
     };
 
     return (
@@ -93,24 +116,21 @@ export default function CreateProject() {
                                     <FieldError message={errors.project_name} />
                                 </div>
 
-                                <div>
-                                    <label htmlFor="location" className={labelClass}>
+                                <div className="md:col-span-2">
+                                    <h3 className={labelClass}>
                                         Project Location
-                                        <span className="ml-1 text-red-500">*</span>
-                                    </label>
-
-                                    <input
-                                        id="location"
-                                        type="text"
-                                        value={data.location}
-                                        onChange={(e) => setData('location', e.target.value)}
-                                        placeholder="e.g. Barangay Balaoi"
-                                        required
-                                        aria-invalid={Boolean(errors.location)}
-                                        className={inputClass}
+                                    </h3>
+                                    <PagudpudProjectLocationFields
+                                        idPrefix="new-project-location"
+                                        barangay={data.barangay}
+                                        sitio={data.sitio}
+                                        onChange={updateLocation}
+                                        error={errors.location}
+                                        barangays={barangays}
+                                        loading={barangaysLoading}
+                                        barangaysError={barangaysError}
+                                        retry={retryBarangays}
                                     />
-
-                                    <FieldError message={errors.location} />
                                 </div>
 
                                 <div>
@@ -308,7 +328,12 @@ export default function CreateProject() {
 
                                 <button
                                     type="submit"
-                                    disabled={processing}
+                                    disabled={
+                                        processing ||
+                                        barangaysLoading ||
+                                        Boolean(barangaysError) ||
+                                        !data.barangay
+                                    }
                                     className="rounded-lg bg-emerald-700 px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {processing ? 'Creating Project...' : 'Create Project'}

@@ -1,8 +1,20 @@
 import { router } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import PagudpudProjectLocationFields from '../../Components/PagudpudProjectLocationFields';
+import usePagudpudBarangays from '../../Hooks/usePagudpudBarangays';
 import DashboardLayout from '../../Layouts/DashboardLayout';
+import {
+    formatPagudpudProjectLocation,
+    parsePagudpudProjectLocation,
+} from '../../Utils/pagudpudProjectLocation';
 
 export default function Projects({ projects = [] }) {
+    const {
+        barangays,
+        loading: barangaysLoading,
+        error: barangaysError,
+        retry: retryBarangays,
+    } = usePagudpudBarangays();
     const [editingProject, setEditingProject] = useState(null);
     const [deletingProject, setDeletingProject] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -14,6 +26,8 @@ export default function Projects({ projects = [] }) {
         project_name: '',
         description: '',
         location: '',
+        barangay: '',
+        sitio: '',
         budget: '',
         start_date: '',
         target_completion_date: '',
@@ -22,6 +36,31 @@ export default function Projects({ projects = [] }) {
     };
 
     const [form, setForm] = useState(emptyForm);
+
+    useEffect(() => {
+        if (!editingProject || barangays.length === 0) return;
+
+        const project = projects.find(
+            (item) => item.id === editingProject,
+        );
+
+        if (!project) return;
+
+        const location = parsePagudpudProjectLocation(
+            project.location,
+            barangays,
+        );
+
+        setForm((current) => ({
+            ...current,
+            location: formatPagudpudProjectLocation(
+                location.sitio,
+                location.barangay,
+            ) || current.location,
+            barangay: location.barangay,
+            sitio: location.sitio,
+        }));
+    }, [barangays, editingProject, projects]);
 
     const projectStatuses = [
         {
@@ -121,6 +160,8 @@ export default function Projects({ projects = [] }) {
             project_name: project.project_name || '',
             description: project.description || '',
             location: project.location || '',
+            barangay: '',
+            sitio: '',
             budget: project.budget ?? '',
             start_date: project.start_date
                 ? String(project.start_date).slice(0, 10)
@@ -145,6 +186,18 @@ export default function Projects({ projects = [] }) {
             ...previous,
             [name]: value,
         }));
+    };
+
+    const handleLocationChange = (field, value) => {
+        const nextForm = { ...form, [field]: value };
+
+        setForm({
+            ...nextForm,
+            location: formatPagudpudProjectLocation(
+                nextForm.sitio,
+                nextForm.barangay,
+            ),
+        });
     };
 
     const saveProject = (e, projectId) => {
@@ -192,7 +245,7 @@ export default function Projects({ projects = [] }) {
             <div className="min-h-screen bg-slate-50 text-slate-800">
                 <header className="border-b border-slate-200 bg-white px-5 py-6 sm:px-8">
                     <div className="mx-auto flex max-w-[1500px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
+                        <div className="sm:col-span-2">
                             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                 Project Management
                             </h1>
@@ -508,21 +561,19 @@ export default function Projects({ projects = [] }) {
                                                                 />
                                                             </div>
 
-                                                            <div>
-                                                                <label
-                                                                    htmlFor={`location-${project.id}`}
-                                                                    className="mb-2 block text-sm font-semibold text-slate-700"
-                                                                >
+                                                            <div className="sm:col-span-2">
+                                                                <h5 className="mb-2 text-sm font-semibold text-slate-700">
                                                                     Location
-                                                                </label>
-                                                                <input
-                                                                    id={`location-${project.id}`}
-                                                                    type="text"
-                                                                    name="location"
-                                                                    value={form.location}
-                                                                    onChange={handleChange}
-                                                                    required
-                                                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                                                                </h5>
+                                                                <PagudpudProjectLocationFields
+                                                                    idPrefix={`project-${project.id}-location`}
+                                                                    barangay={form.barangay}
+                                                                    sitio={form.sitio}
+                                                                    onChange={handleLocationChange}
+                                                                    barangays={barangays}
+                                                                    loading={barangaysLoading}
+                                                                    barangaysError={barangaysError}
+                                                                    retry={retryBarangays}
                                                                 />
                                                             </div>
 
@@ -642,7 +693,12 @@ export default function Projects({ projects = [] }) {
 
                                                             <button
                                                                 type="submit"
-                                                                disabled={isSaving}
+                                                                disabled={
+                                                                    isSaving ||
+                                                                    barangaysLoading ||
+                                                                    Boolean(barangaysError) ||
+                                                                    !form.barangay
+                                                                }
                                                                 className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
                                                             >
                                                                 {isSaving
