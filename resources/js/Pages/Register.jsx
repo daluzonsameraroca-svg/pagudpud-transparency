@@ -1,7 +1,7 @@
 
 import { Link, useForm } from '@inertiajs/react';
 import BackButton from '../Components/BackButton';
-import PasswordInput from '../Components/PasswordInput';
+import PasswordInput from '../Components/PasswordInput.jsx';
 import usePagudpudBarangays from '../Hooks/usePagudpudBarangays';
 
 function AppLogo() {
