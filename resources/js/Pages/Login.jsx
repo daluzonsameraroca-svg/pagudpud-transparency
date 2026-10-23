@@ -1,6 +1,7 @@
 
 import { Link, useForm } from '@inertiajs/react';
 import BackButton from '../Components/BackButton';
+import PasswordInput from '../Components/PasswordInput';
 
 function AppLogo() {
     return (
@@ -90,10 +91,9 @@ export default function Login() {
                                     Password
                                 </label>
 
-                                <input
+                                <PasswordInput
                                     id="password"
                                     name="password"
-                                    type="password"
                                     autoComplete="current-password"
                                     value={data.password}
                                     onChange={(e) =>
@@ -144,7 +144,7 @@ export default function Login() {
                                 href="/register"
                                 className="font-bold text-blue-800 hover:text-blue-950 hover:underline"
                             >
-                                Register as a Citizen
+                                Register
                             </Link>
                         </p>
 
@@ -164,11 +164,7 @@ export default function Login() {
                                     </svg>
                                 </div>
 
-                                <div>
-                                    <p className="text-sm font-bold text-slate-800">
-                                        Account access
-                                    </p>
-                                </div>
+                                
                             </div>
                         </div>
 

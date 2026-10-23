@@ -1,7 +1,7 @@
 
 import { Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
 import BackButton from '../Components/BackButton';
+import PasswordInput from '../Components/PasswordInput';
 import usePagudpudBarangays from '../Hooks/usePagudpudBarangays';
 
 function AppLogo() {
@@ -14,11 +14,11 @@ function AppLogo() {
     );
 }
 
-function FieldError({ message }) {
+function FieldError({ id, message }) {
     if (!message) return null;
 
     return (
-        <p className="mt-2 text-sm text-red-600" role="alert">
+        <p id={id} className="mt-2 text-sm text-red-600" role="alert">
             {message}
         </p>
     );
@@ -48,6 +48,11 @@ export default function Register() {
 
     const inputClass =
         'w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-700 focus:ring-4 focus:ring-blue-700/10';
+
+    const passwordMeetsLengthRequirement = data.password.length >= 8;
+    const passwordsMatch =
+        data.password_confirmation.length > 0 &&
+        data.password === data.password_confirmation;
 
     const labelClass =
         'mb-2 block text-sm font-semibold text-slate-700';
@@ -298,10 +303,9 @@ export default function Register() {
                                     Password
                                 </label>
 
-                                <input
+                                <PasswordInput
                                     id="password"
                                     name="password"
-                                    type="password"
                                     autoComplete="new-password"
                                     value={data.password}
                                     onChange={(e) =>
@@ -312,13 +316,45 @@ export default function Register() {
                                     aria-invalid={Boolean(errors.password)}
                                     aria-describedby={
                                         errors.password
-                                            ? 'password-error'
-                                            : undefined
+                                            ? 'password-error password-requirements'
+                                            : 'password-requirements'
                                     }
                                     className={inputClass}
                                 />
 
-                                <FieldError message={errors.password} />
+                                <ul
+                                    id="password-requirements"
+                                    className="mt-2 space-y-1 text-xs"
+                                    aria-label="Password requirements"
+                                >
+                                    <li
+                                        className={
+                                            passwordMeetsLengthRequirement
+                                                ? 'text-blue-700'
+                                                : 'text-slate-500'
+                                        }
+                                    >
+                                        {passwordMeetsLengthRequirement
+                                            ? '✓'
+                                            : '•'}{' '}
+                                        At least 8 characters
+                                    </li>
+                                    <li
+                                        className={
+                                            passwordsMatch
+                                                ? 'text-blue-700'
+                                                : 'text-slate-500'
+                                        }
+                                    >
+                                        {passwordsMatch ? '✓' : '•'} Password
+                                        confirmation must match
+                                    </li>
+                                </ul>
+
+                                <FieldError
+                                    id="password-error"
+                                    message={errors.password}
+                                />
                             </div>
 
                             {/* Confirm password */}
@@ -330,10 +366,9 @@ export default function Register() {
                                     Confirm password
                                 </label>
 
-                                <input
+                                <PasswordInput
                                     id="password_confirmation"
                                     name="password_confirmation"
-                                    type="password"
                                     autoComplete="new-password"
                                     value={data.password_confirmation}
                                     onChange={(e) =>
@@ -356,6 +391,7 @@ export default function Register() {
                                 />
 
                                 <FieldError
+                                    id="confirmation-error"
                                     message={errors.password_confirmation}
                                 />
                             </div>

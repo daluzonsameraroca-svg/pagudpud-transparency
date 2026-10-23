@@ -72,12 +72,33 @@ class LoginControllerTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
-    public function test_invalid_credentials_are_shared_with_the_login_page(): void
+    public function test_login_reports_when_the_account_does_not_exist(): void
     {
         $response = $this->followingRedirects()
             ->from('/login')
             ->post('/login', [
                 'email' => 'missing@example.com',
+                'password' => 'incorrect-password',
+            ]);
+
+        $response->assertInertia(fn ($page) => $page
+            ->component('Login')
+            ->where('errors.email', 'Account does not exist.')
+        );
+        $this->assertGuest();
+    }
+
+    public function test_login_keeps_generic_error_for_an_incorrect_password(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'registered@example.com',
+            'role' => 'citizen',
+        ]);
+
+        $response = $this->followingRedirects()
+            ->from('/login')
+            ->post('/login', [
+                'email' => $user->email,
                 'password' => 'incorrect-password',
             ]);
 
