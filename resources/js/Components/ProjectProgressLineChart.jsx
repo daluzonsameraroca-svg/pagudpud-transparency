@@ -9,20 +9,18 @@ import {
 } from 'recharts';
 
 const PROJECT_COLORS = [
-    '#1d4ed8',
-    '#0284c7',
-    '#4f46e5',
-    '#0369a1',
     '#2563eb',
+    '#f97316',
+    '#16a34a',
+    '#9333ea',
+    '#e11d48',
+    '#0891b2',
+    '#ca8a04',
+    '#4f46e5',
 ];
+
 function projectColor(index) {
     return PROJECT_COLORS[index % PROJECT_COLORS.length];
-}
-
-function pointColor(index, projectIndex) {
-    const hue = (index * 137.508 + projectIndex * 53) % 360;
-
-    return `hsl(${hue} 72% 42%)`;
 }
 
 function formatDate(timestamp, options) {
@@ -117,7 +115,7 @@ export default function ProjectProgressLineChart({
                                         borderColor: '#e2e8f0',
                                     }}
                                 />
-                                {lines.map((project, projectIndex) => (
+                                {lines.map((project) => (
                                     <Line
                                         key={project.id}
                                         type="linear"
@@ -126,35 +124,17 @@ export default function ProjectProgressLineChart({
                                         stroke={project.color}
                                         strokeWidth={2}
                                         connectNulls
-                                        activeDot={({ cx, cy, index }) => {
-                                            return (
-                                                <circle
-                                                    cx={cx}
-                                                    cy={cy}
-                                                    r={5}
-                                                    fill={pointColor(
-                                                        index,
-                                                        projectIndex,
-                                                    )}
-                                                    stroke="white"
-                                                    strokeWidth={2}
-                                                />
-                                            );
+                                        activeDot={{
+                                            r: 5,
+                                            fill: project.color,
+                                            stroke: 'white',
+                                            strokeWidth: 2,
                                         }}
-                                        dot={({ cx, cy, index }) => {
-                                            return (
-                                                <circle
-                                                    cx={cx}
-                                                    cy={cy}
-                                                    r={4}
-                                                    fill={pointColor(
-                                                        index,
-                                                        projectIndex,
-                                                    )}
-                                                    stroke="white"
-                                                    strokeWidth={1.5}
-                                                />
-                                            );
+                                        dot={{
+                                            r: 4,
+                                            fill: project.color,
+                                            stroke: 'white',
+                                            strokeWidth: 1.5,
                                         }}
                                     />
                                 ))}
