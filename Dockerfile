@@ -52,6 +52,7 @@ RUN composer install \
         --prefer-dist \
         --optimize-autoloader \
         --no-interaction \
+    && php artisan storage:link \
     && sed -ri \
         's!/var/www/html!/var/www/html/public!g' \
         /etc/apache2/sites-available/000-default.conf \
@@ -72,4 +73,4 @@ RUN composer install \
 EXPOSE 10000
 
 # Configure Apache to use Render's assigned port
-CMD ["sh", "-c", "sed -i \"s/10000/${PORT:-10000}/g\" /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
+CMD ["sh", "-c", "mkdir -p storage/app/public && chown www-data:www-data storage/app/public && sed -i \"s/10000/${PORT:-10000}/g\" /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
