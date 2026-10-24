@@ -8,7 +8,7 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import ProjectCompletionLineChart from '../../Components/ProjectCompletionLineChart';
-import ProjectProgressLineChart from '../../Components/ProjectProgressLineChart';
+import ProjectProgressBarChart from '../../Components/ProjectProgressBarChart';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 const STATUS_COLORS = {
@@ -268,21 +268,7 @@ export default function Dashboard({
                                         Project Progress
                                     </h3>
                                 </div>
-
-                                <div className="h-72">
-                                    {projects.some((project) => project.progress_updates?.length > 0) ? (
-                                        <ProjectProgressLineChart projects={projects} />
-                                    ) : (
-                                        <div className="flex h-full flex-col items-center justify-center rounded-xl bg-slate-50 text-center">
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-xl text-blue-700">
-                                                ↗
-                                            </div>
-                                            <p className="mt-3 text-sm font-semibold text-slate-700">
-                                                No progress history available
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
+                                <ProjectProgressBarChart projects={projects} />
                             </section>
                         </div>
                     </section>
