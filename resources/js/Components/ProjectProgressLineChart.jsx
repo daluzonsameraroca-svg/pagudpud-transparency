@@ -15,9 +15,14 @@ const PROJECT_COLORS = [
     '#0369a1',
     '#2563eb',
 ];
-
 function projectColor(index) {
     return PROJECT_COLORS[index % PROJECT_COLORS.length];
+}
+
+function pointColor(index, projectIndex) {
+    const hue = (index * 137.508 + projectIndex * 53) % 360;
+
+    return `hsl(${hue} 72% 42%)`;
 }
 
 function formatDate(timestamp, options) {
@@ -112,7 +117,7 @@ export default function ProjectProgressLineChart({
                                         borderColor: '#e2e8f0',
                                     }}
                                 />
-                                {lines.map((project) => (
+                                {lines.map((project, projectIndex) => (
                                     <Line
                                         key={project.id}
                                         type="linear"
@@ -121,8 +126,36 @@ export default function ProjectProgressLineChart({
                                         stroke={project.color}
                                         strokeWidth={2}
                                         connectNulls
-                                        activeDot={{ r: 5 }}
-                                        dot={{ r: 3, fill: project.color }}
+                                        activeDot={({ cx, cy, index }) => {
+                                            return (
+                                                <circle
+                                                    cx={cx}
+                                                    cy={cy}
+                                                    r={5}
+                                                    fill={pointColor(
+                                                        index,
+                                                        projectIndex,
+                                                    )}
+                                                    stroke="white"
+                                                    strokeWidth={2}
+                                                />
+                                            );
+                                        }}
+                                        dot={({ cx, cy, index }) => {
+                                            return (
+                                                <circle
+                                                    cx={cx}
+                                                    cy={cy}
+                                                    r={4}
+                                                    fill={pointColor(
+                                                        index,
+                                                        projectIndex,
+                                                    )}
+                                                    stroke="white"
+                                                    strokeWidth={1.5}
+                                                />
+                                            );
+                                        }}
                                     />
                                 ))}
                             </LineChart>
