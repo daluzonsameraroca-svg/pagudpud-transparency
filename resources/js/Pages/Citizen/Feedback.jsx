@@ -1,9 +1,63 @@
+import { router, useForm, Head } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
-import { Head } from '@inertiajs/react';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 export default function Feedback({ feedback = [] }) {
     const [statusFilter, setStatusFilter] = useState('All');
+    const [editingFeedbackId, setEditingFeedbackId] = useState(null);
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        clearErrors,
+        reset,
+    } = useForm({
+        message: '',
+        image: null,
+        remove_image: false,
+        _method: 'put',
+    });
+
+    const startEditing = (item) => {
+        clearErrors();
+        setData({
+            message: item.message,
+            image: null,
+            remove_image: false,
+            _method: 'put',
+        });
+        setEditingFeedbackId(item.id);
+    };
+
+    const cancelEditing = () => {
+        reset();
+        clearErrors();
+        setEditingFeedbackId(null);
+    };
+
+    const submitEdit = (event, feedbackId) => {
+        event.preventDefault();
+
+        post(`/citizen/feedback/${feedbackId}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                setEditingFeedbackId(null);
+            },
+        });
+    };
+
+    const deleteFeedback = (feedbackId) => {
+        if (!window.confirm('Are you sure you want to delete this feedback?')) {
+            return;
+        }
+
+        router.delete(`/citizen/feedback/${feedbackId}`, {
+            preserveScroll: true,
+        });
+    };
 
     const filteredFeedback = useMemo(() => {
         return feedback.filter((item) => {
@@ -279,12 +333,146 @@ export default function Feedback({ feedback = [] }) {
                                                 Your message
                                             </p>
 
-                                            <p className="whitespace-pre-line break-words text-sm leading-6 text-slate-700">
-                                                {item.message}
-                                            </p>
+                                            {editingFeedbackId === item.id ? (
+                                                <form
+                                                    onSubmit={(event) =>
+                                                        submitEdit(
+                                                            event,
+                                                            item.id,
+                                                        )
+                                                    }
+                                                    className="space-y-4"
+                                                >
+                                                    <div>
+                                                        <label
+                                                            htmlFor={`feedback-message-${item.id}`}
+                                                            className="sr-only"
+                                                        >
+                                                            Edit your feedback
+                                                        </label>
+                                                        <textarea
+                                                            id={`feedback-message-${item.id}`}
+                                                            value={data.message}
+                                                            onChange={(event) =>
+                                                                setData(
+                                                                    'message',
+                                                                    event.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                            rows={4}
+                                                            maxLength={2000}
+                                                            required
+                                                            className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm leading-5 text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                                        />
+                                                        {errors.message && (
+                                                            <p
+                                                                className="mt-2 text-xs text-red-600"
+                                                                role="alert"
+                                                            >
+                                                                {errors.message}
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    <div>
+                                                        <label
+                                                            htmlFor={`feedback-image-${item.id}`}
+                                                            className="mb-2 block text-xs font-semibold text-slate-700"
+                                                        >
+                                                            Replace photo
+                                                            (optional)
+                                                        </label>
+                                                        <input
+                                                            id={`feedback-image-${item.id}`}
+                                                            type="file"
+                                                            accept="image/jpeg,image/png,image/webp"
+                                                            onChange={(event) =>
+                                                                setData({
+                                                                    ...data,
+                                                                    image:
+                                                                        event
+                                                                            .target
+                                                                            .files?.[0] ??
+                                                                        null,
+                                                                    remove_image: false,
+                                                                })
+                                                            }
+                                                            disabled={processing}
+                                                            className="block w-full text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+                                                        />
+                                                        {errors.image && (
+                                                            <p
+                                                                className="mt-2 text-xs text-red-600"
+                                                                role="alert"
+                                                            >
+                                                                {errors.image}
+                                                            </p>
+                                                        )}
+                                                        {item.image_path && (
+                                                            <label className="mt-3 flex items-center gap-2 text-xs text-slate-700">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={
+                                                                        data.remove_image
+                                                                    }
+                                                                    onChange={(
+                                                                        event,
+                                                                    ) =>
+                                                                        setData(
+                                                                            'remove_image',
+                                                                            event
+                                                                                .target
+                                                                                .checked,
+                                                                        )
+                                                                    }
+                                                                    disabled={
+                                                                        processing
+                                                                    }
+                                                                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                                />
+                                                                Remove current
+                                                                photo
+                                                            </label>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex flex-wrap gap-2">
+                                                        <button
+                                                            type="submit"
+                                                            disabled={
+                                                                processing ||
+                                                                !data.message.trim()
+                                                            }
+                                                            className="rounded-lg bg-blue-700 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                                                        >
+                                                            {processing
+                                                                ? 'Saving...'
+                                                                : 'Save changes'}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={
+                                                                cancelEditing
+                                                            }
+                                                            disabled={
+                                                                processing
+                                                            }
+                                                            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            ) : (
+                                                <p className="whitespace-pre-line break-words text-sm leading-6 text-slate-700">
+                                                    {item.message}
+                                                </p>
+                                            )}
                                         </div>
 
-                                        {item.image_url && (
+                                        {item.image_url &&
+                                            editingFeedbackId !== item.id && (
                                             <img
                                                 src={item.image_url}
                                                 alt={`Photo attached to feedback for ${item.project?.project_name || 'project'}`}
@@ -299,10 +487,39 @@ export default function Feedback({ feedback = [] }) {
                                                 {formatDate(item.updated_at)}
                                             </p>
 
-                                            <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                                                Feedback record
-                                            </span>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                {editingFeedbackId !==
+                                                    item.id && (
+                                                    <>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                startEditing(
+                                                                    item,
+                                                                )
+                                                            }
+                                                            className="rounded-lg border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-50"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                deleteFeedback(
+                                                                    item.id,
+                                                                )
+                                                            }
+                                                            className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </>
+                                                )}
+                                                <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                                                    Feedback record
+                                                </span>
+                                            </div>
                                         </div>
                                     </article>
                                 );

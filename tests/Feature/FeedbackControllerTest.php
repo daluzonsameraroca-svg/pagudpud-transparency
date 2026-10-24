@@ -110,6 +110,149 @@ class FeedbackControllerTest extends TestCase
         Storage::disk('public')->assertDirectoryEmpty('feedback');
     }
 
+    public function test_citizen_can_edit_their_feedback_and_replace_its_photo(): void
+    {
+        Storage::fake('public');
+        $citizen = User::factory()->create(['role' => 'citizen']);
+        $project = $this->createProject();
+        $oldImagePath = UploadedFile::fake()
+            ->image('old-photo.jpg')
+            ->store('feedback', 'public');
+        $feedback = Feedback::create([
+            'user_id' => $citizen->id,
+            'project_id' => $project->id,
+            'message' => 'The road work has not started.',
+            'image_path' => $oldImagePath,
+        ]);
+
+        $response = $this->actingAs($citizen)
+            ->from('/citizen/feedback')
+            ->put("/citizen/feedback/{$feedback->id}", [
+                'message' => 'The road work has now started.',
+                'image' => UploadedFile::fake()->image('new-photo.png'),
+            ]);
+
+        $response->assertRedirect('/citizen/feedback');
+        $feedback->refresh();
+        $this->assertSame('The road work has now started.', $feedback->message);
+        $this->assertSame('Pending', $feedback->status);
+        $this->assertNotSame($oldImagePath, $feedback->image_path);
+        Storage::disk('public')->assertMissing($oldImagePath);
+        Storage::disk('public')->assertExists($feedback->image_path);
+    }
+
+    public function test_citizen_can_remove_the_photo_from_their_feedback(): void
+    {
+        Storage::fake('public');
+        $citizen = User::factory()->create(['role' => 'citizen']);
+        $project = $this->createProject();
+        $imagePath = UploadedFile::fake()
+            ->image('site-photo.jpg')
+            ->store('feedback', 'public');
+        $feedback = Feedback::create([
+            'user_id' => $citizen->id,
+            'project_id' => $project->id,
+            'message' => 'The road work has not started.',
+            'image_path' => $imagePath,
+        ]);
+
+        $response = $this->actingAs($citizen)
+            ->from('/citizen/feedback')
+            ->put("/citizen/feedback/{$feedback->id}", [
+                'message' => 'The road work has not started.',
+                'remove_image' => true,
+            ]);
+
+        $response->assertRedirect('/citizen/feedback');
+        $this->assertNull($feedback->fresh()->image_path);
+        Storage::disk('public')->assertMissing($imagePath);
+    }
+
+    public function test_citizen_can_delete_their_feedback_and_its_photo(): void
+    {
+        Storage::fake('public');
+        $citizen = User::factory()->create(['role' => 'citizen']);
+        $project = $this->createProject();
+        $imagePath = UploadedFile::fake()
+            ->image('site-photo.jpg')
+            ->store('feedback', 'public');
+        $feedback = Feedback::create([
+            'user_id' => $citizen->id,
+            'project_id' => $project->id,
+            'message' => 'The road work has not started.',
+            'image_path' => $imagePath,
+        ]);
+
+        $response = $this->actingAs($citizen)
+            ->from('/citizen/feedback')
+            ->delete("/citizen/feedback/{$feedback->id}");
+
+        $response->assertRedirect('/citizen/feedback');
+        $this->assertDatabaseMissing('feedback', ['id' => $feedback->id]);
+        Storage::disk('public')->assertMissing($imagePath);
+    }
+
+    public function test_citizen_cannot_edit_or_delete_another_citizens_feedback(): void
+    {
+        Storage::fake('public');
+        $owner = User::factory()->create(['role' => 'citizen']);
+        $otherCitizen = User::factory()->create(['role' => 'citizen']);
+        $project = $this->createProject();
+        $imagePath = UploadedFile::fake()
+            ->image('site-photo.jpg')
+            ->store('feedback', 'public');
+        $feedback = Feedback::create([
+            'user_id' => $owner->id,
+            'project_id' => $project->id,
+            'message' => 'The road work has not started.',
+            'image_path' => $imagePath,
+        ]);
+
+        $this->actingAs($otherCitizen)
+            ->put("/citizen/feedback/{$feedback->id}", [
+                'message' => 'This is not my feedback.',
+            ])
+            ->assertNotFound();
+
+        $this->actingAs($otherCitizen)
+            ->delete("/citizen/feedback/{$feedback->id}")
+            ->assertNotFound();
+
+        $this->assertSame(
+            'The road work has not started.',
+            $feedback->fresh()->message,
+        );
+        Storage::disk('public')->assertExists($imagePath);
+    }
+
+    public function test_non_citizen_cannot_edit_or_delete_feedback_through_citizen_routes(): void
+    {
+        Storage::fake('public');
+        $owner = User::factory()->create(['role' => 'citizen']);
+        $admin = User::factory()->create(['role' => 'admin']);
+        $project = $this->createProject();
+        $feedback = Feedback::create([
+            'user_id' => $owner->id,
+            'project_id' => $project->id,
+            'message' => 'The road work has not started.',
+        ]);
+
+        $this->actingAs($admin)
+            ->put("/citizen/feedback/{$feedback->id}", [
+                'message' => 'Updated feedback from admin.',
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($admin)
+            ->delete("/citizen/feedback/{$feedback->id}")
+            ->assertForbidden();
+
+        $this->assertSame(
+            'The road work has not started.',
+            $feedback->fresh()->message,
+        );
+    }
+
     private function createProject(): Project
     {
         return Project::create([

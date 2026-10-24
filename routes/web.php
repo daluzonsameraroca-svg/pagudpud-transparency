@@ -88,6 +88,12 @@ Route::get('/citizen/posts', [AdminPostController::class, 'citizenIndex'])
 Route::get('/citizen/feedback', [FeedbackController::class, 'myFeedback'])
     ->middleware(['auth', 'role:citizen']);
 
+Route::put('/citizen/feedback/{feedback}', [FeedbackController::class, 'update'])
+    ->middleware(['auth', 'role:citizen']);
+
+Route::delete('/citizen/feedback/{feedback}', [FeedbackController::class, 'destroy'])
+    ->middleware(['auth', 'role:citizen']);
+
 // Engineering routes
 Route::get('/engineering/dashboard', function (
     ProjectCompletionStats $completionStats,
