@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 
 import ProjectCompletionLineChart from '../../Components/ProjectCompletionLineChart';
-import ProjectProgressLineChart from '../../Components/ProjectProgressLineChart';
+import ProjectProgressBarChart from '../../Components/ProjectProgressBarChart';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 const COLORS = {
@@ -303,13 +303,8 @@ export default function Dashboard({
                         </div>
 
                         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                            <SectionTitle
-                                title="Project Progress"
-                            />
-
-                            <div className="h-[220px]">
-                                <ProjectProgressLineChart projects={projects} />
-                            </div>
+                            <SectionTitle title="Project Progress" />
+                            <ProjectProgressBarChart projects={projects} />
                         </div>
                     </section>
 

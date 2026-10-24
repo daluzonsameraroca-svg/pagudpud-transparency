@@ -103,7 +103,7 @@ export default function ProjectLocationMap({
                 center={position || PAGUDPUD_CENTER}
                 zoom={position ? 14 : 12}
                 scrollWheelZoom={false}
-                className="h-72 w-full rounded-xl sm:h-80"
+                className="relative z-[60] h-72 w-full rounded-xl sm:h-80"
                 aria-label={projectName}
             >
                 <TileLayer

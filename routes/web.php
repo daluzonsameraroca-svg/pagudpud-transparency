@@ -47,11 +47,7 @@ Route::get('/citizen/dashboard', function (
     Request $request,
     ProjectCompletionStats $completionStats,
 ) {
-    $projects = Project::with([
-        'progressUpdates' => fn ($query) => $query
-            ->orderBy('update_date')
-            ->orderBy('created_at'),
-    ])->orderBy('created_at', 'desc')->get();
+    $projects = Project::orderBy('created_at', 'desc')->get();
 
     return Inertia::render('Citizen/Dashboard', [
         'projects' => $projects,
@@ -99,11 +95,7 @@ Route::get('/engineering/dashboard', function (
     ProjectCompletionStats $completionStats,
 ) {
     return Inertia::render('Engineering/Dashboard', [
-        'projects' => Project::with([
-            'progressUpdates' => fn ($query) => $query
-                ->orderBy('update_date')
-                ->orderBy('created_at'),
-        ])->orderBy('created_at', 'desc')->get(),
+        'projects' => Project::orderBy('created_at', 'desc')->get(),
         'completionStats' => $completionStats->twoYearCompletionCounts(),
     ]);
 })->middleware(['auth', 'role:engineering']);
@@ -124,11 +116,7 @@ Route::put('/engineering/projects/{project}', [EngineeringProjectController::cla
 Route::get('/admin/dashboard', function (
     ProjectCompletionStats $completionStats,
 ) {
-    $projects = Project::with([
-        'progressUpdates' => fn ($query) => $query
-            ->orderBy('update_date')
-            ->orderBy('created_at'),
-    ])->orderBy('created_at', 'desc')->get();
+    $projects = Project::orderBy('created_at', 'desc')->get();
     $users = User::count();
     $feedback = Feedback::count();
     $posts = AdministrativePost::count();

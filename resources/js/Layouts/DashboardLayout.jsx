@@ -60,7 +60,7 @@ function DashboardTopbar({ role }) {
     };
 
     return (
-        <header className="sticky top-0 z-30 flex min-h-12 items-center justify-between gap-3 border-b border-slate-200 bg-white px-3 pl-16 sm:px-7">
+        <header className="sticky top-0 z-[70] flex min-h-12 items-center justify-between gap-3 border-b border-slate-200 bg-white px-3 pl-16 sm:px-7">
             <div className="flex min-w-0 items-center">
                 <span className="hidden min-w-0 truncate text-xs font-semibold tracking-tight text-blue-900 min-[480px]:block">
                     Pagudpud Transparency

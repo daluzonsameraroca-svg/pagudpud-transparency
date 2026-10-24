@@ -98,7 +98,7 @@ class ProjectCompletionStatsTest extends TestCase
         }
     }
 
-    public function test_all_role_dashboards_include_project_progress_history_in_date_order(): void
+    public function test_citizen_project_details_include_progress_history_in_date_order(): void
     {
         $project = $this->createProject();
         $project->progressUpdates()->createMany([
@@ -113,25 +113,19 @@ class ProjectCompletionStatsTest extends TestCase
                 'update_date' => '2025-01-10',
             ],
         ]);
-        $dashboards = [
-            ['citizen', '/citizen/dashboard', 'Citizen/Dashboard'],
-            ['engineering', '/engineering/dashboard', 'Engineering/Dashboard'],
-            ['admin', '/admin/dashboard', 'Admin/Dashboard'],
-        ];
+        $citizen = User::factory()->create(['role' => 'citizen']);
 
-        foreach ($dashboards as [$role, $url, $component]) {
-            $user = User::factory()->create(['role' => $role]);
-            $response = $this->actingAs($user)->get($url);
+        $response = $this->actingAs($citizen)
+            ->get("/citizen/projects/{$project->id}");
 
-            $response->assertOk();
-            $response->assertInertia(fn ($page) => $page
-                ->component($component)
-                ->where('projects.0.id', $project->id)
-                ->has('projects.0.progress_updates', 2)
-                ->where('projects.0.progress_updates.0.progress', 20)
-                ->where('projects.0.progress_updates.1.progress', 75)
-            );
-        }
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Citizen/ProjectDetails')
+            ->where('project.id', $project->id)
+            ->has('project.progress_updates', 2)
+            ->where('project.progress_updates.0.progress', 20)
+            ->where('project.progress_updates.1.progress', 75)
+        );
     }
 
     private function createProject(): Project

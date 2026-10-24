@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 
 import ProjectCompletionLineChart from '../../Components/ProjectCompletionLineChart';
-import ProjectProgressLineChart from '../../Components/ProjectProgressLineChart';
+import ProjectProgressBarChart from '../../Components/ProjectProgressBarChart';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 export default function Dashboard({
@@ -323,15 +323,8 @@ export default function Dashboard({
                                         Project Progress
                                     </h3>
                                 </div>
-
-                                <div className="mt-4 h-[280px]">
-                                    {projects.some((project) => project.progress_updates?.length > 0) ? (
-                                        <ProjectProgressLineChart projects={projects} />
-                                    ) : (
-                                        <div className="flex h-full items-center justify-center text-sm text-slate-500">
-                                            No progress history available.
-                                        </div>
-                                    )}
+                                <div className="mt-4">
+                                    <ProjectProgressBarChart projects={projects} />
                                 </div>
                             </div>
                         </div>

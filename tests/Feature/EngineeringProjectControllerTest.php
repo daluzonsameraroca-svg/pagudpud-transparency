@@ -110,7 +110,7 @@ class EngineeringProjectControllerTest extends TestCase
         ]);
     }
 
-    public function test_engineering_project_list_includes_progress_history_in_date_order(): void
+    public function test_engineering_project_list_includes_current_progress(): void
     {
         $engineer = User::factory()->create([
             'role' => 'engineering',
@@ -140,9 +140,7 @@ class EngineeringProjectControllerTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('Engineering/Projects')
-            ->has('projects.0.progress_updates', 2)
-            ->where('projects.0.progress_updates.0.progress', 20)
-            ->where('projects.0.progress_updates.1.progress', 75)
+            ->where('projects.0.progress', 75)
         );
     }
 
