@@ -1,5 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
+import ProjectProgressLineChart from '../../Components/ProjectProgressLineChart';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 const STATUS_OPTIONS = [
@@ -526,34 +527,37 @@ export default function Projects({ projects = [] }) {
 
                                         <div className="border-t border-slate-100 px-5 py-5 sm:px-6">
                                             <div className="mb-3 flex items-center justify-between gap-3">
-                                                <p className="text-sm font-semibold text-slate-700">
-                                                    Project Progress
-                                                </p>
+                                                <div>
+                                                    <p className="text-sm font-semibold text-slate-700">
+                                                        Project Progress
+                                                    </p>
+                                                    <p className="mt-1 text-xs text-slate-500">
+                                                        Progress over time
+                                                    </p>
+                                                </div>
                                                 <p className="text-sm font-bold text-blue-700">
                                                     {progress}%
                                                 </p>
                                             </div>
 
-                                            <div
-                                                className="h-2.5 overflow-hidden rounded-full bg-slate-100"
-                                                role="progressbar"
-                                                aria-valuenow={progress}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                                aria-label={`${project.project_name || 'Project'} progress`}
-                                            >
+                                            {project.progress_updates?.length >
+                                            0 ? (
                                                 <div
-                                                    className={`h-full rounded-full transition-all ${
-                                                        project.status ===
-                                                        'Suspended'
-                                                            ? 'bg-red-400'
-                                                            : 'bg-blue-500'
-                                                    }`}
-                                                    style={{
-                                                        width: `${progress}%`,
-                                                    }}
-                                                />
-                                            </div>
+                                                    className="h-56 w-full"
+                                                    role="img"
+                                                    aria-label={`${project.project_name || 'Project'} progress history line graph`}
+                                                >
+                                                    <ProjectProgressLineChart
+                                                        projects={[project]}
+                                                        showLegend={false}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="flex h-56 items-center justify-center rounded-xl bg-slate-50 text-sm text-slate-500">
+                                                    No progress history
+                                                    available.
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="flex flex-col gap-3 border-t border-slate-100 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">

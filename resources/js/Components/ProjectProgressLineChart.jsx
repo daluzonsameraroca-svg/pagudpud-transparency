@@ -8,15 +8,26 @@ import {
     YAxis,
 } from 'recharts';
 
+const PROJECT_COLORS = [
+    '#1d4ed8',
+    '#0284c7',
+    '#4f46e5',
+    '#0369a1',
+    '#2563eb',
+];
+
 function projectColor(index) {
-    return `hsl(${Math.round((145 + index * 137.508) % 360)} 68% 38%)`;
+    return PROJECT_COLORS[index % PROJECT_COLORS.length];
 }
 
 function formatDate(timestamp, options) {
     return new Date(timestamp).toLocaleDateString(undefined, options);
 }
 
-export default function ProjectProgressLineChart({ projects = [] }) {
+export default function ProjectProgressLineChart({
+    projects = [],
+    showLegend = true,
+}) {
     const lines = projects
         .map((project, index) => ({
             id: project.id,
@@ -117,21 +128,27 @@ export default function ProjectProgressLineChart({ projects = [] }) {
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
-                    <div className="mt-2 flex max-h-12 shrink-0 flex-wrap gap-x-3 gap-y-1 overflow-y-auto">
-                        {lines.map((project) => (
-                            <span
-                                key={project.id}
-                                className="inline-flex max-w-[48%] items-center gap-1.5 truncate text-[10px] text-slate-600"
-                                title={project.name}
-                            >
+                    {showLegend && (
+                        <div className="mt-2 flex max-h-12 shrink-0 flex-wrap gap-x-3 gap-y-1 overflow-y-auto">
+                            {lines.map((project) => (
                                 <span
-                                    className="h-2 w-2 shrink-0 rounded-full"
-                                    style={{ backgroundColor: project.color }}
-                                />
-                                <span className="truncate">{project.name}</span>
-                            </span>
-                        ))}
-                    </div>
+                                    key={project.id}
+                                    className="inline-flex max-w-[48%] items-center gap-1.5 truncate text-[10px] text-slate-600"
+                                    title={project.name}
+                                >
+                                    <span
+                                        className="h-2 w-2 shrink-0 rounded-full"
+                                        style={{
+                                            backgroundColor: project.color,
+                                        }}
+                                    />
+                                    <span className="truncate">
+                                        {project.name}
+                                    </span>
+                                </span>
+                            ))}
+                        </div>
+                    )}
                 </>
             ) : (
                 <div className="flex h-full items-center justify-center text-sm text-slate-500">

@@ -270,6 +270,14 @@ export default function ProjectDetails({ project }) {
                 </header>
 
                 <main className="space-y-5 px-5 py-6 sm:px-7">
+                    {currentProject.image_url && (
+                        <img
+                            src={currentProject.image_url}
+                            alt={`${currentProject.project_name || 'Project'} photo`}
+                            className="max-h-[32rem] w-full rounded-xl object-cover shadow-sm"
+                        />
+                    )}
+
                     <section>
                         <div className="mt-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                             <div className="min-w-0">

@@ -110,6 +110,42 @@ class EngineeringProjectControllerTest extends TestCase
         ]);
     }
 
+    public function test_engineering_project_list_includes_progress_history_in_date_order(): void
+    {
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+        ]);
+        $project = Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Ongoing',
+            'progress' => 75,
+        ]);
+        $project->progressUpdates()->createMany([
+            [
+                'status' => 'Ongoing',
+                'progress' => 75,
+                'update_date' => '2026-03-15',
+            ],
+            [
+                'status' => 'Ongoing',
+                'progress' => 20,
+                'update_date' => '2025-01-10',
+            ],
+        ]);
+
+        $response = $this->actingAs($engineer)->get('/engineering/projects');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Engineering/Projects')
+            ->has('projects.0.progress_updates', 2)
+            ->where('projects.0.progress_updates.0.progress', 20)
+            ->where('projects.0.progress_updates.1.progress', 75)
+        );
+    }
+
     public function test_engineer_can_replace_a_project_image_during_a_progress_update(): void
     {
         Storage::fake('public');

@@ -23,7 +23,11 @@ class EngineeringProjectController extends Controller
 
     public function index()
     {
-        $projects = Project::orderBy('created_at', 'desc')->get();
+        $projects = Project::with([
+            'progressUpdates' => fn ($query) => $query
+                ->orderBy('update_date')
+                ->orderBy('id'),
+        ])->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Engineering/Projects', [
             'projects' => $projects,
