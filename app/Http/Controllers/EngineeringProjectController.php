@@ -75,7 +75,10 @@ class EngineeringProjectController extends Controller
             (int) $validated['progress']
         );
 
-        $imagePath = $request->file('image')->store('projects', 'public');
+        $imagePath = $request->file('image')->store(
+            'projects',
+            config('filesystems.upload_disk', 'public'),
+        );
 
         if ($imagePath === false) {
             throw new RuntimeException('The project image could not be saved.');
@@ -98,7 +101,8 @@ class EngineeringProjectController extends Controller
                 return $project;
             });
         } catch (Throwable $exception) {
-            Storage::disk('public')->delete($imagePath);
+            Storage::disk(config('filesystems.upload_disk', 'public'))
+                ->delete($imagePath);
 
             throw $exception;
         }
@@ -156,7 +160,10 @@ class EngineeringProjectController extends Controller
         $newImagePath = null;
 
         if ($request->hasFile('image')) {
-            $newImagePath = $request->file('image')->store('projects', 'public');
+            $newImagePath = $request->file('image')->store(
+                'projects',
+                config('filesystems.upload_disk', 'public'),
+            );
 
             if ($newImagePath === false) {
                 throw new RuntimeException('The project image could not be saved.');
@@ -197,14 +204,16 @@ class EngineeringProjectController extends Controller
             });
         } catch (Throwable $exception) {
             if ($newImagePath !== null) {
-                Storage::disk('public')->delete($newImagePath);
+                Storage::disk(config('filesystems.upload_disk', 'public'))
+                    ->delete($newImagePath);
             }
 
             throw $exception;
         }
 
         if ($oldImagePath && $oldImagePath !== $imagePath) {
-            Storage::disk('public')->delete($oldImagePath);
+            Storage::disk(config('filesystems.upload_disk', 'public'))
+                ->delete($oldImagePath);
         }
 
         $this->citizenNotifications->sendToCitizens(

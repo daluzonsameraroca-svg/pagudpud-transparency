@@ -173,7 +173,7 @@ export default function Sidebar({
                 type="button"
                 onClick={() => setIsMobileOpen(true)}
                 aria-label="Open navigation menu"
-                className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-xl border border-blue-100 bg-white text-blue-800 shadow-sm transition duration-200 hover:scale-105 hover:bg-blue-50 motion-reduce:transition-none motion-reduce:hover:scale-100 lg:hidden"
+                className="fixed left-4 top-4 z-[80] flex h-11 w-11 items-center justify-center rounded-xl border border-blue-100 bg-white text-blue-800 shadow-sm transition duration-200 hover:scale-105 hover:bg-blue-50 motion-reduce:transition-none motion-reduce:hover:scale-100 lg:hidden"
             >
                 <Icon name="menu" size={22} />
             </button>
@@ -193,7 +193,9 @@ export default function Sidebar({
             />
 
             <aside
-                className={`fixed inset-y-0 left-0 z-50 flex max-w-[85vw] flex-col border-r border-blue-100 bg-white shadow-xl transition-[width,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:max-w-none lg:translate-x-0 lg:shadow-sm ${
+                className={`fixed inset-y-0 left-0 ${
+                    isMobileOpen || !isDesktopCollapsed ? 'z-[100]' : 'z-50'
+                } flex max-w-[85vw] flex-col border-r border-blue-100 bg-white shadow-xl transition-[width,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:max-w-none lg:translate-x-0 lg:shadow-sm ${
                     isMobileOpen ? 'w-72 translate-x-0' : '-translate-x-full'
                 } ${isDesktopCollapsed ? 'lg:w-20' : 'lg:w-64'}`}
             >

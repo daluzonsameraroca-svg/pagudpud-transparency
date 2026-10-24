@@ -132,7 +132,8 @@ class AdminProjectController extends Controller
         $project->delete();
 
         if ($imagePath) {
-            Storage::disk('public')->delete($imagePath);
+            Storage::disk(config('filesystems.upload_disk', 'public'))
+                ->delete($imagePath);
         }
 
         return back()->with(

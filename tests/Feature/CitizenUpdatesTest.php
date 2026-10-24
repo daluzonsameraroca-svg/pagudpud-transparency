@@ -90,6 +90,38 @@ class CitizenUpdatesTest extends TestCase
             );
     }
 
+    public function test_project_images_can_be_stored_and_served_from_the_configured_upload_disk(): void
+    {
+        Storage::fake('r2', [
+            'url' => 'https://images.example.com',
+        ]);
+        config(['filesystems.upload_disk' => 'r2']);
+
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+        ]);
+
+        $response = $this->actingAs($engineer)->post('/engineering/projects', [
+            'project_name' => 'Community Health Center',
+            'description' => 'A new health center.',
+            'location' => 'Pagudpud',
+            'latitude' => 18.5601,
+            'longitude' => 120.7862,
+            'image' => UploadedFile::fake()->image('health-center.jpg'),
+            'budget' => 250000,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+
+        $response->assertRedirect('/engineering/projects');
+        $project = Project::query()->firstOrFail();
+        Storage::disk('r2')->assertExists($project->image_path);
+        $this->assertSame(
+            "https://images.example.com/{$project->image_path}",
+            $project->image_url,
+        );
+    }
+
     public function test_publishing_an_announcement_notifies_citizens(): void
     {
         $admin = User::factory()->create([

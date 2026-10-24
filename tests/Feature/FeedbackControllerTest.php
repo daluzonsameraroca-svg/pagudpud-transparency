@@ -63,6 +63,23 @@ class FeedbackControllerTest extends TestCase
             );
     }
 
+    public function test_feedback_image_url_uses_the_configured_upload_disk(): void
+    {
+        Storage::fake('r2', [
+            'url' => 'https://images.example.com',
+        ]);
+        config(['filesystems.upload_disk' => 'r2']);
+
+        $feedback = new Feedback([
+            'image_path' => 'feedback/site-condition.jpg',
+        ]);
+
+        $this->assertSame(
+            'https://images.example.com/feedback/site-condition.jpg',
+            $feedback->image_url,
+        );
+    }
+
     public function test_citizen_can_submit_a_project_concern_without_a_photo(): void
     {
         Storage::fake('public');

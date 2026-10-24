@@ -34,7 +34,8 @@ class Feedback extends Model
     public function getImageUrlAttribute(): ?string
     {
         return $this->image_path
-            ? Storage::disk('public')->url($this->image_path)
+            ? Storage::disk(config('filesystems.upload_disk', 'public'))
+                ->url($this->image_path)
             : null;
     }
 

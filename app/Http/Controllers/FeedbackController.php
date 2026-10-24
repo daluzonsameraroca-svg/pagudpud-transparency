@@ -33,7 +33,10 @@ class FeedbackController extends Controller
         $imagePath = null;
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('feedback', 'public');
+            $imagePath = $request->file('image')->store(
+                'feedback',
+                config('filesystems.upload_disk', 'public'),
+            );
 
             if ($imagePath === false) {
                 throw new RuntimeException('The feedback image could not be saved.');
@@ -51,7 +54,8 @@ class FeedbackController extends Controller
             });
         } catch (Throwable $exception) {
             if ($imagePath !== null) {
-                Storage::disk('public')->delete($imagePath);
+                Storage::disk(config('filesystems.upload_disk', 'public'))
+                    ->delete($imagePath);
             }
 
             throw $exception;
@@ -87,7 +91,10 @@ class FeedbackController extends Controller
         $newImagePath = null;
 
         if ($request->hasFile('image')) {
-            $newImagePath = $request->file('image')->store('feedback', 'public');
+            $newImagePath = $request->file('image')->store(
+                'feedback',
+                config('filesystems.upload_disk', 'public'),
+            );
 
             if ($newImagePath === false) {
                 throw new RuntimeException('The feedback image could not be saved.');
@@ -121,14 +128,16 @@ class FeedbackController extends Controller
             });
         } catch (Throwable $exception) {
             if ($newImagePath !== null) {
-                Storage::disk('public')->delete($newImagePath);
+                Storage::disk(config('filesystems.upload_disk', 'public'))
+                    ->delete($newImagePath);
             }
 
             throw $exception;
         }
 
         if ($oldImagePath !== null && $oldImagePath !== $updatedImagePath) {
-            Storage::disk('public')->delete($oldImagePath);
+            Storage::disk(config('filesystems.upload_disk', 'public'))
+                ->delete($oldImagePath);
         }
 
         return back()->with(
@@ -153,7 +162,8 @@ class FeedbackController extends Controller
         });
 
         if ($imagePath !== null) {
-            Storage::disk('public')->delete($imagePath);
+            Storage::disk(config('filesystems.upload_disk', 'public'))
+                ->delete($imagePath);
         }
 
         return back()->with(
