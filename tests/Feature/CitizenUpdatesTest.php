@@ -70,7 +70,10 @@ class CitizenUpdatesTest extends TestCase
                 ->component('Citizen/Dashboard')
                 ->where('projects.0.project_name', 'Community Health Center')
                 ->where('projects.0.image_path', $project->image_path)
-                ->where('projects.0.image_url', $project->image_url)
+                ->where(
+                    'projects.0.image_url',
+                    "/storage/{$project->image_path}",
+                )
             );
 
         $this->actingAs($citizen)

@@ -44,7 +44,10 @@ class FeedbackControllerTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Citizen/Feedback')
                 ->where('feedback.0.image_path', $feedback->image_path)
-                ->where('feedback.0.image_url', $feedback->image_url)
+                ->where(
+                    'feedback.0.image_url',
+                    "/storage/{$feedback->image_path}",
+                )
             );
 
         $admin = User::factory()->create(['role' => 'admin']);
@@ -53,7 +56,10 @@ class FeedbackControllerTest extends TestCase
             ->get('/admin/feedback')
             ->assertInertia(fn ($page) => $page
                 ->component('Admin/Feedback')
-                ->where('feedback.0.image_url', $feedback->image_url)
+                ->where(
+                    'feedback.0.image_url',
+                    "/storage/{$feedback->image_path}",
+                )
             );
     }
 

@@ -411,6 +411,14 @@ export default function Projects({ projects = [] }) {
                                         key={project.id}
                                         className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
                                     >
+                                        {project.image_url && (
+                                            <img
+                                                src={project.image_url}
+                                                alt={`${project.project_name || 'Project'} photo`}
+                                                className="h-56 w-full object-cover sm:h-72"
+                                            />
+                                        )}
+
                                         <div className="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:px-6 md:flex-row md:items-start md:justify-between">
                                             <div className="flex min-w-0 items-start gap-4">
                                                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl text-blue-700">
