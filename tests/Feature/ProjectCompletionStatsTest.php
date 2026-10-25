@@ -72,6 +72,38 @@ class ProjectCompletionStatsTest extends TestCase
         );
     }
 
+    public function test_citizen_dashboard_lists_all_planned_ongoing_and_suspended_projects(): void
+    {
+        $this->travelTo('2026-10-25 10:00:00');
+
+        $completedProject = $this->createProject();
+        $completedProject->update(['status' => 'Completed']);
+
+        $this->travel(1)->seconds();
+        $ongoingProject = $this->createProject();
+
+        $this->travel(1)->seconds();
+        $plannedProject = $this->createProject();
+        $plannedProject->update(['status' => 'Planned']);
+
+        $this->travel(1)->seconds();
+        $suspendedProject = $this->createProject();
+        $suspendedProject->update(['status' => 'Suspended']);
+        $citizen = User::factory()->create(['role' => 'citizen']);
+
+        $response = $this->actingAs($citizen)->get('/citizen/dashboard');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Citizen/Dashboard')
+            ->has('projects', 4)
+            ->has('activeProjects', 3)
+            ->where('activeProjects.0.id', $suspendedProject->id)
+            ->where('activeProjects.1.id', $plannedProject->id)
+            ->where('activeProjects.2.id', $ongoingProject->id)
+        );
+    }
+
     public function test_completed_projects_remain_available_in_each_role_project_list(): void
     {
         $project = $this->createProject();

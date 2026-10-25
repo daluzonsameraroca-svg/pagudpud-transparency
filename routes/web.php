@@ -53,9 +53,13 @@ Route::get('/citizen/dashboard', function (
     ProjectCompletionStats $completionStats,
 ) {
     $projects = Project::orderBy('created_at', 'desc')->get();
+    $activeProjects = $projects
+        ->whereIn('status', ['Ongoing', 'Planned', 'Suspended'])
+        ->values();
 
     return Inertia::render('Citizen/Dashboard', [
         'projects' => $projects,
+        'activeProjects' => $activeProjects,
         'completionStats' => $completionStats->twoYearCompletionCounts(),
         'isNewCitizen' => $request->session()->pull('new_citizen', false),
     ]);

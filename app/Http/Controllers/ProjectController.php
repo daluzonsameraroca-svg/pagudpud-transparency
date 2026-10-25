@@ -49,6 +49,7 @@ class ProjectController extends Controller
             'projects' => $projects,
             'search' => $search,
         ]);
+
     }
 
     /**

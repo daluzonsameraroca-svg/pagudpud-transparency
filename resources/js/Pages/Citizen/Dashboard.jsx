@@ -143,6 +143,7 @@ function StatusBadge({ status }) {
 
 export default function Dashboard({
     projects = [],
+    activeProjects = [],
     completionStats = [],
     isNewCitizen = false,
 }) {
@@ -191,10 +192,6 @@ export default function Dashboard({
             ).length,
         },
     ].filter((item) => item.value > 0);
-
-    const recentProjects = projects
-        .filter((project) => project.status !== 'Completed')
-        .slice(0, 5);
 
     return (
         <DashboardLayout role="citizen">
@@ -314,7 +311,7 @@ export default function Dashboard({
                         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
                             <div>
                                 <h2 className="text-[13px] font-semibold text-slate-800">
-                                    Recent Projects
+                                    Current Projects
                                 </h2>
                             </div>
 
@@ -326,49 +323,64 @@ export default function Dashboard({
                             </Link>
                         </div>
 
-                        {recentProjects.length > 0 ? (
+                        {activeProjects.length > 0 ? (
                             <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3">
-                                {recentProjects.map((project) => (
-                                    <Link
+                                {activeProjects.map((project) => (
+                                    <article
                                         key={project.id}
-                                        href={`/citizen/projects/${project.id}`}
-                                        className="group overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:border-blue-300 hover:shadow-md"
+                                        className="overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:border-blue-300 hover:shadow-md"
                                     >
-                                        {project.image_url ? (
-                                            <img
-                                                src={project.image_url}
-                                                alt={project.project_name || 'Project'}
-                                                loading="lazy"
-                                                className="aspect-video w-full object-cover transition duration-200 group-hover:scale-[1.02]"
-                                            />
-                                        ) : (
-                                            <div
-                                                className="flex aspect-video items-center justify-center bg-slate-100 text-sm font-medium text-slate-500"
-                                                role="img"
-                                                aria-label="No project image available"
+                                        <Link
+                                            href={`/citizen/projects/${project.id}`}
+                                            className="group block"
+                                        >
+                                            {project.image_url ? (
+                                                <img
+                                                    src={project.image_url}
+                                                    alt={project.project_name || 'Project'}
+                                                    loading="lazy"
+                                                    className="aspect-video w-full object-cover transition duration-200 group-hover:scale-[1.02]"
+                                                />
+                                            ) : (
+                                                <div
+                                                    className="flex aspect-video items-center justify-center bg-slate-100 text-sm font-medium text-slate-500"
+                                                    role="img"
+                                                    aria-label="No project image available"
+                                                >
+                                                    Project image unavailable
+                                                </div>
+                                            )}
+                                            <div className="flex items-start justify-between gap-3 p-3.5">
+                                                <div className="min-w-0">
+                                                    <h3 className="line-clamp-2 text-sm font-semibold text-slate-800 group-hover:text-blue-800">
+                                                        {project.project_name ||
+                                                            'Untitled Project'}
+                                                    </h3>
+                                                    <p className="mt-1 truncate text-xs text-slate-500">
+                                                        {project.location ||
+                                                            'Location not provided'}
+                                                    </p>
+                                                </div>
+                                                <StatusBadge status={project.status} />
+                                            </div>
+                                        </Link>
+                                        <div className="flex justify-end border-t border-slate-100 px-3 py-2">
+                                            <Link
+                                                href={`/citizen/projects/${project.id}#project-feedback`}
+                                                aria-label={`Send feedback about ${project.project_name || 'this project'}`}
+                                                title="Send feedback"
+                                                className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-medium text-blue-700 transition hover:bg-blue-50 hover:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             >
-                                                Project image unavailable
-                                            </div>
-                                        )}
-                                        <div className="flex items-start justify-between gap-3 p-3.5">
-                                            <div className="min-w-0">
-                                                <h3 className="line-clamp-2 text-sm font-semibold text-slate-800 group-hover:text-blue-800">
-                                                    {project.project_name ||
-                                                        'Untitled Project'}
-                                                </h3>
-                                                <p className="mt-1 truncate text-xs text-slate-500">
-                                                    {project.location ||
-                                                        'Location not provided'}
-                                                </p>
-                                            </div>
-                                            <StatusBadge status={project.status} />
+                                                <Icon name="message" className="h-4 w-4" />
+                                                <span>Feedback</span>
+                                            </Link>
                                         </div>
-                                    </Link>
+                                    </article>
                                 ))}
                             </div>
                         ) : (
                             <div className="px-4 py-10 text-center text-[11px] text-slate-500">
-                                No recent projects. Completed projects remain available in all projects.
+                                No ongoing, planned, or suspended projects right now.
                             </div>
                         )}
                     </section>
@@ -419,7 +431,7 @@ export default function Dashboard({
 
                                 <div>
                                     <h3 className="text-[11px] font-semibold text-slate-700 group-hover:text-blue-800">
-                                        Submit Feedback
+                                        My Feedbacks
                                     </h3>
                                 </div>
                             </Link>
