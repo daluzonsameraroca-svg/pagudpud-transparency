@@ -82,7 +82,8 @@ Route::get('/citizen/projects', [ProjectController::class, 'index'])
     ->middleware(['auth', 'role:citizen']);
 
 Route::get('/citizen/projects/{project}', [ProjectController::class, 'show'])
-    ->middleware(['auth', 'role:citizen']);
+    ->middleware(['auth', 'role:citizen'])
+    ->name('citizen.projects.show');
 
 Route::post('/citizen/projects/{project}/feedback', [FeedbackController::class, 'store'])
     ->middleware(['auth', 'role:citizen']);

@@ -69,9 +69,15 @@ class ProjectController extends Controller
                     ->orderBy('id', 'asc');
             },
         ]);
+        $feedback = $project->feedback()
+            ->with('user:id,name')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Citizen/ProjectDetails', [
             'project' => $project,
+            'feedback' => $feedback,
         ]);
     }
 }

@@ -1,6 +1,5 @@
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import ProjectLocationMap from '../../Components/ProjectLocationMap';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
@@ -97,6 +96,31 @@ function formatBudget(budget) {
     });
 }
 
+function formatFeedbackDate(date) {
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+        return '';
+    }
+
+    return parsedDate.toLocaleString('en-PH', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    });
+}
+
+function getFeedbackStatusStyle(status) {
+    switch ((status ?? 'Pending').toLowerCase()) {
+        case 'resolved':
+        case 'reviewed':
+            return 'bg-blue-50 text-blue-700 ring-blue-200';
+        case 'pending':
+            return 'bg-amber-50 text-amber-700 ring-amber-200';
+        default:
+            return 'bg-slate-100 text-slate-600 ring-slate-200';
+    }
+}
+
 function InfoCard({ icon, label, value }) {
     return (
         <div className="rounded-lg border border-blue-100 bg-blue-50/40 p-3.5">
@@ -126,14 +150,11 @@ function SectionHeading({ title, right }) {
     );
 }
 
-export default function ProjectDetails({ project }) {
+export default function ProjectDetails({ project, feedback }) {
     const [currentProject, setCurrentProject] = useState(project);
     const [lastUpdatedLive, setLastUpdatedLive] = useState(false);
     const [feedbackImagePreview, setFeedbackImagePreview] = useState('');
-    const [feedbackOpen, setFeedbackOpen] = useState(false);
     const feedbackImageInput = useRef(null);
-    const feedbackDialog = useRef(null);
-    const feedbackTrigger = useRef(null);
 
     const {
         data,
@@ -185,35 +206,6 @@ export default function ProjectDetails({ project }) {
         };
     }, [project.id]);
 
-    useEffect(() => {
-        if (!feedbackOpen) {
-            return undefined;
-        }
-
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-
-        const closeOnEscape = (event) => {
-            if (event.key === 'Escape' && !processing) {
-                setFeedbackOpen(false);
-                feedbackTrigger.current?.focus();
-            }
-        };
-
-        document.addEventListener('keydown', closeOnEscape);
-
-        return () => {
-            document.removeEventListener('keydown', closeOnEscape);
-            document.body.style.overflow = previousOverflow;
-        };
-    }, [feedbackOpen, processing]);
-
-    useEffect(() => {
-        if (feedbackOpen) {
-            feedbackDialog.current?.focus();
-        }
-    }, [feedbackOpen]);
-
     const submitFeedback = (event) => {
         event.preventDefault();
 
@@ -225,8 +217,6 @@ export default function ProjectDetails({ project }) {
                 if (feedbackImageInput.current) {
                     feedbackImageInput.current.value = '';
                 }
-                setFeedbackOpen(false);
-                feedbackTrigger.current?.focus();
             },
         });
     };
@@ -610,196 +600,6 @@ export default function ProjectDetails({ project }) {
                                 </div>
                             </section>
 
-                            <section
-                                id="project-feedback"
-                                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-                            >
-                                <h2 className="text-sm font-semibold text-slate-800">
-                                    Have a concern about this project?
-                                </h2>
-                                <p className="mt-2 text-xs leading-5 text-slate-600">
-                                    Feedback is for project concerns, such as a
-                                    lack of visible progress over a long period,
-                                    not general comments.
-                                </p>
-                                <button
-                                    ref={feedbackTrigger}
-                                    type="button"
-                                    onClick={() => setFeedbackOpen(true)}
-                                    aria-haspopup="dialog"
-                                    aria-expanded={feedbackOpen}
-                                    className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                >
-                                    <Icon name="message" className="h-4 w-4" />
-                                    Send feedback
-                                </button>
-                            </section>
-
-                            {feedbackOpen && (
-                                createPortal(
-                                    <div
-                                        className="fixed inset-0 z-[2147483647] flex items-center justify-center overscroll-none bg-slate-950/50 p-4 backdrop-blur-sm"
-                                        onClick={(event) => {
-                                            if (
-                                                event.target ===
-                                                    event.currentTarget &&
-                                                !processing
-                                            ) {
-                                                setFeedbackOpen(false);
-                                                feedbackTrigger.current?.focus();
-                                            }
-                                        }}
-                                    >
-                                    <section
-                                        ref={feedbackDialog}
-                                        role="dialog"
-                                        aria-modal="true"
-                                        aria-labelledby="feedback-dialog-title"
-                                        aria-describedby="feedback-dialog-guidance"
-                                        tabIndex={-1}
-                                        className="max-h-[90vh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-2xl bg-white shadow-2xl outline-none"
-                                    >
-                                        <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4">
-                                            <div>
-                                                <h2
-                                                    id="feedback-dialog-title"
-                                                    className="text-base font-bold text-slate-900"
-                                                >
-                                                    Report a Project Concern
-                                                </h2>
-                                                <p className="mt-1 text-xs text-slate-500">
-                                                    {currentProject.project_name}
-                                                </p>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setFeedbackOpen(false);
-                                                    feedbackTrigger.current?.focus();
-                                                }}
-                                                disabled={processing}
-                                                aria-label="Close feedback form"
-                                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                                            >
-                                                <span aria-hidden="true">
-                                                    ×
-                                                </span>
-                                            </button>
-                                        </div>
-
-                                        <form
-                                            onSubmit={submitFeedback}
-                                            className="space-y-4 p-5"
-                                        >
-                                            <p
-                                                id="feedback-dialog-guidance"
-                                                className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900"
-                                            >
-                                                Please submit feedback only when
-                                                you have a concern about this
-                                                project, such as no visible
-                                                progress over a long period.
-                                                Feedback is not for general
-                                                comments.
-                                            </p>
-
-                                            <div>
-                                                <label
-                                                    htmlFor="feedback-message"
-                                                    className="mb-2 block text-xs font-semibold text-slate-700"
-                                                >
-                                                    Your message
-                                                </label>
-                                                <textarea
-                                                    id="feedback-message"
-                                                    value={data.message}
-                                                    onChange={(event) =>
-                                                        setData(
-                                                            'message',
-                                                            event.target.value,
-                                                        )
-                                                    }
-                                                    rows={5}
-                                                    maxLength={2000}
-                                                    required
-                                                    placeholder="Describe your concern about this project..."
-                                                    className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm leading-5 text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                                                />
-                                                {errors.message && (
-                                                    <p className="mt-2 text-xs text-red-600">
-                                                        {errors.message}
-                                                    </p>
-                                                )}
-                                                <p className="mt-1 text-right text-xs text-slate-400">
-                                                    {data.message.length}/2000
-                                                </p>
-                                            </div>
-
-                                            <div>
-                                                <label
-                                                    htmlFor="feedback-image"
-                                                    className="mb-2 block text-xs font-semibold text-slate-700"
-                                                >
-                                                    Add a photo (optional)
-                                                </label>
-                                                <input
-                                                    ref={feedbackImageInput}
-                                                    id="feedback-image"
-                                                    type="file"
-                                                    accept="image/jpeg,image/png,image/webp"
-                                                    onChange={
-                                                        handleFeedbackImageChange
-                                                    }
-                                                    disabled={processing}
-                                                    className="block w-full text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
-                                                />
-                                                <p className="mt-1 text-xs text-slate-500">
-                                                    JPG, PNG, or WebP; maximum 5
-                                                    MB. A photo can help explain
-                                                    a project concern.
-                                                </p>
-                                                {errors.image && (
-                                                    <p
-                                                        className="mt-2 text-xs text-red-600"
-                                                        role="alert"
-                                                    >
-                                                        {errors.image}
-                                                    </p>
-                                                )}
-                                                {feedbackImagePreview && (
-                                                    <img
-                                                        src={
-                                                            feedbackImagePreview
-                                                        }
-                                                        alt="Feedback photo preview"
-                                                        className="mt-3 max-h-56 w-full rounded-lg border border-slate-200 object-contain sm:w-auto"
-                                                    />
-                                                )}
-                                            </div>
-
-                                            <button
-                                                type="submit"
-                                                disabled={
-                                                    processing ||
-                                                    !data.message.trim()
-                                                }
-                                                className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            >
-                                                <Icon
-                                                    name="message"
-                                                    className="h-4 w-4"
-                                                />
-                                                {processing
-                                                    ? 'Submitting...'
-                                                    : 'Submit Report'}
-                                            </button>
-                                        </form>
-                                    </section>
-                                    </div>,
-                                    document.body,
-                                )
-                            )}
-
                             <section className="rounded-xl border border-blue-100 bg-blue-50/60 p-4">
                                 <h3 className="text-sm font-semibold text-blue-900">
                                     About Project Information
@@ -807,6 +607,229 @@ export default function ProjectDetails({ project }) {
                             </section>
                         </aside>
                     </div>
+
+                    <section
+                        id="project-feedback"
+                        className="scroll-mt-5 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+                    >
+                        <SectionHeading
+                            title="Project Feedback"
+                            right={
+                                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                                    {feedback.total}{' '}
+                                    {feedback.total === 1 ? 'post' : 'posts'}
+                                </span>
+                            }
+                        />
+
+                        <form
+                            onSubmit={submitFeedback}
+                            className="space-y-4 border-b border-slate-100 p-5"
+                        >
+                            <p className="text-xs leading-5 text-slate-600">
+                                Share a concern about this project. Your name
+                                and feedback will be visible to all citizens
+                                viewing this project.
+                            </p>
+
+                            <div>
+                                <label
+                                    htmlFor="feedback-message"
+                                    className="mb-2 block text-xs font-semibold text-slate-700"
+                                >
+                                    Write a feedback post
+                                </label>
+                                <textarea
+                                    id="feedback-message"
+                                    value={data.message}
+                                    onChange={(event) =>
+                                        setData('message', event.target.value)
+                                    }
+                                    rows={3}
+                                    maxLength={2000}
+                                    required
+                                    placeholder="Describe a concern about the project..."
+                                    className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm leading-5 text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                                {errors.message && (
+                                    <p
+                                        className="mt-2 text-xs text-red-600"
+                                        role="alert"
+                                    >
+                                        {errors.message}
+                                    </p>
+                                )}
+                                <p className="mt-1 text-right text-xs text-slate-400">
+                                    {data.message.length}/2000
+                                </p>
+                            </div>
+
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <label
+                                        htmlFor="feedback-image"
+                                        className="mb-1 block text-xs font-semibold text-slate-700"
+                                    >
+                                        Add a photo (optional)
+                                    </label>
+                                    <input
+                                        ref={feedbackImageInput}
+                                        id="feedback-image"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        onChange={handleFeedbackImageChange}
+                                        disabled={processing}
+                                        className="block w-full text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+                                    />
+                                    <p className="mt-1 text-xs text-slate-500">
+                                        JPG, PNG, or WebP; maximum 5 MB.
+                                    </p>
+                                    {errors.image && (
+                                        <p
+                                            className="mt-2 text-xs text-red-600"
+                                            role="alert"
+                                        >
+                                            {errors.image}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={
+                                        processing || !data.message.trim()
+                                    }
+                                    className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    <Icon
+                                        name="message"
+                                        className="h-4 w-4"
+                                    />
+                                    {processing ? 'Posting...' : 'Post feedback'}
+                                </button>
+                            </div>
+
+                            {feedbackImagePreview && (
+                                <img
+                                    src={feedbackImagePreview}
+                                    alt="Feedback photo preview"
+                                    className="max-h-56 rounded-lg border border-slate-200 object-contain"
+                                />
+                            )}
+                        </form>
+
+                        <div
+                            id="feedback-list"
+                            className="divide-y divide-slate-100"
+                            aria-label="Feedback posts"
+                        >
+                            {feedback.data.length > 0 ? (
+                                feedback.data.map((entry) => {
+                                    const authorName =
+                                        entry.user?.name || 'Citizen';
+
+                                    return (
+                                        <article
+                                            key={entry.id}
+                                            className="flex gap-3 p-5"
+                                        >
+                                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-800">
+                                                {authorName
+                                                    .trim()
+                                                    .charAt(0)
+                                                    .toUpperCase() || 'C'}
+                                            </span>
+
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                                    <p className="text-sm font-semibold text-slate-800">
+                                                        {authorName}
+                                                    </p>
+                                                    <time
+                                                        dateTime={
+                                                            entry.created_at
+                                                        }
+                                                        className="text-xs text-slate-500"
+                                                    >
+                                                        {formatFeedbackDate(
+                                                            entry.created_at,
+                                                        )}
+                                                    </time>
+                                                    <span
+                                                        className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ring-1 ring-inset ${getFeedbackStatusStyle(entry.status)}`}
+                                                    >
+                                                        {entry.status ??
+                                                            'Pending'}
+                                                    </span>
+                                                </div>
+                                                <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">
+                                                    {entry.message}
+                                                </p>
+                                                {entry.image_url && (
+                                                    <img
+                                                        src={entry.image_url}
+                                                        alt={`Photo shared by ${authorName}`}
+                                                        loading="lazy"
+                                                        className="mt-3 max-h-96 max-w-full rounded-lg border border-slate-200 object-contain"
+                                                    />
+                                                )}
+                                            </div>
+                                        </article>
+                                    );
+                                })
+                            ) : (
+                                <p className="px-5 py-10 text-center text-sm text-slate-500">
+                                    No feedback has been posted for this project
+                                    yet.
+                                </p>
+                            )}
+                        </div>
+
+                        {feedback.last_page > 1 && (
+                            <nav
+                                aria-label="Feedback pages"
+                                className="flex flex-wrap items-center justify-center gap-2 border-t border-slate-100 p-4"
+                            >
+                                {feedback.links.map((pageLink, index) => {
+                                    const label =
+                                        index === 0
+                                            ? 'Previous'
+                                            : index ===
+                                                feedback.links.length - 1
+                                              ? 'Next'
+                                              : pageLink.label;
+
+                                    return pageLink.url ? (
+                                        <Link
+                                            key={`${label}-${index}`}
+                                            href={pageLink.url}
+                                            preserveScroll
+                                            aria-current={
+                                                pageLink.active
+                                                    ? 'page'
+                                                    : undefined
+                                            }
+                                            className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
+                                                pageLink.active
+                                                    ? 'bg-blue-700 text-white'
+                                                    : 'bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-800'
+                                            }`}
+                                        >
+                                            {label}
+                                        </Link>
+                                    ) : (
+                                        <span
+                                            key={`${label}-${index}`}
+                                            aria-disabled="true"
+                                            className="rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-400"
+                                        >
+                                            {label}
+                                        </span>
+                                    );
+                                })}
+                            </nav>
+                        )}
+                    </section>
 
                     <footer className="border-t border-slate-200 pt-4 text-xs text-slate-500">
                         Pagudpud Transparency · Municipality of Pagudpud,

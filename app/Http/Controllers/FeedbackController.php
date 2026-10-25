@@ -61,7 +61,7 @@ class FeedbackController extends Controller
             throw $exception;
         }
 
-        return back()->with(
+        return redirect()->route('citizen.projects.show', $project)->with(
             'success',
             'Your feedback has been submitted successfully.'
         );

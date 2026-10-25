@@ -40,6 +40,19 @@ class FeedbackControllerTest extends TestCase
         ]);
 
         $this->actingAs($citizen)
+            ->get("/citizen/projects/{$project->id}")
+            ->assertInertia(fn ($page) => $page
+                ->component('Citizen/ProjectDetails')
+                ->where('feedback.data.0.message', $feedback->message)
+                ->where('feedback.data.0.status', 'Pending')
+                ->where('feedback.data.0.user.name', $citizen->name)
+                ->where(
+                    'feedback.data.0.image_url',
+                    "/media/{$feedback->image_path}",
+                )
+            );
+
+        $this->actingAs($citizen)
             ->get('/citizen/feedback')
             ->assertInertia(fn ($page) => $page
                 ->component('Citizen/Feedback')
@@ -101,6 +114,65 @@ class FeedbackControllerTest extends TestCase
             'id' => $feedback->id,
             'image_path' => null,
         ]);
+    }
+
+    public function test_citizens_can_view_each_others_feedback_on_project_details(): void
+    {
+        $author = User::factory()->create(['role' => 'citizen']);
+        $viewer = User::factory()->create(['role' => 'citizen']);
+        $project = $this->createProject();
+        $feedback = Feedback::create([
+            'user_id' => $author->id,
+            'project_id' => $project->id,
+            'message' => 'The work site appears to be unattended.',
+            'status' => 'Reviewed',
+            'image_path' => 'feedback/site-condition.jpg',
+        ]);
+
+        $this->actingAs($viewer)
+            ->get("/citizen/projects/{$project->id}")
+            ->assertInertia(fn ($page) => $page
+                ->component('Citizen/ProjectDetails')
+                ->has('feedback.data', 1)
+                ->where('feedback.data.0.id', $feedback->id)
+                ->where('feedback.data.0.status', 'Reviewed')
+                ->where(
+                    'feedback.data.0.user',
+                    [
+                        'id' => $author->id,
+                        'name' => $author->name,
+                    ],
+                )
+                ->where(
+                    'feedback.data.0.image_url',
+                    '/media/feedback/site-condition.jpg',
+                )
+            );
+    }
+
+    public function test_project_feedback_is_paginated_for_citizens(): void
+    {
+        $viewer = User::factory()->create(['role' => 'citizen']);
+        $author = User::factory()->create(['role' => 'citizen']);
+        $project = $this->createProject();
+
+        foreach (range(1, 11) as $number) {
+            Feedback::create([
+                'user_id' => $author->id,
+                'project_id' => $project->id,
+                'message' => "Project concern {$number}.",
+            ]);
+        }
+
+        $this->actingAs($viewer)
+            ->get("/citizen/projects/{$project->id}?page=2")
+            ->assertInertia(fn ($page) => $page
+                ->component('Citizen/ProjectDetails')
+                ->has('feedback.data', 1)
+                ->where('feedback.current_page', 2)
+                ->where('feedback.last_page', 2)
+                ->where('feedback.total', 11)
+            );
     }
 
     public function test_citizen_cannot_submit_a_non_image_as_feedback_photo(): void
