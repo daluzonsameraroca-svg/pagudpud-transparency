@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class Project extends Model
 {
@@ -43,8 +42,7 @@ class Project extends Model
     public function getImageUrlAttribute(): ?string
     {
         return $this->image_path
-            ? Storage::disk(config('filesystems.upload_disk', 'public'))
-                ->url($this->image_path)
+            ? route('media.public', ['path' => $this->image_path], false)
             : null;
     }
 

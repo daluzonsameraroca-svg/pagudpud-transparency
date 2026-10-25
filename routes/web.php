@@ -11,6 +11,7 @@ use App\Http\Controllers\EngineeringProjectController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PublicImageController;
 use App\Models\AdministrativePost;
 use App\Models\Feedback;
 use App\Models\Project;
@@ -34,6 +35,10 @@ Route::get('/register', function () {
 
 Route::post('/login', [LoginController::class, 'store']);
 Route::post('/register', [RegisterController::class, 'store']);
+
+Route::get('/media/{path}', [PublicImageController::class, 'show'])
+    ->where('path', '(projects|feedback)/.*')
+    ->name('media.public');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])

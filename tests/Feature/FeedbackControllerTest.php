@@ -46,7 +46,7 @@ class FeedbackControllerTest extends TestCase
                 ->where('feedback.0.image_path', $feedback->image_path)
                 ->where(
                     'feedback.0.image_url',
-                    "/storage/{$feedback->image_path}",
+                    "/media/{$feedback->image_path}",
                 )
             );
 
@@ -58,7 +58,7 @@ class FeedbackControllerTest extends TestCase
                 ->component('Admin/Feedback')
                 ->where(
                     'feedback.0.image_url',
-                    "/storage/{$feedback->image_path}",
+                    "/media/{$feedback->image_path}",
                 )
             );
     }
@@ -75,7 +75,7 @@ class FeedbackControllerTest extends TestCase
         ]);
 
         $this->assertSame(
-            'https://images.example.com/feedback/site-condition.jpg',
+            '/media/feedback/site-condition.jpg',
             $feedback->image_url,
         );
     }

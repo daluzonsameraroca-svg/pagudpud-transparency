@@ -72,7 +72,7 @@ class CitizenUpdatesTest extends TestCase
                 ->where('projects.0.image_path', $project->image_path)
                 ->where(
                     'projects.0.image_url',
-                    "/storage/{$project->image_path}",
+                    "/media/{$project->image_path}",
                 )
             );
 
@@ -117,7 +117,7 @@ class CitizenUpdatesTest extends TestCase
         $project = Project::query()->firstOrFail();
         Storage::disk('r2')->assertExists($project->image_path);
         $this->assertSame(
-            "https://images.example.com/{$project->image_path}",
+            "/media/{$project->image_path}",
             $project->image_url,
         );
     }
