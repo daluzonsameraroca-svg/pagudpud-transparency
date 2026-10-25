@@ -160,6 +160,35 @@ class ProjectCompletionStatsTest extends TestCase
         );
     }
 
+    public function test_admin_project_pages_receive_project_image_urls(): void
+    {
+        $project = $this->createProject();
+        $project->update([
+            'image_path' => 'projects/road-improvement.jpg',
+        ]);
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->get('/admin/projects')
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Projects')
+                ->where(
+                    'projects.0.image_url',
+                    '/media/projects/road-improvement.jpg',
+                )
+            );
+
+        $this->actingAs($admin)
+            ->get('/admin/dashboard')
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Dashboard')
+                ->where(
+                    'projects.0.image_url',
+                    '/media/projects/road-improvement.jpg',
+                )
+            );
+    }
+
     private function createProject(): Project
     {
         return Project::create([

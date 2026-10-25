@@ -427,6 +427,15 @@ export default function Projects({ projects = [] }) {
                                             key={project.id}
                                             className="transition hover:bg-slate-50/70"
                                         >
+                                            {project.image_url && (
+                                                <img
+                                                    src={project.image_url}
+                                                    alt={`${project.project_name || 'Project'} photo`}
+                                                    loading="lazy"
+                                                    className="h-48 w-full bg-slate-100 object-cover sm:h-56"
+                                                />
+                                            )}
+
                                             <div className="p-5 sm:p-6">
                                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                                     <div className="min-w-0">

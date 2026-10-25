@@ -74,6 +74,13 @@ class FeedbackControllerTest extends TestCase
                     "/media/{$feedback->image_path}",
                 )
             );
+
+        $adminImageResponse = $this->actingAs($admin)
+            ->get("/media/{$feedback->image_path}");
+
+        $adminImageResponse->assertOk();
+        $adminImageResponse->assertHeader('Content-Type', 'image/jpeg');
+        $this->assertNotEmpty($adminImageResponse->streamedContent());
     }
 
     public function test_feedback_image_url_uses_the_configured_upload_disk(): void

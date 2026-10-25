@@ -373,13 +373,23 @@ export default function Dashboard({
                                                         key={project.id}
                                                         className="transition hover:bg-blue-50/40"
                                                     >
-                                                        <td className="max-w-[260px] px-5 py-4">
-                                                            <Link
-                                                                href="/admin/projects"
-                                                                className="block truncate text-sm font-semibold text-slate-800 transition hover:text-blue-700"
-                                                            >
-                                                                {project.project_name || 'Untitled Project'}
-                                                            </Link>
+                                                        <td className="max-w-[300px] px-5 py-4">
+                                                            <div className="flex items-center gap-3">
+                                                                {project.image_url && (
+                                                                    <img
+                                                                        src={project.image_url}
+                                                                        alt=""
+                                                                        loading="lazy"
+                                                                        className="h-12 w-16 shrink-0 rounded-lg bg-slate-100 object-cover"
+                                                                    />
+                                                                )}
+                                                                <Link
+                                                                    href="/admin/projects"
+                                                                    className="truncate text-sm font-semibold text-slate-800 transition hover:text-blue-700"
+                                                                >
+                                                                    {project.project_name || 'Untitled Project'}
+                                                                </Link>
+                                                            </div>
                                                         </td>
 
                                                         <td className="px-4 py-4 text-sm text-slate-600">
@@ -431,13 +441,23 @@ export default function Dashboard({
                                                 className="space-y-4 px-5 py-4"
                                             >
                                                 <div className="flex items-start justify-between gap-3">
-                                                    <div className="min-w-0">
+                                                    <div className="flex min-w-0 items-start gap-3">
+                                                        {project.image_url && (
+                                                            <img
+                                                                src={project.image_url}
+                                                                alt=""
+                                                                loading="lazy"
+                                                                className="h-14 w-20 shrink-0 rounded-lg bg-slate-100 object-cover"
+                                                            />
+                                                        )}
+                                                        <div className="min-w-0">
                                                         <p className="break-words text-sm font-semibold text-slate-900">
                                                             {project.project_name || 'Untitled Project'}
                                                         </p>
                                                         <p className="mt-1.5 text-sm text-slate-600">
                                                             {project.location || 'Not specified'}
                                                         </p>
+                                                        </div>
                                                     </div>
 
                                                     <span
