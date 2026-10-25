@@ -189,6 +189,25 @@ class ProjectCompletionStatsTest extends TestCase
             );
     }
 
+    public function test_engineering_dashboard_receives_project_image_urls(): void
+    {
+        $project = $this->createProject();
+        $project->update([
+            'image_path' => 'projects/road-improvement.jpg',
+        ]);
+        $engineer = User::factory()->create(['role' => 'engineering']);
+
+        $this->actingAs($engineer)
+            ->get('/engineering/dashboard')
+            ->assertInertia(fn ($page) => $page
+                ->component('Engineering/Dashboard')
+                ->where(
+                    'projects.0.image_url',
+                    '/media/projects/road-improvement.jpg',
+                )
+            );
+    }
+
     private function createProject(): Project
     {
         return Project::create([

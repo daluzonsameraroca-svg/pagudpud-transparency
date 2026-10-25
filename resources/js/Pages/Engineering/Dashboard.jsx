@@ -308,9 +308,18 @@ export default function Dashboard({
                                             className="flex flex-col gap-4 px-5 py-5 transition hover:bg-slate-50 sm:px-6 md:flex-row md:items-center md:justify-between"
                                         >
                                             <div className="flex min-w-0 items-start gap-3">
-                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg text-blue-700">
-                                                    ▤
-                                                </div>
+                                                {project.image_url ? (
+                                                    <img
+                                                        src={project.image_url}
+                                                        alt={`${project.project_name || 'Project'} photo`}
+                                                        loading="lazy"
+                                                        className="h-14 w-20 shrink-0 rounded-xl bg-slate-100 object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg text-blue-700">
+                                                        ▤
+                                                    </div>
+                                                )}
 
                                                 <div className="min-w-0">
                                                     <Link
