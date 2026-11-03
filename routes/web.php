@@ -122,6 +122,9 @@ Route::post('/engineering/projects', [EngineeringProjectController::class, 'stor
 Route::put('/engineering/projects/{project}', [EngineeringProjectController::class, 'update'])
     ->middleware(['auth', 'role:engineering']);
 
+Route::get('/engineering/feedback', [AdminFeedbackController::class, 'index'])
+    ->middleware(['auth', 'role:engineering']);
+
 // Admin routes
 Route::get('/admin/dashboard', function (
     ProjectCompletionStats $completionStats,

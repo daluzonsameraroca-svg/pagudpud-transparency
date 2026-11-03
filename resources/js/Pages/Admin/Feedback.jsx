@@ -2,13 +2,14 @@ import { router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
-export default function Feedback({ feedback = [] }) {
+export default function Feedback({ feedback = [], role = 'admin' }) {
+    const canManageFeedback = role === 'admin';
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
     const [updatingId, setUpdatingId] = useState(null);
 
     const updateStatus = (item, status) => {
-        if (item.status === status || updatingId === item.id) {
+        if (!canManageFeedback || item.status === status || updatingId === item.id) {
             return;
         }
 
@@ -75,7 +76,7 @@ export default function Feedback({ feedback = [] }) {
                 item.project?.location,
                 item.message,
                 item.user?.name,
-                item.user?.email,
+                canManageFeedback ? item.user?.email : null,
             ]
                 .filter(Boolean)
                 .join(' ')
@@ -83,7 +84,7 @@ export default function Feedback({ feedback = [] }) {
 
             return matchesStatus && (!query || searchableText.includes(query));
         });
-    }, [feedback, search, statusFilter]);
+    }, [canManageFeedback, feedback, search, statusFilter]);
 
     const summaryCards = [
         {
@@ -118,14 +119,16 @@ export default function Feedback({ feedback = [] }) {
     };
 
     return (
-        <DashboardLayout role="admin">
+        <DashboardLayout role={role}>
             <div className="min-h-screen bg-slate-50 text-slate-800">
                 <header className="border-b border-slate-200 bg-white px-5 py-6 sm:px-8">
                     <div className="mx-auto max-w-[1500px]">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <div>
                                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-                                    Public Feedback
+                                    {canManageFeedback
+                                        ? 'Public Feedback'
+                                        : 'Project Feedback'}
                                 </h1>
                             </div>
 
@@ -306,15 +309,17 @@ export default function Feedback({ feedback = [] }) {
                                                 </div>
                                             </div>
 
-                                            <div className="min-w-0">
-                                                <p className="text-sm text-slate-500">
-                                                    Email Address
-                                                </p>
-                                                <p className="mt-1 break-all text-sm font-medium text-slate-800">
-                                                    {item.user?.email ||
-                                                        'Not available'}
-                                                </p>
-                                            </div>
+                                            {canManageFeedback && (
+                                                <div className="min-w-0">
+                                                    <p className="text-sm text-slate-500">
+                                                        Email Address
+                                                    </p>
+                                                    <p className="mt-1 break-all text-sm font-medium text-slate-800">
+                                                        {item.user?.email ||
+                                                            'Not available'}
+                                                    </p>
+                                                </div>
+                                            )}
 
                                             <div>
                                                 <p className="text-sm text-slate-500">
@@ -326,51 +331,60 @@ export default function Feedback({ feedback = [] }) {
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-col gap-4 border-t border-slate-200 bg-slate-50 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                                            <div>
-                                                <p className="text-base font-bold text-slate-900">
-                                                    Manage Feedback Status
-                                                </p>
-                                                <p className="mt-1 text-sm leading-6 text-slate-600">
-                                                    Update the status after reviewing
-                                                    this submission.
-                                                </p>
-                                            </div>
+                                        {canManageFeedback && (
+                                            <div className="flex flex-col gap-4 border-t border-slate-200 bg-slate-50 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                                                <div>
+                                                    <p className="text-base font-bold text-slate-900">
+                                                        Manage Feedback Status
+                                                    </p>
+                                                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                                                        Update the status after
+                                                        reviewing this
+                                                        submission.
+                                                    </p>
+                                                </div>
 
-                                            <div className="flex flex-wrap items-center gap-3">
-                                                {updatingId === item.id && (
-                                                    <span
-                                                        className="text-sm font-medium text-blue-700"
-                                                        aria-live="polite"
+                                                <div className="flex flex-wrap items-center gap-3">
+                                                    {updatingId === item.id && (
+                                                        <span
+                                                            className="text-sm font-medium text-blue-700"
+                                                            aria-live="polite"
+                                                        >
+                                                            Updating...
+                                                        </span>
+                                                    )}
+
+                                                    <select
+                                                        value={
+                                                            item.status ||
+                                                            'Pending'
+                                                        }
+                                                        disabled={
+                                                            updatingId ===
+                                                            item.id
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateStatus(
+                                                                item,
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        aria-label={`Update status for feedback on ${item.project?.project_name || 'project'}`}
+                                                        className="min-w-40 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:cursor-wait disabled:opacity-60"
                                                     >
-                                                        Updating...
-                                                    </span>
-                                                )}
-
-                                                <select
-                                                    value={item.status || 'Pending'}
-                                                    disabled={updatingId === item.id}
-                                                    onChange={(e) =>
-                                                        updateStatus(
-                                                            item,
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    aria-label={`Update status for feedback on ${item.project?.project_name || 'project'}`}
-                                                    className="min-w-40 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:cursor-wait disabled:opacity-60"
-                                                >
-                                                    <option value="Pending">
-                                                        Pending
-                                                    </option>
-                                                    <option value="Reviewed">
-                                                        Reviewed
-                                                    </option>
-                                                    <option value="Resolved">
-                                                        Resolved
-                                                    </option>
-                                                </select>
+                                                        <option value="Pending">
+                                                            Pending
+                                                        </option>
+                                                        <option value="Reviewed">
+                                                            Reviewed
+                                                        </option>
+                                                        <option value="Resolved">
+                                                            Resolved
+                                                        </option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </article>
                                 ))}
                             </div>

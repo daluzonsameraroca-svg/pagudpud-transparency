@@ -73,6 +73,7 @@ class FeedbackControllerTest extends TestCase
                     'feedback.0.image_url',
                     "/media/{$feedback->image_path}",
                 )
+                ->where('feedback.0.user.email', $citizen->email)
             );
 
         $adminImageResponse = $this->actingAs($admin)
@@ -81,6 +82,57 @@ class FeedbackControllerTest extends TestCase
         $adminImageResponse->assertOk();
         $adminImageResponse->assertHeader('Content-Type', 'image/jpeg');
         $this->assertNotEmpty($adminImageResponse->streamedContent());
+    }
+
+    public function test_engineering_can_view_feedback_without_personal_email_or_status_controls(): void
+    {
+        $citizen = User::factory()->create(['role' => 'citizen']);
+        $engineer = User::factory()->create(['role' => 'engineering']);
+        $project = $this->createProject();
+        $feedback = Feedback::create([
+            'user_id' => $citizen->id,
+            'project_id' => $project->id,
+            'message' => 'The work site appears to be unattended.',
+            'status' => 'Reviewed',
+            'image_path' => 'feedback/site-condition.jpg',
+        ]);
+
+        $this->actingAs($engineer)
+            ->get('/engineering/feedback')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Feedback')
+                ->where('role', 'engineering')
+                ->has('feedback', 1)
+                ->where('feedback.0.id', $feedback->id)
+                ->where('feedback.0.message', $feedback->message)
+                ->where('feedback.0.status', 'Reviewed')
+                ->where('feedback.0.image_url', '/media/feedback/site-condition.jpg')
+                ->where(
+                    'feedback.0.user',
+                    [
+                        'id' => $citizen->id,
+                        'name' => $citizen->name,
+                    ],
+                )
+            );
+
+        $this->actingAs($engineer)
+            ->put("/admin/feedback/{$feedback->id}", [
+                'status' => 'Resolved',
+            ])
+            ->assertForbidden();
+
+        $this->assertSame('Reviewed', $feedback->fresh()->status);
+    }
+
+    public function test_citizens_cannot_access_engineering_feedback_page(): void
+    {
+        $citizen = User::factory()->create(['role' => 'citizen']);
+
+        $this->actingAs($citizen)
+            ->get('/engineering/feedback')
+            ->assertForbidden();
     }
 
     public function test_feedback_image_url_uses_the_configured_upload_disk(): void

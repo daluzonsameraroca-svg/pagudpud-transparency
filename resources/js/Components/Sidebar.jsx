@@ -89,6 +89,7 @@ const navigationByRole = {
                 { label: 'Home', href: '/engineering/dashboard', icon: 'dashboard' },
                 { label: 'Projects', href: '/engineering/projects', icon: 'projects' },
                 { label: 'Add Project', href: '/engineering/projects/create', icon: 'plus' },
+                { label: 'Feedback', href: '/engineering/feedback', icon: 'feedback' },
             ],
         },
     ],

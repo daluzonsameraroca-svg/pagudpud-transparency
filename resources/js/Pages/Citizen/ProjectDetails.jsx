@@ -317,7 +317,7 @@ export default function ProjectDetails({ project, feedback }) {
 
                                 <div className="p-5">
                                     <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                        Contract Description
+                                        Project Description
                                     </h3>
                                     <p className="whitespace-pre-line text-sm leading-6 text-slate-600">
                                         {currentProject.description ||
@@ -600,11 +600,7 @@ export default function ProjectDetails({ project, feedback }) {
                                 </div>
                             </section>
 
-                            <section className="rounded-xl border border-blue-100 bg-blue-50/60 p-4">
-                                <h3 className="text-sm font-semibold text-blue-900">
-                                    About Project Information
-                                </h3>
-                            </section>
+                            
                         </aside>
                     </div>
 
@@ -627,9 +623,7 @@ export default function ProjectDetails({ project, feedback }) {
                             className="space-y-4 border-b border-slate-100 p-5"
                         >
                             <p className="text-xs leading-5 text-slate-600">
-                                Share a concern about this project. Your name
-                                and feedback will be visible to all citizens
-                                viewing this project.
+                                Share a concern about this project. 
                             </p>
 
                             <div>

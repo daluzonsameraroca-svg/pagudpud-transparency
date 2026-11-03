@@ -8,14 +8,23 @@ use Illuminate\Http\Request;
 class AdminFeedbackController extends Controller
 {
     // Display all feedback submitted by citizens.
-    public function index()
+    public function index(Request $request)
     {
-        $feedback = Feedback::with(['user', 'project'])
+        $role = $request->user()->role;
+        $feedback = Feedback::with([
+            'project',
+            'user' => function ($query) use ($role) {
+                if ($role === 'engineering') {
+                    $query->select('id', 'name');
+                }
+            },
+        ])
             ->latest()
             ->get();
 
         return inertia('Admin/Feedback', [
             'feedback' => $feedback,
+            'role' => $role,
         ]);
     }
 
@@ -26,7 +35,7 @@ class AdminFeedbackController extends Controller
             'status' => [
                 'required',
                 'string',
-                'in:' . implode(',', Feedback::STATUSES),
+                'in:'.implode(',', Feedback::STATUSES),
             ],
         ]);
 
