@@ -148,25 +148,7 @@ export default function Login() {
                             </Link>
                         </p>
 
-                        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-5">
-                            <div className="flex items-start gap-3">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-800">
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.7"
-                                        className="h-5 w-5"
-                                        aria-hidden="true"
-                                    >
-                                        <path d="M12 3 4.5 6v5c0 5 3.2 8.5 7.5 10 4.3-1.5 7.5-5 7.5-10V6L12 3Z" />
-                                        <path d="m9 12 2 2 4-4" />
-                                    </svg>
-                                </div>
-
-                                
-                            </div>
-                        </div>
+                        
 
                         <BackButton fallback="/" className="mt-8" />
                 </section>
