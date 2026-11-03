@@ -17,7 +17,7 @@ export default function Home() {
                             className="h-10 w-10 shrink-0 object-contain min-[480px]:h-12 min-[480px]:w-12"
                         />
                         <span className="whitespace-nowrap">
-                            Pagudpud Transparency
+                            Pagudpud Transparency Infrastructure
                         </span>
                     </a>
 
@@ -104,7 +104,7 @@ export default function Home() {
                                         Pagudpud, Ilocos Norte
                                     </p>
                                     <p className="mt-2 max-w-xs text-2xl font-bold leading-tight tracking-tight text-blue-950 sm:text-3xl">
-                                        Your community, in the know.
+                                        Know your community.
                                     </p>
                                 </div>
                                 <div className="relative mt-5 grid grid-cols-1 gap-2 rounded-2xl bg-blue-950 p-3 text-center text-xs font-semibold leading-5 text-white sm:grid-cols-3 sm:gap-0 sm:px-2 sm:py-4 sm:text-sm">
