@@ -77,7 +77,7 @@ const navigationByRole = {
         {
             section: 'COMMUNITY',
             items: [
-                { label: 'Administrative Posts', href: '/citizen/posts', icon: 'posts' },
+                { label: 'Announcements', href: '/citizen/posts', icon: 'posts' },
                 { label: 'My Feedback', href: '/citizen/feedback', icon: 'feedback' },
             ],
         },
@@ -97,7 +97,7 @@ const navigationByRole = {
         {
             section: 'MAIN MENU',
             items: [
-                { label: 'Home', href: '/admin/dashboard', icon: 'dashboard' },
+                { label: 'Home', href: '/admin/dashboard', icon: 'Home' },
             ],
         },
         {
