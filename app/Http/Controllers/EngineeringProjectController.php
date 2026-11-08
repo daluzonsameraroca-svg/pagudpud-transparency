@@ -137,6 +137,12 @@ class EngineeringProjectController extends Controller
                 'required',
                 'date',
             ],
+            'proof_image' => [
+                'required',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+            ],
             'image' => [
                 'nullable',
                 'image',
@@ -158,6 +164,14 @@ class EngineeringProjectController extends Controller
         $oldImagePath = null;
         $imagePath = null;
         $newImagePath = null;
+        $proofImagePath = $request->file('proof_image')->store(
+            'projects/progress-updates',
+            config('filesystems.upload_disk', 'public'),
+        );
+
+        if ($proofImagePath === false) {
+            throw new RuntimeException('The progress proof image could not be saved.');
+        }
 
         if ($request->hasFile('image')) {
             $newImagePath = $request->file('image')->store(
@@ -166,6 +180,9 @@ class EngineeringProjectController extends Controller
             );
 
             if ($newImagePath === false) {
+                Storage::disk(config('filesystems.upload_disk', 'public'))
+                    ->delete($proofImagePath);
+
                 throw new RuntimeException('The project image could not be saved.');
             }
 
@@ -176,6 +193,7 @@ class EngineeringProjectController extends Controller
                 $project,
                 $validated,
                 $newImagePath,
+                $proofImagePath,
                 $removeImage,
                 &$oldImagePath,
                 &$imagePath
@@ -198,11 +216,15 @@ class EngineeringProjectController extends Controller
                     'progress' => $validated['progress'],
                     'update_description' => $validated['update_description'] ?? null,
                     'update_date' => $validated['update_date'],
+                    'image_path' => $proofImagePath,
                 ]);
 
                 return $lockedProject->fresh();
             });
         } catch (Throwable $exception) {
+            Storage::disk(config('filesystems.upload_disk', 'public'))
+                ->delete($proofImagePath);
+
             if ($newImagePath !== null) {
                 Storage::disk(config('filesystems.upload_disk', 'public'))
                     ->delete($newImagePath);

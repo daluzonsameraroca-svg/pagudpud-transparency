@@ -124,6 +124,53 @@ class CitizenUpdatesTest extends TestCase
         );
     }
 
+    public function test_citizens_see_progress_percentages_with_their_proof_images_in_the_timeline(): void
+    {
+        Storage::fake('public');
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'editor',
+        ]);
+        $citizen = User::factory()->create([
+            'role' => 'citizen',
+        ]);
+        $project = Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+
+        $this->actingAs($engineer)
+            ->put("/engineering/projects/{$project->id}", [
+                'status' => 'Ongoing',
+                'progress' => 25,
+                'update_description' => 'Road surfacing is underway.',
+                'update_date' => '2026-11-09',
+                'proof_image' => UploadedFile::fake()->image('road-work.jpg'),
+            ])
+            ->assertRedirect();
+
+        $update = $project->progressUpdates()->firstOrFail();
+        Storage::disk('public')->assertExists($update->image_path);
+
+        $this->actingAs($citizen)
+            ->get("/citizen/projects/{$project->id}")
+            ->assertInertia(fn ($page) => $page
+                ->component('Citizen/ProjectDetails')
+                ->where('project.progress_updates.0.progress', 25)
+                ->where(
+                    'project.progress_updates.0.image_url',
+                    "/media/{$update->image_path}",
+                )
+                ->where(
+                    'project.progress_updates.0.update_description',
+                    'Road surfacing is underway.',
+                )
+            );
+    }
+
     public function test_publishing_an_announcement_notifies_citizens(): void
     {
         $admin = User::factory()->create([

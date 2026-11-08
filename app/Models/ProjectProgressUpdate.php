@@ -15,7 +15,10 @@ class ProjectProgressUpdate extends Model
         'progress',
         'update_description',
         'update_date',
+        'image_path',
     ];
+
+    protected $appends = ['image_url'];
 
     protected function casts(): array
     {
@@ -28,5 +31,12 @@ class ProjectProgressUpdate extends Model
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path
+            ? route('media.public', ['path' => $this->image_path], false)
+            : null;
     }
 }

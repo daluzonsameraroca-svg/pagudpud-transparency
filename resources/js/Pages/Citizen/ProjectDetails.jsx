@@ -484,54 +484,76 @@ export default function ProjectDetails({ project, feedback }) {
                                                     />
 
                                                     <div className="min-w-0 flex-1 rounded-lg border border-slate-100 bg-slate-50/70 p-4">
-                                                        <div className="flex flex-wrap items-center justify-between gap-2">
-                                                            <div className="flex flex-wrap items-center gap-2">
-                                                                <StatusBadge
-                                                                    status={
-                                                                        update.status
-                                                                    }
-                                                                />
-                                                                <span className="text-sm font-semibold text-slate-700">
-                                                                    {Math.min(
-                                                                        100,
-                                                                        Math.max(
-                                                                            0,
-                                                                            Number(
-                                                                                update.progress ||
-                                                                                    0
-                                                                            )
-                                                                        )
-                                                                    )}
-                                                                    %
-                                                                </span>
+                                                        <div
+                                                            className={`grid gap-4 ${
+                                                                update.image_url
+                                                                    ? 'sm:grid-cols-[minmax(0,1fr)_minmax(0,15rem)] sm:items-start'
+                                                                    : ''
+                                                            }`}
+                                                        >
+                                                            <div className="min-w-0">
+                                                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                                                    <div className="flex flex-wrap items-center gap-2">
+                                                                        <StatusBadge
+                                                                            status={
+                                                                                update.status
+                                                                            }
+                                                                        />
+                                                                        <span className="text-sm font-semibold text-slate-700">
+                                                                            {Math.min(
+                                                                                100,
+                                                                                Math.max(
+                                                                                    0,
+                                                                                    Number(
+                                                                                        update.progress ||
+                                                                                            0
+                                                                                    )
+                                                                                )
+                                                                            )}
+                                                                            %
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <span className="text-xs text-slate-500">
+                                                                        {formatDate(
+                                                                            update.update_date ||
+                                                                                update.created_at
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+
+                                                                {update.update_description && (
+                                                                    <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">
+                                                                        {
+                                                                            update.update_description
+                                                                        }
+                                                                    </p>
+                                                                )}
+
+                                                                {index === 0 && (
+                                                                    <p className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-blue-700">
+                                                                        <Icon
+                                                                            name="check"
+                                                                            className="h-3.5 w-3.5"
+                                                                        />
+                                                                        Latest recorded
+                                                                        update
+                                                                    </p>
+                                                                )}
                                                             </div>
 
-                                                            <span className="text-xs text-slate-500">
-                                                                {formatDate(
-                                                                    update.update_date ||
-                                                                        update.created_at
-                                                                )}
-                                                            </span>
-                                                        </div>
-
-                                                        {update.update_description && (
-                                                            <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">
-                                                                {
-                                                                    update.update_description
-                                                                }
-                                                            </p>
-                                                        )}
-
-                                                        {index === 0 && (
-                                                            <p className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-blue-700">
-                                                                <Icon
-                                                                    name="check"
-                                                                    className="h-3.5 w-3.5"
+                                                            {update.image_url && (
+                                                                <img
+                                                                    src={update.image_url}
+                                                                    alt={`Proof of ${update.progress}% project progress from ${formatDate(
+                                                                        update.update_date ||
+                                                                            update.created_at,
+                                                                    )}`}
+                                                                    loading="lazy"
+                                                                    className="h-24 w-36 rounded-lg border border-slate-200 object-cover justify-self-end sm:h-20 sm:w-28"
                                                                 />
-                                                                Latest recorded
-                                                                update
-                                                            </p>
-                                                        )}
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}

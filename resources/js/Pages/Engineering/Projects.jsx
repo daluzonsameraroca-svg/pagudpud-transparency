@@ -1,5 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 const STATUS_OPTIONS = [
@@ -26,6 +26,8 @@ export default function Projects({ projects = [] }) {
     const [statusFilter, setStatusFilter] = useState('All');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [imagePreview, setImagePreview] = useState('');
+    const [proofImagePreview, setProofImagePreview] = useState('');
+    const proofImageInput = useRef(null);
 
     const [form, setForm] = useState({
         status: '',
@@ -33,6 +35,7 @@ export default function Projects({ projects = [] }) {
         update_description: '',
         update_date: '',
         image: null,
+        proof_image: null,
         remove_image: false,
     });
 
@@ -43,6 +46,15 @@ export default function Projects({ projects = [] }) {
             }
         },
         [imagePreview],
+    );
+
+    useEffect(
+        () => () => {
+            if (proofImagePreview.startsWith('blob:')) {
+                URL.revokeObjectURL(proofImagePreview);
+            }
+        },
+        [proofImagePreview],
     );
 
     const totalProjects = projects.length;
@@ -84,6 +96,11 @@ export default function Projects({ projects = [] }) {
     const openUpdateForm = (project) => {
         setUpdatingProject(project.id);
         setImagePreview(project.image_url || '');
+        setProofImagePreview('');
+
+        if (proofImageInput.current) {
+            proofImageInput.current.value = '';
+        }
 
         setForm({
             status: project.status || 'Planned',
@@ -94,8 +111,10 @@ export default function Projects({ projects = [] }) {
             update_description: '',
             update_date: new Date().toLocaleDateString('en-CA'),
             image: null,
+            proof_image: null,
             remove_image: false,
         });
+        setProofImagePreview('');
     };
 
     const closeUpdateForm = () => {
@@ -108,9 +127,15 @@ export default function Projects({ projects = [] }) {
             update_description: '',
             update_date: '',
             image: null,
+            proof_image: null,
             remove_image: false,
         });
         setImagePreview('');
+        setProofImagePreview('');
+
+        if (proofImageInput.current) {
+            proofImageInput.current.value = '';
+        }
     };
 
     const handleChange = (e) => {
@@ -137,6 +162,18 @@ export default function Projects({ projects = [] }) {
             image
                 ? URL.createObjectURL(image)
                 : currentProject?.image_url || '',
+        );
+    };
+
+    const handleProofImageChange = (e) => {
+        const proofImage = e.target.files?.[0] || null;
+
+        setForm((previous) => ({
+            ...previous,
+            proof_image: proofImage,
+        }));
+        setProofImagePreview(
+            proofImage ? URL.createObjectURL(proofImage) : '',
         );
     };
 
@@ -170,6 +207,7 @@ export default function Projects({ projects = [] }) {
                 update_description: form.update_description,
                 update_date: form.update_date,
                 image: form.image,
+                proof_image: form.proof_image,
                 remove_image: form.remove_image ? '1' : '0',
             },
             {
@@ -719,6 +757,45 @@ export default function Projects({ projects = [] }) {
                                                             placeholder="Describe completed work, recent developments, or issues encountered..."
                                                             className="w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                                         />
+                                                    </div>
+
+                                                    <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5">
+                                                        <div>
+                                                            <label
+                                                                htmlFor={`progress-proof-${project.id}`}
+                                                                className="block text-sm font-semibold text-slate-700"
+                                                            >
+                                                                Progress Proof Photo <span className="text-red-600">*</span>
+                                                            </label>
+                                                            <p className="mt-1 text-xs leading-5 text-slate-500">
+                                                                Upload a photo showing the work completed for this progress update. JPG, PNG, or WebP, up to 5 MB.
+                                                            </p>
+                                                        </div>
+
+                                                        {proofImagePreview && (
+                                                            <img
+                                                                src={proofImagePreview}
+                                                                alt="Progress proof preview"
+                                                                className="h-40 w-full rounded-xl border border-slate-200 object-cover sm:w-64"
+                                                            />
+                                                        )}
+
+                                                        <input
+                                                            ref={proofImageInput}
+                                                            id={`progress-proof-${project.id}`}
+                                                            type="file"
+                                                            accept="image/jpeg,image/png,image/webp"
+                                                            required
+                                                            onChange={handleProofImageChange}
+                                                            disabled={isSubmitting}
+                                                            className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+                                                        />
+
+                                                        {errors.proof_image && (
+                                                            <p className="text-sm text-red-600" role="alert">
+                                                                {errors.proof_image}
+                                                            </p>
+                                                        )}
                                                     </div>
 
                                                     <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5">

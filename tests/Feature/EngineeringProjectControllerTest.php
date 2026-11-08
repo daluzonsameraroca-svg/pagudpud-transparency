@@ -68,6 +68,39 @@ class EngineeringProjectControllerTest extends TestCase
         ]);
     }
 
+    public function test_engineer_must_upload_a_progress_proof_image(): void
+    {
+        Storage::fake('public');
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'editor',
+        ]);
+        $project = Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+
+        $response = $this->actingAs($engineer)
+            ->from('/engineering/projects')
+            ->put("/engineering/projects/{$project->id}", [
+                'status' => 'Ongoing',
+                'progress' => 25,
+                'update_date' => '2026-10-22',
+            ]);
+
+        $response->assertRedirect('/engineering/projects');
+        $response->assertSessionHasErrors(['proof_image']);
+        $this->assertDatabaseCount('project_progress_updates', 0);
+        $this->assertDatabaseHas('projects', [
+            'id' => $project->id,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+    }
+
     public function test_editor_can_create_a_project(): void
     {
         Storage::fake('public');
@@ -153,6 +186,7 @@ class EngineeringProjectControllerTest extends TestCase
 
     public function test_progress_update_creates_notifications_for_all_citizens(): void
     {
+        Storage::fake('public');
         $engineer = User::factory()->create([
             'role' => 'engineering',
             'engineering_permission' => 'editor',
@@ -179,10 +213,15 @@ class EngineeringProjectControllerTest extends TestCase
                 'progress' => 25,
                 'update_description' => 'Construction started',
                 'update_date' => '2026-10-22',
+                'proof_image' => UploadedFile::fake()->image('progress-proof.jpg'),
             ]);
 
         $response->assertRedirect('/engineering/projects');
         $this->assertDatabaseCount('notifications', 2);
+        $update = $project->progressUpdates()->firstOrFail();
+        $this->assertSame(25, $update->progress);
+        $this->assertNotNull($update->image_path);
+        Storage::disk('public')->assertExists($update->image_path);
 
         foreach ($citizens as $citizen) {
             $notification = $citizen->notifications()->firstOrFail();
@@ -291,6 +330,7 @@ class EngineeringProjectControllerTest extends TestCase
                 'progress' => 50,
                 'update_description' => 'Work is halfway complete',
                 'update_date' => '2026-10-23',
+                'proof_image' => UploadedFile::fake()->image('progress-proof.jpg'),
                 'image' => UploadedFile::fake()->image('updated-project.png'),
             ]);
 
@@ -331,6 +371,7 @@ class EngineeringProjectControllerTest extends TestCase
                 'progress' => 50,
                 'update_description' => 'Work is halfway complete',
                 'update_date' => '2026-10-23',
+                'proof_image' => UploadedFile::fake()->image('progress-proof.jpg'),
                 'remove_image' => '1',
             ]);
 
@@ -369,6 +410,7 @@ class EngineeringProjectControllerTest extends TestCase
                 'status' => 'Ongoing',
                 'progress' => 50,
                 'update_date' => '2026-10-23',
+                'proof_image' => UploadedFile::fake()->image('progress-proof.jpg'),
                 'image' => UploadedFile::fake()->create(
                     'document.pdf',
                     100,
