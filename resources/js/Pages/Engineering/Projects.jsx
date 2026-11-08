@@ -234,9 +234,10 @@ export default function Projects({ projects = [] }) {
     const formatDate = (date) => {
         if (!date) return 'Not set';
 
-        const parsed = new Date(`${date}T00:00:00`);
+        const normalizedDate = String(date).slice(0, 10);
+        const parsed = new Date(`${normalizedDate}T00:00:00`);
 
-        if (Number.isNaN(parsed.getTime())) return date;
+        if (Number.isNaN(parsed.getTime())) return 'Not set';
 
         return parsed.toLocaleDateString('en-PH', {
             month: 'short',
