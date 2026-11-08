@@ -22,6 +22,7 @@ class CitizenUpdatesTest extends TestCase
 
         $engineer = User::factory()->create([
             'role' => 'engineering',
+            'engineering_permission' => 'editor',
         ]);
         $citizen = User::factory()->create([
             'role' => 'citizen',
@@ -99,6 +100,7 @@ class CitizenUpdatesTest extends TestCase
 
         $engineer = User::factory()->create([
             'role' => 'engineering',
+            'engineering_permission' => 'editor',
         ]);
 
         $response = $this->actingAs($engineer)->post('/engineering/projects', [

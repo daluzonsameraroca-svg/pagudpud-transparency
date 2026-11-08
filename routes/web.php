@@ -6,7 +6,9 @@ use App\Http\Controllers\AdminProjectController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\EngineeringProjectController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProfileController;
@@ -26,11 +28,29 @@ Route::get('/', function () {
     return Inertia::render('Home');
 });
 
-Route::get('/login', fn () => Inertia::render('Login'))
+Route::get('/login', fn (Request $request) => Inertia::render('Login', [
+    'status' => $request->session()->get('status'),
+]))
     ->name('login');
 
 Route::get('/register', function () {
     return Inertia::render('Register');
+});
+
+Route::middleware('guest')->group(function () {
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
+        ->name('password.request');
+
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'edit'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [ResetPasswordController::class, 'update'])
+        ->middleware('throttle:6,1')
+        ->name('password.update');
 });
 
 Route::post('/login', [LoginController::class, 'store']);
@@ -114,13 +134,13 @@ Route::get('/engineering/projects', [EngineeringProjectController::class, 'index
     ->middleware(['auth', 'role:engineering']);
 
 Route::get('/engineering/projects/create', [EngineeringProjectController::class, 'create'])
-    ->middleware(['auth', 'role:engineering']);
+    ->middleware(['auth', 'role:engineering', 'engineering-editor']);
 
 Route::post('/engineering/projects', [EngineeringProjectController::class, 'store'])
-    ->middleware(['auth', 'role:engineering']);
+    ->middleware(['auth', 'role:engineering', 'engineering-editor']);
 
 Route::put('/engineering/projects/{project}', [EngineeringProjectController::class, 'update'])
-    ->middleware(['auth', 'role:engineering']);
+    ->middleware(['auth', 'role:engineering', 'engineering-editor']);
 
 Route::get('/engineering/feedback', [AdminFeedbackController::class, 'index'])
     ->middleware(['auth', 'role:engineering']);
@@ -150,6 +170,9 @@ Route::put('/admin/feedback/{feedback}', [AdminFeedbackController::class, 'updat
     ->middleware(['auth', 'role:admin']);
 
 Route::get('/admin/users', [AdminUserController::class, 'index'])
+    ->middleware(['auth', 'role:admin']);
+
+Route::post('/admin/users', [AdminUserController::class, 'store'])
     ->middleware(['auth', 'role:admin']);
 
 Route::put('/admin/users/{user}', [AdminUserController::class, 'update'])

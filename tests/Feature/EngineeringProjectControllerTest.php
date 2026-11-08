@@ -14,10 +14,99 @@ class EngineeringProjectControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_viewer_cannot_open_the_project_creation_form(): void
+    {
+        $viewer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'viewer',
+        ]);
+
+        $this->actingAs($viewer)
+            ->get('/engineering/projects/create')
+            ->assertForbidden();
+    }
+
+    public function test_viewer_cannot_create_a_project(): void
+    {
+        $viewer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'viewer',
+        ]);
+
+        $this->actingAs($viewer)
+            ->post('/engineering/projects')
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('projects', 0);
+    }
+
+    public function test_viewer_cannot_update_a_project(): void
+    {
+        $viewer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'viewer',
+        ]);
+        $project = Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+
+        $this->actingAs($viewer)
+            ->put("/engineering/projects/{$project->id}", [
+                'status' => 'Ongoing',
+                'progress' => 50,
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('projects', [
+            'id' => $project->id,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+    }
+
+    public function test_editor_can_create_a_project(): void
+    {
+        Storage::fake('public');
+        $editor = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'editor',
+        ]);
+
+        $response = $this->actingAs($editor)
+            ->from('/engineering/projects/create')
+            ->post('/engineering/projects', [
+                'project_name' => 'Road Improvement',
+                'description' => 'Road paving project',
+                'location' => 'Balaoi, Pagudpud, Ilocos Norte',
+                'latitude' => 18.6024,
+                'longitude' => 120.8532,
+                'budget' => 100000,
+                'status' => 'Planned',
+                'progress' => 0,
+                'image' => UploadedFile::fake()->image('project.jpg'),
+            ]);
+
+        $response->assertRedirect('/engineering/projects');
+        $project = Project::where('project_name', 'Road Improvement')->firstOrFail();
+        $this->assertSame('Planned', $project->status);
+        $this->assertSame(0, $project->progress);
+        Storage::disk('public')->assertExists($project->image_path);
+        $this->assertDatabaseHas('project_progress_updates', [
+            'project_id' => $project->id,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+    }
+
     public function test_engineer_must_provide_a_valid_map_pin_when_creating_a_project(): void
     {
         $engineer = User::factory()->create([
             'role' => 'engineering',
+            'engineering_permission' => 'editor',
         ]);
 
         $response = $this->actingAs($engineer)
@@ -42,6 +131,7 @@ class EngineeringProjectControllerTest extends TestCase
     {
         $engineer = User::factory()->create([
             'role' => 'engineering',
+            'engineering_permission' => 'editor',
         ]);
 
         $response = $this->actingAs($engineer)
@@ -65,6 +155,7 @@ class EngineeringProjectControllerTest extends TestCase
     {
         $engineer = User::factory()->create([
             'role' => 'engineering',
+            'engineering_permission' => 'editor',
         ]);
         $citizens = User::factory()->count(2)->create([
             'role' => 'citizen',
@@ -140,8 +231,39 @@ class EngineeringProjectControllerTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('Engineering/Projects')
+            ->where('auth.user.engineering_permission', 'viewer')
             ->where('projects.0.progress', 75)
         );
+    }
+
+    public function test_viewer_can_see_all_engineering_projects(): void
+    {
+        $viewer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'viewer',
+        ]);
+        Project::create([
+            'project_name' => 'Road Improvement',
+            'location' => 'Pagudpud',
+            'budget' => 100000,
+            'status' => 'Ongoing',
+            'progress' => 75,
+        ]);
+        Project::create([
+            'project_name' => 'Community Health Center',
+            'location' => 'Pagudpud',
+            'budget' => 200000,
+            'status' => 'Planned',
+            'progress' => 0,
+        ]);
+
+        $this->actingAs($viewer)
+            ->get('/engineering/projects')
+            ->assertInertia(fn ($page) => $page
+                ->component('Engineering/Projects')
+                ->has('projects', 2)
+                ->where('auth.user.engineering_permission', 'viewer')
+            );
     }
 
     public function test_engineer_can_replace_a_project_image_during_a_progress_update(): void
@@ -149,7 +271,10 @@ class EngineeringProjectControllerTest extends TestCase
         Storage::fake('public');
         Storage::disk('public')->put('projects/old.jpg', 'old image');
 
-        $engineer = User::factory()->create(['role' => 'engineering']);
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'editor',
+        ]);
         $project = Project::create([
             'project_name' => 'Road Improvement',
             'location' => 'Pagudpud',
@@ -186,7 +311,10 @@ class EngineeringProjectControllerTest extends TestCase
         Storage::fake('public');
         Storage::disk('public')->put('projects/current.jpg', 'current image');
 
-        $engineer = User::factory()->create(['role' => 'engineering']);
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'editor',
+        ]);
         $project = Project::create([
             'project_name' => 'Road Improvement',
             'location' => 'Pagudpud',
@@ -222,7 +350,10 @@ class EngineeringProjectControllerTest extends TestCase
         Storage::fake('public');
         Storage::disk('public')->put('projects/current.jpg', 'current image');
 
-        $engineer = User::factory()->create(['role' => 'engineering']);
+        $engineer = User::factory()->create([
+            'role' => 'engineering',
+            'engineering_permission' => 'editor',
+        ]);
         $project = Project::create([
             'project_name' => 'Road Improvement',
             'location' => 'Pagudpud',

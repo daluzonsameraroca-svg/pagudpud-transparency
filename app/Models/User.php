@@ -5,11 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Models\Feedback;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+
+    protected $attributes = [
+        'engineering_permission' => 'viewer',
+    ];
 
     protected $fillable = [
         'name',
@@ -17,9 +20,9 @@ class User extends Authenticatable
         'phone_number',
         'address',
         'role',
+        'engineering_permission',
         'password',
     ];
-
 
     protected $hidden = [
         'password',
@@ -32,6 +35,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isEngineeringEditor(): bool
+    {
+        return $this->role === 'engineering'
+            && $this->engineering_permission === 'editor';
     }
 
     public function feedback()

@@ -45,6 +45,7 @@ class FeedbackControllerTest extends TestCase
                 ->component('Citizen/ProjectDetails')
                 ->where('feedback.data.0.message', $feedback->message)
                 ->where('feedback.data.0.status', 'Pending')
+                ->where('feedback.data.0.is_anonymous', false)
                 ->where('feedback.data.0.user.name', $citizen->name)
                 ->where(
                     'feedback.data.0.image_url',
@@ -56,6 +57,7 @@ class FeedbackControllerTest extends TestCase
             ->get('/citizen/feedback')
             ->assertInertia(fn ($page) => $page
                 ->component('Citizen/Feedback')
+                ->where('feedback.0.is_anonymous', false)
                 ->where('feedback.0.image_path', $feedback->image_path)
                 ->where(
                     'feedback.0.image_url',
@@ -74,6 +76,7 @@ class FeedbackControllerTest extends TestCase
                     "/media/{$feedback->image_path}",
                 )
                 ->where('feedback.0.user.email', $citizen->email)
+                ->where('feedback.0.is_anonymous', false)
             );
 
         $adminImageResponse = $this->actingAs($admin)
@@ -175,6 +178,79 @@ class FeedbackControllerTest extends TestCase
         ]);
     }
 
+    public function test_anonymous_feedback_hides_citizen_identity_from_all_feedback_views(): void
+    {
+        $citizen = User::factory()->create(['role' => 'citizen']);
+        $project = $this->createProject();
+
+        $response = $this->actingAs($citizen)
+            ->from("/citizen/projects/{$project->id}")
+            ->post("/citizen/projects/{$project->id}/feedback", [
+                'message' => 'The work site appears to be unattended.',
+                'is_anonymous' => true,
+            ]);
+
+        $response->assertRedirect("/citizen/projects/{$project->id}");
+        $feedback = Feedback::query()->firstOrFail();
+        $this->assertDatabaseHas('feedback', [
+            'id' => $feedback->id,
+            'user_id' => $citizen->id,
+            'is_anonymous' => true,
+        ]);
+
+        $this->actingAs(User::factory()->create(['role' => 'citizen']))
+            ->get("/citizen/projects/{$project->id}")
+            ->assertInertia(fn ($page) => $page
+                ->component('Citizen/ProjectDetails')
+                ->where('feedback.data.0.is_anonymous', true)
+                ->where('feedback.data.0.user', ['name' => 'Anonymous'])
+                ->missing('feedback.data.0.user_id')
+            );
+
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->get('/admin/feedback')
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Feedback')
+                ->where('feedback.0.is_anonymous', true)
+                ->where('feedback.0.user', ['name' => 'Anonymous'])
+                ->missing('feedback.0.user_id')
+                ->missing('feedback.0.user.id')
+                ->missing('feedback.0.user.email')
+            )
+            ->assertDontSee($citizen->name)
+            ->assertDontSee($citizen->email);
+
+        $this->actingAs(User::factory()->create(['role' => 'engineering']))
+            ->get('/engineering/feedback')
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Feedback')
+                ->where('feedback.0.is_anonymous', true)
+                ->where('feedback.0.user', ['name' => 'Anonymous'])
+                ->missing('feedback.0.user_id')
+                ->missing('feedback.0.user.id')
+                ->missing('feedback.0.user.email')
+            )
+            ->assertDontSee($citizen->name)
+            ->assertDontSee($citizen->email);
+    }
+
+    public function test_citizen_cannot_submit_an_invalid_anonymity_choice(): void
+    {
+        $citizen = User::factory()->create(['role' => 'citizen']);
+        $project = $this->createProject();
+
+        $response = $this->actingAs($citizen)
+            ->from("/citizen/projects/{$project->id}")
+            ->post("/citizen/projects/{$project->id}/feedback", [
+                'message' => 'The work site appears to be unattended.',
+                'is_anonymous' => 'everyone',
+            ]);
+
+        $response->assertRedirect("/citizen/projects/{$project->id}");
+        $response->assertSessionHasErrors(['is_anonymous']);
+        $this->assertDatabaseCount('feedback', 0);
+    }
+
     public function test_citizens_can_view_each_others_feedback_on_project_details(): void
     {
         $author = User::factory()->create(['role' => 'citizen']);
@@ -271,6 +347,7 @@ class FeedbackControllerTest extends TestCase
             'project_id' => $project->id,
             'message' => 'The road work has not started.',
             'image_path' => $oldImagePath,
+            'is_anonymous' => true,
         ]);
 
         $response = $this->actingAs($citizen)
@@ -278,12 +355,14 @@ class FeedbackControllerTest extends TestCase
             ->put("/citizen/feedback/{$feedback->id}", [
                 'message' => 'The road work has now started.',
                 'image' => UploadedFile::fake()->image('new-photo.png'),
+                'is_anonymous' => false,
             ]);
 
         $response->assertRedirect('/citizen/feedback');
         $feedback->refresh();
         $this->assertSame('The road work has now started.', $feedback->message);
         $this->assertSame('Pending', $feedback->status);
+        $this->assertFalse($feedback->is_anonymous);
         $this->assertNotSame($oldImagePath, $feedback->image_path);
         Storage::disk('public')->assertMissing($oldImagePath);
         Storage::disk('public')->assertExists($feedback->image_path);

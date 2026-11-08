@@ -25,10 +25,18 @@ class Feedback extends Model
         'project_id',
         'message',
         'status',
+        'is_anonymous',
         'image_path',
     ];
 
     protected $appends = ['image_url'];
+
+    protected function casts(): array
+    {
+        return [
+            'is_anonymous' => 'boolean',
+        ];
+    }
 
     public function getImageUrlAttribute(): ?string
     {

@@ -155,7 +155,17 @@ export default function Sidebar({
 
     const pathname = url.split('?')[0];
     const user = props.auth?.user;
-    const navigation = navigationByRole[role] || navigationByRole.citizen;
+    const roleNavigation = navigationByRole[role] || navigationByRole.citizen;
+    const navigation =
+        role === 'engineering' &&
+        user?.engineering_permission !== 'editor'
+            ? roleNavigation.map((group) => ({
+                  ...group,
+                  items: group.items.filter(
+                      (item) => item.href !== '/engineering/projects/create',
+                  ),
+              }))
+            : roleNavigation;
     const feedbackProjects = props.citizenFeedbackProjects || [];
     const displayName = user?.name || 'User';
     const email = user?.email || '';

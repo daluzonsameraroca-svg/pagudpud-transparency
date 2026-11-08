@@ -11,16 +11,32 @@ class AdminFeedbackController extends Controller
     public function index(Request $request)
     {
         $role = $request->user()->role;
-        $feedback = Feedback::with([
-            'project',
-            'user' => function ($query) use ($role) {
-                if ($role === 'engineering') {
-                    $query->select('id', 'name');
-                }
-            },
-        ])
+        $feedback = Feedback::with('project')
             ->latest()
             ->get();
+
+        $feedback
+            ->where('is_anonymous', false)
+            ->load([
+                'user' => function ($query) use ($role) {
+                    $columns = $role === 'engineering'
+                        ? ['id', 'name']
+                        : ['id', 'name', 'email'];
+
+                    $query->select($columns);
+                },
+            ]);
+
+        $feedback = $feedback->map(function (Feedback $entry): array {
+            $attributes = $entry->toArray();
+
+            if ($entry->is_anonymous) {
+                unset($attributes['user_id']);
+                $attributes['user'] = ['name' => 'Anonymous'];
+            }
+
+            return $attributes;
+        });
 
         return inertia('Admin/Feedback', [
             'feedback' => $feedback,

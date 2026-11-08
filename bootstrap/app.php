@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureEngineeringEditor;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'engineering-editor' => EnsureEngineeringEditor::class,
         ]);
 
         // Trust the proxy headers used by Render.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Feedback;
 use App\Models\Project;
 use App\Services\CitizenNotificationReadService;
 use Illuminate\Http\Request;
@@ -73,7 +74,17 @@ class ProjectController extends Controller
             ->with('user:id,name')
             ->latest()
             ->paginate(10)
-            ->withQueryString();
+            ->withQueryString()
+            ->through(function (Feedback $entry): array {
+                $feedbackEntry = $entry->toArray();
+
+                if ($entry->is_anonymous) {
+                    unset($feedbackEntry['user_id']);
+                    $feedbackEntry['user'] = ['name' => 'Anonymous'];
+                }
+
+                return $feedbackEntry;
+            });
 
         return Inertia::render('Citizen/ProjectDetails', [
             'project' => $project,

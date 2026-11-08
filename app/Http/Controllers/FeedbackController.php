@@ -22,6 +22,7 @@ class FeedbackController extends Controller
                 'min:5',
                 'max:2000',
             ],
+            'is_anonymous' => ['sometimes', 'boolean'],
             'image' => [
                 'nullable',
                 'image',
@@ -49,6 +50,7 @@ class FeedbackController extends Controller
                     'user_id' => auth()->id(),
                     'project_id' => $project->id,
                     'message' => trim($validated['message']),
+                    'is_anonymous' => (bool) ($validated['is_anonymous'] ?? false),
                     'image_path' => $imagePath,
                 ]);
             });
@@ -76,6 +78,7 @@ class FeedbackController extends Controller
                 'min:5',
                 'max:2000',
             ],
+            'is_anonymous' => ['sometimes', 'boolean'],
             'image' => [
                 'nullable',
                 'image',
@@ -119,10 +122,16 @@ class FeedbackController extends Controller
                 $updatedImagePath = $newImagePath
                     ?? ($removeImage ? null : $oldImagePath);
 
-                $ownedFeedback->update([
+                $attributes = [
                     'message' => trim($validated['message']),
                     'image_path' => $updatedImagePath,
-                ]);
+                ];
+
+                if (array_key_exists('is_anonymous', $validated)) {
+                    $attributes['is_anonymous'] = (bool) $validated['is_anonymous'];
+                }
+
+                $ownedFeedback->update($attributes);
 
                 return [$oldImagePath, $updatedImagePath];
             });

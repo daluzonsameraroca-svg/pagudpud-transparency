@@ -20,6 +20,7 @@ class HandleInertiaRequests extends Middleware
                     'name',
                     'email',
                     'role',
+                    'engineering_permission',
                 ]),
             ],
             'notifications' => fn () => $isCitizen

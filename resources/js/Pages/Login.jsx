@@ -13,7 +13,7 @@ function AppLogo() {
     );
 }
 
-export default function Login() {
+export default function Login({ status }) {
     const { data, setData, post, processing, errors } = useForm({
         email: '',
         password: '',
@@ -45,6 +45,15 @@ export default function Login() {
                             Sign in to your account
                         </h1>
                     </div>
+
+                    {status && (
+                        <p
+                            role="status"
+                            className="mb-6 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-800"
+                        >
+                            {status}
+                        </p>
+                    )}
 
                         <form onSubmit={submit} className="space-y-6">
                             <div>
@@ -109,6 +118,15 @@ export default function Login() {
                                     }
                                     className={inputClass}
                                 />
+
+                                <div className="mt-2 text-right">
+                                    <Link
+                                        href="/forgot-password"
+                                        className="text-sm font-semibold text-blue-800 hover:text-blue-950 hover:underline"
+                                    >
+                                        Forgot password?
+                                    </Link>
+                                </div>
 
                                 {errors.password && (
                                     <p

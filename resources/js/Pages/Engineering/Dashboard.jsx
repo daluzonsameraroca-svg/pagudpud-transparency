@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     PieChart,
     Pie,
@@ -22,6 +22,9 @@ export default function Dashboard({
     projects = [],
     completionStats = [],
 }) {
+    const { props } = usePage();
+    const canEditProjects =
+        props.auth?.user?.engineering_permission === 'editor';
     const totalProjects = projects.length;
 
     const ongoingProjects = projects.filter(
@@ -122,13 +125,15 @@ export default function Dashboard({
 
                         </div>
 
-                        <Link
-                            href="/engineering/projects/create"
-                            className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:self-center"
-                        >
-                            <span className="text-lg">+</span>
-                            Add New Project
-                        </Link>
+                        {canEditProjects && (
+                            <Link
+                                href="/engineering/projects/create"
+                                className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:self-center"
+                            >
+                                <span className="text-lg">+</span>
+                                Add New Project
+                            </Link>
+                        )}
                     </div>
                 </header>
 
@@ -389,12 +394,18 @@ export default function Dashboard({
                                         : 'No recent projects'}
                                 </p>
                                 {projects.length === 0 ? (
-                                    <Link
-                                        href="/engineering/projects/create"
-                                        className="mt-5 inline-flex items-center rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800"
-                                    >
-                                        Add First Project
-                                    </Link>
+                                    canEditProjects ? (
+                                        <Link
+                                            href="/engineering/projects/create"
+                                            className="mt-5 inline-flex items-center rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800"
+                                        >
+                                            Add First Project
+                                        </Link>
+                                    ) : (
+                                        <p className="mt-2 text-sm text-slate-500">
+                                            You have view-only access to project records.
+                                        </p>
+                                    )
                                 ) : (
                                     <p className="mt-2 text-sm text-slate-500">
                                         Completed projects remain in View All Projects.
@@ -431,24 +442,26 @@ export default function Dashboard({
                                 </div>
                             </Link>
 
-                            <Link
-                                href="/engineering/projects/create"
-                                className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:shadow-md"
-                            >
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl font-bold text-blue-700 transition group-hover:bg-blue-100">
-                                        +
+                            {canEditProjects && (
+                                <Link
+                                    href="/engineering/projects/create"
+                                    className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+                                >
+                                    <div className="flex items-start gap-4">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl font-bold text-blue-700 transition group-hover:bg-blue-100">
+                                            +
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-bold text-slate-900 transition group-hover:text-blue-700">
+                                                Add New Project
+                                            </h3>
+                                            <span className="mt-3 inline-block text-sm font-semibold text-blue-700">
+                                                Create project
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="text-sm font-bold text-slate-900 transition group-hover:text-blue-700">
-                                            Add New Project
-                                        </h3>
-                                        <span className="mt-3 inline-block text-sm font-semibold text-blue-700">
-                                            Create project
-                                        </span>
-                                    </div>
-                                </div>
-                            </Link>
+                                </Link>
+                            )}
                         </div>
                     </section>
 

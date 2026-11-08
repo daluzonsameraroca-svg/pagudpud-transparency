@@ -165,6 +165,7 @@ export default function ProjectDetails({ project, feedback }) {
         reset,
     } = useForm({
         message: '',
+        is_anonymous: false,
         image: null,
     });
 
@@ -623,7 +624,7 @@ export default function ProjectDetails({ project, feedback }) {
                             className="space-y-4 border-b border-slate-100 p-5"
                         >
                             <p className="text-xs leading-5 text-slate-600">
-                                Share a concern about this project. 
+                                Share a concern about this project.
                             </p>
 
                             <div>
@@ -656,6 +657,42 @@ export default function ProjectDetails({ project, feedback }) {
                                 <p className="mt-1 text-right text-xs text-slate-400">
                                     {data.message.length}/2000
                                 </p>
+                            </div>
+
+                            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                <label
+                                    htmlFor="feedback-anonymous"
+                                    className="flex items-start gap-2 text-xs font-semibold text-slate-700"
+                                >
+                                    <input
+                                        id="feedback-anonymous"
+                                        type="checkbox"
+                                        checked={data.is_anonymous}
+                                        onChange={(event) =>
+                                            setData(
+                                                'is_anonymous',
+                                                event.target.checked,
+                                            )
+                                        }
+                                        disabled={processing}
+                                        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                    />
+                                    Post anonymously (optional)
+                                </label>
+                                <p className="ml-6 mt-1 text-xs leading-5 text-slate-500">
+                                    Other citizens will see “Anonymous” instead
+                                    of your name. Admin and Engineering can still
+                                    see your account. Your message and photo
+                                    remain public.
+                                </p>
+                                {errors.is_anonymous && (
+                                    <p
+                                        className="ml-6 mt-2 text-xs text-red-600"
+                                        role="alert"
+                                    >
+                                        {errors.is_anonymous}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

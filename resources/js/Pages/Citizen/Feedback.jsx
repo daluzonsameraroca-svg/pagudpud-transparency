@@ -15,6 +15,7 @@ export default function Feedback({ feedback = [] }) {
         reset,
     } = useForm({
         message: '',
+        is_anonymous: false,
         image: null,
         remove_image: false,
         _method: 'put',
@@ -24,6 +25,7 @@ export default function Feedback({ feedback = [] }) {
         clearErrors();
         setData({
             message: item.message,
+            is_anonymous: Boolean(item.is_anonymous),
             image: null,
             remove_image: false,
             _method: 'put',
@@ -319,6 +321,11 @@ export default function Feedback({ feedback = [] }) {
                                                     Submitted on{' '}
                                                     {formatDate(item.created_at)}
                                                 </p>
+                                                <p className="mt-1 text-xs font-medium text-slate-600">
+                                                    {item.is_anonymous
+                                                        ? 'Posted anonymously to other citizens'
+                                                        : 'Posted with your name visible to other citizens'}
+                                                </p>
                                             </div>
 
                                             <span
@@ -435,6 +442,34 @@ export default function Feedback({ feedback = [] }) {
                                                                 photo
                                                             </label>
                                                         )}
+                                                    </div>
+
+                                                    <div className="rounded-lg border border-slate-200 bg-white p-3">
+                                                        <label
+                                                            htmlFor={`feedback-anonymous-${item.id}`}
+                                                            className="flex items-start gap-2 text-xs font-semibold text-slate-700"
+                                                        >
+                                                            <input
+                                                                id={`feedback-anonymous-${item.id}`}
+                                                                type="checkbox"
+                                                                checked={data.is_anonymous}
+                                                                onChange={(event) =>
+                                                                    setData(
+                                                                        'is_anonymous',
+                                                                        event.target.checked,
+                                                                    )
+                                                                }
+                                                                disabled={processing}
+                                                                className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                            />
+                                                            Post anonymously
+                                                        </label>
+                                                        <p className="ml-6 mt-1 text-xs leading-5 text-slate-500">
+                                                            Other citizens see
+                                                            “Anonymous”; Admin
+                                                            and Engineering can
+                                                            still identify you.
+                                                        </p>
                                                     </div>
 
                                                     <div className="flex flex-wrap gap-2">

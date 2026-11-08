@@ -19,6 +19,8 @@ const STATUS_STYLES = {
 export default function Projects({ projects = [] }) {
     const { props } = usePage();
     const errors = props.errors ?? {};
+    const canEditProjects =
+        props.auth?.user?.engineering_permission === 'editor';
     const [updatingProject, setUpdatingProject] = useState(null);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
@@ -247,13 +249,15 @@ export default function Projects({ projects = [] }) {
 
                         </div>
 
-                        <Link
-                            href="/engineering/projects/create"
-                            className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:self-center"
-                        >
-                            <span className="text-lg">+</span>
-                            Add Project
-                        </Link>
+                        {canEditProjects && (
+                            <Link
+                                href="/engineering/projects/create"
+                                className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:self-center"
+                            >
+                                <span className="text-lg">+</span>
+                                Add Project
+                            </Link>
+                        )}
                     </div>
                 </header>
 
@@ -404,6 +408,7 @@ export default function Projects({ projects = [] }) {
                             filteredProjects.map((project) => {
                                 const progress = getProgress(project.progress);
                                 const isEditing =
+                                    canEditProjects &&
                                     updatingProject === project.id;
 
                                 return (
@@ -558,11 +563,12 @@ export default function Projects({ projects = [] }) {
 
                                         <div className="flex flex-col gap-3 border-t border-slate-100 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                                             <p className="text-sm leading-6 text-slate-500">
-                                                Keep the official project status
-                                                and progress current.
+                                                {canEditProjects
+                                                    ? 'Keep the official project status and progress current.'
+                                                    : 'You have view-only access to project records.'}
                                             </p>
 
-                                            {!isEditing && (
+                                            {canEditProjects && !isEditing && (
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -811,12 +817,14 @@ export default function Projects({ projects = [] }) {
 
 
                                 {projects.length === 0 ? (
-                                    <Link
-                                        href="/engineering/projects/create"
-                                        className="mt-5 inline-flex rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800"
-                                    >
-                                        Add First Project
-                                    </Link>
+                                    canEditProjects ? (
+                                        <Link
+                                            href="/engineering/projects/create"
+                                            className="mt-5 inline-flex rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800"
+                                        >
+                                            Add First Project
+                                        </Link>
+                                    ) : null
                                 ) : (
                                     <button
                                         type="button"

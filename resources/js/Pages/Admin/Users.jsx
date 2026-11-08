@@ -1,16 +1,77 @@
-import { router } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
+import { useState } from 'react';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 
 export default function Users({ users = [] }) {
+    const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
+    const [creationMessage, setCreationMessage] = useState('');
+    const [pendingRoleChange, setPendingRoleChange] = useState(null);
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+    } = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        engineering_permission: 'viewer',
+    });
+
+    const createEngineeringAccount = (event) => {
+        event.preventDefault();
+        setCreationMessage('');
+
+        post('/admin/users', {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                setIsCreateFormOpen(false);
+                setCreationMessage('Engineering account created successfully.');
+            },
+        });
+    };
+
+    const closeCreateForm = () => {
+        reset();
+        clearErrors();
+        setCreationMessage('');
+        setIsCreateFormOpen(false);
+    };
+
     const updateRole = (user, role) => {
         if (role === user.role) return;
 
+        setPendingRoleChange({ user, role });
+    };
+
+    const confirmRoleChange = () => {
+        if (!pendingRoleChange) return;
+
+        const { user, role } = pendingRoleChange;
+        setPendingRoleChange(null);
         router.put(
             `/admin/users/${user.id}`,
             { role },
             {
                 preserveScroll: true,
             }
+        );
+    };
+
+    const updateEngineeringPermission = (user, engineeringPermission) => {
+        if (engineeringPermission === user.engineering_permission) return;
+
+        router.put(
+            `/admin/users/${user.id}`,
+            { engineering_permission: engineeringPermission },
+            {
+                preserveScroll: true,
+            },
         );
     };
 
@@ -141,6 +202,15 @@ export default function Users({ users = [] }) {
                 </header>
 
                 <main className="mx-auto max-w-7xl space-y-8 p-5 sm:p-8">
+                    {creationMessage && (
+                        <div
+                            className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800"
+                            role="status"
+                        >
+                            {creationMessage}
+                        </div>
+                    )}
+
                     <section>
                         <div className="mb-4">
                             <h2 className="text-lg font-bold text-slate-800">
@@ -184,10 +254,220 @@ export default function Users({ users = [] }) {
                                 </h2>
                             </div>
 
-                            <span className="rounded-lg bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 ring-1 ring-blue-200">
-                                {users.length} records
-                            </span>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <span className="rounded-lg bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 ring-1 ring-blue-200">
+                                    {users.length} records
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setCreationMessage('');
+                                        setIsCreateFormOpen((isOpen) => !isOpen);
+                                    }}
+                                    aria-expanded={isCreateFormOpen}
+                                    aria-controls="create-engineering-account"
+                                    className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                >
+                                    <span aria-hidden="true">+</span>
+                                    {isCreateFormOpen
+                                        ? 'Close form'
+                                        : 'Create Engineering Account'}
+                                </button>
+                            </div>
                         </div>
+
+                        {isCreateFormOpen && (
+                            <form
+                                id="create-engineering-account"
+                                onSubmit={createEngineeringAccount}
+                                className="space-y-5 border-b border-slate-200 bg-slate-50 p-5 sm:p-6"
+                            >
+                                <div>
+                                    <h3 className="text-base font-bold text-slate-900">
+                                        New Engineering Account
+                                    </h3>
+                                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                                        Choose whether this account can only
+                                        view projects or can also create
+                                        projects and post progress updates.
+                                    </p>
+                                </div>
+
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div>
+                                        <label
+                                            htmlFor="engineering-name"
+                                            className="mb-1.5 block text-sm font-medium text-slate-700"
+                                        >
+                                            Full name
+                                        </label>
+                                        <input
+                                            id="engineering-name"
+                                            name="name"
+                                            type="text"
+                                            value={data.name}
+                                            onChange={(event) =>
+                                                setData('name', event.target.value)
+                                            }
+                                            autoComplete="name"
+                                            maxLength={255}
+                                            required
+                                            disabled={processing}
+                                            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100"
+                                        />
+                                        {errors.name && (
+                                            <p className="mt-1.5 text-sm text-red-600" role="alert">
+                                                {errors.name}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="engineering-email"
+                                            className="mb-1.5 block text-sm font-medium text-slate-700"
+                                        >
+                                            Email address
+                                        </label>
+                                        <input
+                                            id="engineering-email"
+                                            name="email"
+                                            type="email"
+                                            value={data.email}
+                                            onChange={(event) =>
+                                                setData('email', event.target.value)
+                                            }
+                                            autoComplete="email"
+                                            maxLength={255}
+                                            required
+                                            disabled={processing}
+                                            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100"
+                                        />
+                                        {errors.email && (
+                                            <p className="mt-1.5 text-sm text-red-600" role="alert">
+                                                {errors.email}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="engineering-password"
+                                            className="mb-1.5 block text-sm font-medium text-slate-700"
+                                        >
+                                            Initial password
+                                        </label>
+                                        <input
+                                            id="engineering-password"
+                                            name="password"
+                                            type="password"
+                                            value={data.password}
+                                            onChange={(event) =>
+                                                setData('password', event.target.value)
+                                            }
+                                            autoComplete="new-password"
+                                            minLength={8}
+                                            required
+                                            disabled={processing}
+                                            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100"
+                                        />
+                                        {errors.password && (
+                                            <p className="mt-1.5 text-sm text-red-600" role="alert">
+                                                {errors.password}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="engineering-password-confirmation"
+                                            className="mb-1.5 block text-sm font-medium text-slate-700"
+                                        >
+                                            Confirm password
+                                        </label>
+                                        <input
+                                            id="engineering-password-confirmation"
+                                            name="password_confirmation"
+                                            type="password"
+                                            value={data.password_confirmation}
+                                            onChange={(event) =>
+                                                setData(
+                                                    'password_confirmation',
+                                                    event.target.value,
+                                                )
+                                            }
+                                            autoComplete="new-password"
+                                            minLength={8}
+                                            required
+                                            disabled={processing}
+                                            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100"
+                                        />
+                                        {errors.password_confirmation && (
+                                            <p className="mt-1.5 text-sm text-red-600" role="alert">
+                                                {errors.password_confirmation}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="engineering-permission"
+                                            className="mb-1.5 block text-sm font-medium text-slate-700"
+                                        >
+                                            Project access
+                                        </label>
+                                        <select
+                                            id="engineering-permission"
+                                            name="engineering_permission"
+                                            value={data.engineering_permission}
+                                            onChange={(event) =>
+                                                setData(
+                                                    'engineering_permission',
+                                                    event.target.value,
+                                                )
+                                            }
+                                            required
+                                            disabled={processing}
+                                            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100"
+                                        >
+                                                <option value="viewer">
+                                                Viewer — view all projects and
+                                                feedback
+                                            </option>
+                                            <option value="editor">
+                                                    Editor — view, create, and
+                                                    update projects
+                                                </option>
+                                        </select>
+                                        {errors.engineering_permission && (
+                                            <p className="mt-1.5 text-sm text-red-600" role="alert">
+                                                {errors.engineering_permission}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-wrap justify-end gap-3 border-t border-slate-200 pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={closeCreateForm}
+                                        disabled={processing}
+                                        className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="rounded-lg bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                        {processing
+                                            ? 'Creating account...'
+                                            : 'Create Engineering Account'}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
 
                         {users.length === 0 ? (
                             <div className="px-5 py-16 text-center">
@@ -202,7 +482,7 @@ export default function Users({ users = [] }) {
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="w-full min-w-[900px] text-left">
+                                <table className="w-full min-w-[1080px] text-left">
                                     <thead className="bg-blue-50/70">
                                         <tr className="border-b border-blue-100">
                                             {[
@@ -211,6 +491,7 @@ export default function Users({ users = [] }) {
                                                 'Address',
                                                 'Current Role',
                                                 'Change Role',
+                                                'Engineering Project Access',
                                             ].map((heading) => (
                                                 <th
                                                     key={heading}
@@ -300,6 +581,35 @@ export default function Users({ users = [] }) {
                                                     </select>
 
                                                 </td>
+
+                                                <td className="px-5 py-5">
+                                                    {user.role === 'engineering' ? (
+                                                        <select
+                                                            value={user.engineering_permission || 'viewer'}
+                                                            onChange={(event) =>
+                                                                updateEngineeringPermission(
+                                                                    user,
+                                                                    event.target.value,
+                                                                )
+                                                            }
+                                                            aria-label={`Change Engineering project access for ${user.name}`}
+                                                            className="w-full max-w-[210px] rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                                        >
+                                                            <option value="viewer">
+                                                                Viewer — view
+                                                                only
+                                                            </option>
+                                                            <option value="editor">
+                                                                Editor — view,
+                                                                create, and update
+                                                            </option>
+                                                        </select>
+                                                    ) : (
+                                                        <span className="text-sm text-slate-400">
+                                                            Not applicable
+                                                        </span>
+                                                    )}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -361,6 +671,74 @@ export default function Users({ users = [] }) {
                     </footer>
                 </main>
             </div>
+
+            {pendingRoleChange && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
+                    onMouseDown={(event) => {
+                        if (event.target === event.currentTarget) {
+                            setPendingRoleChange(null);
+                        }
+                    }}
+                >
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="change-role-title"
+                        className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl"
+                    >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-2xl font-bold text-amber-700">
+                            !
+                        </div>
+
+                        <h2
+                            id="change-role-title"
+                            className="mt-5 text-xl font-bold text-slate-900"
+                        >
+                            Confirm Role Change
+                        </h2>
+
+                        <p className="mt-3 break-words text-sm leading-7 text-slate-600">
+                            Change{' '}
+                            <span className="font-semibold text-slate-900">
+                                {pendingRoleChange.user.name}
+                            </span>
+                            's role from{' '}
+                            <span className="font-semibold text-slate-900">
+                                {getRoleName(pendingRoleChange.user.role)}
+                            </span>{' '}
+                            to{' '}
+                            <span className="font-semibold text-slate-900">
+                                {getRoleName(pendingRoleChange.role)}
+                            </span>
+                            ?
+                        </p>
+
+                        <p className="mt-2 text-sm text-slate-500">
+                            Changing a role may change which parts of the system
+                            this account can access.
+                        </p>
+
+                        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            <button
+                                type="button"
+                                onClick={() => setPendingRoleChange(null)}
+                                className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={confirmRoleChange}
+                                className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            >
+                                Confirm Role Change
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
 }

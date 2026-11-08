@@ -293,7 +293,9 @@ export default function Feedback({ feedback = [], role = 'admin' }) {
                                         <div className="grid gap-5 border-t border-slate-100 px-5 py-5 sm:grid-cols-2 lg:grid-cols-3 sm:px-6">
                                             <div className="flex min-w-0 items-start gap-3">
                                                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-800">
-                                                    {item.user?.name
+                                                    {(item.is_anonymous
+                                                        ? 'A'
+                                                        : item.user?.name)
                                                         ?.trim()
                                                         ?.charAt(0)
                                                         ?.toUpperCase() || '?'}
@@ -303,9 +305,16 @@ export default function Feedback({ feedback = [], role = 'admin' }) {
                                                         Submitted by
                                                     </p>
                                                     <p className="mt-1 break-words text-sm font-semibold text-slate-800">
-                                                        {item.user?.name ||
-                                                            'Unknown citizen'}
+                                                        {item.is_anonymous
+                                                            ? 'Anonymous'
+                                                            : item.user?.name ||
+                                                              'Unknown citizen'}
                                                     </p>
+                                                    {item.is_anonymous && (
+                                                        <p className="mt-1 text-xs font-medium text-blue-700">
+                                                            Identity hidden from everyone
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
 
@@ -315,8 +324,10 @@ export default function Feedback({ feedback = [], role = 'admin' }) {
                                                         Email Address
                                                     </p>
                                                     <p className="mt-1 break-all text-sm font-medium text-slate-800">
-                                                        {item.user?.email ||
-                                                            'Not available'}
+                                                        {item.is_anonymous
+                                                            ? 'Hidden for anonymous feedback'
+                                                            : item.user?.email ||
+                                                              'Not available'}
                                                     </p>
                                                 </div>
                                             )}
