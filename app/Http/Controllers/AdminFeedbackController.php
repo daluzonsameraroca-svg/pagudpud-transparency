@@ -10,7 +10,8 @@ class AdminFeedbackController extends Controller
     // Display all feedback submitted by citizens.
     public function index(Request $request)
     {
-        $role = $request->user()->role;
+        $role = strtolower(trim((string) $request->user()->role));
+        $role = $role === 'administrator' ? 'admin' : $role;
         $feedback = Feedback::with('project')
             ->latest()
             ->get();

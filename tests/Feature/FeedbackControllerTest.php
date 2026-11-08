@@ -129,6 +129,19 @@ class FeedbackControllerTest extends TestCase
         $this->assertSame('Reviewed', $feedback->fresh()->status);
     }
 
+    public function test_administrator_role_sees_the_admin_feedback_navigation(): void
+    {
+        $administrator = User::factory()->create(['role' => 'Administrator']);
+
+        $this->actingAs($administrator)
+            ->get('/admin/feedback')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/Feedback')
+                ->where('role', 'admin')
+            );
+    }
+
     public function test_citizens_cannot_access_engineering_feedback_page(): void
     {
         $citizen = User::factory()->create(['role' => 'citizen']);
